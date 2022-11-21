@@ -1,0 +1,1434 @@
+fileFormatVersion: 2
+guid: f9c877552e5c48647909f7d4ca8abcf5
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: FORCE-AD-13a
+    21300002: FORCE-AD-13a_0
+    21300004: FORCE-AD-13a_4
+    21300006: FORCE-AD-13a_11
+    21300008: FORCE-AD-13a_12
+    21300010: FORCE-AD-13a_13
+    21300012: FORCE-AD-13a_14
+    21300014: FORCE-AD-13a_15
+    21300016: FORCE-AD-13a_16
+    21300018: FORCE-AD-13a_17
+    21300020: FORCE-AD-13a_18
+    21300022: FORCE-AD-13a_19
+    21300024: FORCE-AD-13a_20
+    21300026: FORCE-AD-13a_21
+    21300028: FORCE-AD-13a_22
+    21300030: FORCE-AD-13a_23
+    21300032: FORCE-AD-13a_24
+    21300034: FORCE-AD-13a_25
+    21300036: FORCE-AD-13a_26
+    21300038: FORCE-AD-13a_27
+    21300040: FORCE-AD-13a_30
+    21300042: FORCE-AD-13a_34
+    21300044: FORCE-AD-13a_38
+    21300046: FORCE-AD-13a_41
+    21300048: FORCE-AD-13a_44
+    21300050: FORCE-AD-13a_47
+    21300052: FORCE-AD-13a_55
+    21300054: FORCE-AD-13a_56
+    21300056: FORCE-AD-13a_58
+    21300058: FORCE-AD-13a_103
+    21300060: FORCE-AD-13a_104
+    21300062: FORCE-AD-13a_105
+    21300064: FORCE-AD-13a_106
+    21300066: FORCE-AD-13a_111
+    21300068: FORCE-AD-13a_112
+    21300070: FORCE-AD-13a_113
+    21300072: FORCE-AD-13a_114
+    21300074: FORCE-AD-13a_115
+    21300076: FORCE-AD-13a_116
+    21300078: FORCE-AD-13a_117
+    21300080: FORCE-AD-13a_118
+    21300082: FORCE-AD-13a_114
+    21300084: FORCE-AD-13a_111
+    21300086: FORCE-AD-13a_108
+    21300088: FORCE-AD-13a_107
+    21300090: FORCE-AD-13a_105
+    21300092: FORCE-AD-13a_104
+    21300094: FORCE-AD-13a_103
+    21300096: FORCE-AD-13a_102
+    21300098: FORCE-AD-13a_101
+    21300100: FORCE-AD-13a_100
+    21300102: FORCE-AD-13a_98
+    21300104: FORCE-AD-13a_97
+    21300106: FORCE-AD-13a_95
+    21300108: FORCE-AD-13a_93
+    21300110: FORCE-AD-13a_91
+    21300112: FORCE-AD-13a_89
+    21300114: FORCE-AD-13a_87
+    21300116: FORCE-AD-13a_85
+    21300118: FORCE-AD-13a_83
+    21300120: FORCE-AD-13a_81
+    21300122: FORCE-AD-13a_79
+    21300124: FORCE-AD-13a_76
+    21300126: FORCE-AD-13a_73
+    21300128: FORCE-AD-13a_70
+    21300130: FORCE-AD-13a_69
+    21300132: FORCE-AD-13a_68
+    21300134: FORCE-AD-13a_67
+    21300136: FORCE-AD-13a_67
+    21300138: FORCE-AD-13a_68
+    21300140: FORCE-AD-13a_69
+    21300142: FORCE-AD-13a_70
+    21300144: FORCE-AD-13a_71
+    21300146: FORCE-AD-13a_72
+    21300148: FORCE-AD-13a_73
+    21300150: FORCE-AD-13a_74
+    21300152: FORCE-AD-13a_75
+    21300154: FORCE-AD-13a_76
+    21300156: FORCE-AD-13a_77
+    21300158: FORCE-AD-13a_78
+    21300160: FORCE-AD-13a_79
+    21300162: FORCE-AD-13a_80
+    21300164: FORCE-AD-13a_81
+    21300166: FORCE-AD-13a_82
+    21300168: FORCE-AD-13a_83
+    21300170: FORCE-AD-13a_84
+    21300172: FORCE-AD-13a_85
+    21300174: FORCE-AD-13a_86
+    21300176: FORCE-AD-13a_87
+    21300178: FORCE-AD-13a_88
+    21300180: FORCE-AD-13a_89
+    21300182: FORCE-AD-13a_90
+    21300184: FORCE-AD-13a_91
+    21300186: FORCE-AD-13a_92
+    21300188: FORCE-AD-13a_93
+    21300190: FORCE-AD-13a_94
+    21300192: FORCE-AD-13a_95
+    21300194: FORCE-AD-13a_96
+    21300196: FORCE-AD-13a_97
+    21300198: FORCE-AD-13a_98
+    21300200: FORCE-AD-13a_99
+    21300202: FORCE-AD-13a_100
+    21300204: FORCE-AD-13a_101
+    21300206: FORCE-AD-13a_102
+    21300208: FORCE-AD-13a_103
+    21300210: FORCE-AD-13a_104
+    21300212: FORCE-AD-13a_105
+    21300214: FORCE-AD-13a_106
+    21300216: FORCE-AD-13a_107
+    21300218: FORCE-AD-13a_108
+    21300220: FORCE-AD-13a_109
+    21300222: FORCE-AD-13a_110
+    21300224: FORCE-AD-13a_111
+    21300226: FORCE-AD-13a_112
+    21300228: FORCE-AD-13a_113
+    21300230: FORCE-AD-13a_114
+    21300232: FORCE-AD-13a_115
+    21300234: FORCE-AD-13a_116
+    21300236: FORCE-AD-13a_117
+    21300238: FORCE-AD-13a_118
+    21300240: FORCE-AD-13a_119
+    21300242: FORCE-AD-13a_120
+    21300244: FORCE-AD-13a_121
+    21300246: FORCE-AD-13a_122
+    21300248: FORCE-AD-13a_123
+    21300250: FORCE-AD-13a_124
+    21300252: FORCE-AD-13a_125
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -2
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: FORCE-AD-13a_0
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 1862
+        width: 325
+        height: 146
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_4
+      rect:
+        serializedVersion: 2
+        x: 1228
+        y: 1930
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_11
+      rect:
+        serializedVersion: 2
+        x: 1105
+        y: 1802
+        width: 57
+        height: 55
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_12
+      rect:
+        serializedVersion: 2
+        x: 1196
+        y: 1806
+        width: 53
+        height: 52
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_13
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 1562
+        width: 325
+        height: 244
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_14
+      rect:
+        serializedVersion: 2
+        x: 1121
+        y: 1729
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_15
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 1731
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_16
+      rect:
+        serializedVersion: 2
+        x: 1243
+        y: 1729
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_17
+      rect:
+        serializedVersion: 2
+        x: 1304
+        y: 1730
+        width: 22
+        height: 18
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_18
+      rect:
+        serializedVersion: 2
+        x: 1373
+        y: 1731
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_19
+      rect:
+        serializedVersion: 2
+        x: 1121
+        y: 1700
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_20
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 1701
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_21
+      rect:
+        serializedVersion: 2
+        x: 1243
+        y: 1699
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_22
+      rect:
+        serializedVersion: 2
+        x: 1304
+        y: 1700
+        width: 22
+        height: 18
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_23
+      rect:
+        serializedVersion: 2
+        x: 1372
+        y: 1703
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_24
+      rect:
+        serializedVersion: 2
+        x: 1124
+        y: 1512
+        width: 65
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_25
+      rect:
+        serializedVersion: 2
+        x: 1226
+        y: 1512
+        width: 65
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_26
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 1370
+        width: 325
+        height: 114
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_27
+      rect:
+        serializedVersion: 2
+        x: 1133
+        y: 1418
+        width: 43
+        height: 43
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_30
+      rect:
+        serializedVersion: 2
+        x: 1357
+        y: 1423
+        width: 50
+        height: 41
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_34
+      rect:
+        serializedVersion: 2
+        x: 1141
+        y: 1366
+        width: 27
+        height: 22
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_38
+      rect:
+        serializedVersion: 2
+        x: 1292
+        y: 1370
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_41
+      rect:
+        serializedVersion: 2
+        x: 1358
+        y: 1370
+        width: 25
+        height: 17
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_44
+      rect:
+        serializedVersion: 2
+        x: 1430
+        y: 1370
+        width: 13
+        height: 17
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_47
+      rect:
+        serializedVersion: 2
+        x: 1497
+        y: 1369
+        width: 14
+        height: 19
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_55
+      rect:
+        serializedVersion: 2
+        x: 1652
+        y: 1369
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_56
+      rect:
+        serializedVersion: 2
+        x: 1676
+        y: 1368
+        width: 14
+        height: 20
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_58
+      rect:
+        serializedVersion: 2
+        x: 1185
+        y: 1334
+        width: 18
+        height: 22
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_103
+      rect:
+        serializedVersion: 2
+        x: 1133
+        y: 1184
+        width: 95
+        height: 94
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_104
+      rect:
+        serializedVersion: 2
+        x: 1261
+        y: 1189
+        width: 85
+        height: 84
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_105
+      rect:
+        serializedVersion: 2
+        x: 1143
+        y: 1038
+        width: 18
+        height: 40
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_106
+      rect:
+        serializedVersion: 2
+        x: 1182
+        y: 1039
+        width: 39
+        height: 38
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_111
+      rect:
+        serializedVersion: 2
+        x: 1380
+        y: 1038
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_112
+      rect:
+        serializedVersion: 2
+        x: 1132
+        y: 970
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_113
+      rect:
+        serializedVersion: 2
+        x: 1186
+        y: 970
+        width: 45
+        height: 44
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_114
+      rect:
+        serializedVersion: 2
+        x: 1243
+        y: 970
+        width: 45
+        height: 44
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_115
+      rect:
+        serializedVersion: 2
+        x: 1333
+        y: 972
+        width: 36
+        height: 40
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_116
+      rect:
+        serializedVersion: 2
+        x: 1132
+        y: 913
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_117
+      rect:
+        serializedVersion: 2
+        x: 1186
+        y: 913
+        width: 45
+        height: 44
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_118
+      rect:
+        serializedVersion: 2
+        x: 1243
+        y: 913
+        width: 45
+        height: 44
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_114
+      rect:
+        serializedVersion: 2
+        x: 474
+        y: 1081
+        width: 416
+        height: 153
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_111
+      rect:
+        serializedVersion: 2
+        x: 1109
+        y: 1929
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_108
+      rect:
+        serializedVersion: 2
+        x: 1341
+        y: 1929
+        width: 212
+        height: 72
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_107
+      rect:
+        serializedVersion: 2
+        x: 1195
+        y: 1421
+        width: 38
+        height: 44
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_105
+      rect:
+        serializedVersion: 2
+        x: 1252
+        y: 1421
+        width: 44
+        height: 43
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_104
+      rect:
+        serializedVersion: 2
+        x: 1242
+        y: 1370
+        width: 42
+        height: 17
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_103
+      rect:
+        serializedVersion: 2
+        x: 1318
+        y: 1370
+        width: 33
+        height: 17
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_102
+      rect:
+        serializedVersion: 2
+        x: 1390
+        y: 1369
+        width: 31
+        height: 19
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_101
+      rect:
+        serializedVersion: 2
+        x: 1451
+        y: 1369
+        width: 40
+        height: 19
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_100
+      rect:
+        serializedVersion: 2
+        x: 1519
+        y: 1369
+        width: 29
+        height: 19
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_98
+      rect:
+        serializedVersion: 2
+        x: 1557
+        y: 1369
+        width: 42
+        height: 18
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_97
+      rect:
+        serializedVersion: 2
+        x: 1608
+        y: 1366
+        width: 37
+        height: 22
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_95
+      rect:
+        serializedVersion: 2
+        x: 1240
+        y: 1336
+        width: 38
+        height: 23
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_93
+      rect:
+        serializedVersion: 2
+        x: 1287
+        y: 1336
+        width: 44
+        height: 23
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_91
+      rect:
+        serializedVersion: 2
+        x: 1338
+        y: 1336
+        width: 44
+        height: 23
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_89
+      rect:
+        serializedVersion: 2
+        x: 1390
+        y: 1336
+        width: 44
+        height: 23
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_87
+      rect:
+        serializedVersion: 2
+        x: 1442
+        y: 1336
+        width: 44
+        height: 23
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_85
+      rect:
+        serializedVersion: 2
+        x: 1494
+        y: 1336
+        width: 45
+        height: 23
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_83
+      rect:
+        serializedVersion: 2
+        x: 1547
+        y: 1336
+        width: 44
+        height: 23
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_81
+      rect:
+        serializedVersion: 2
+        x: 1597
+        y: 1336
+        width: 46
+        height: 23
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_79
+      rect:
+        serializedVersion: 2
+        x: 1651
+        y: 1336
+        width: 45
+        height: 23
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_76
+      rect:
+        serializedVersion: 2
+        x: 1703
+        y: 1336
+        width: 56
+        height: 23
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_73
+      rect:
+        serializedVersion: 2
+        x: 1766
+        y: 1336
+        width: 48
+        height: 23
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_70
+      rect:
+        serializedVersion: 2
+        x: 1822
+        y: 1336
+        width: 54
+        height: 23
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_69
+      rect:
+        serializedVersion: 2
+        x: 1182
+        y: 1368
+        width: 26
+        height: 18
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_68
+      rect:
+        serializedVersion: 2
+        x: 1249
+        y: 1038
+        width: 36
+        height: 40
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_67
+      rect:
+        serializedVersion: 2
+        x: 1316
+        y: 1038
+        width: 35
+        height: 40
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_67
+      rect:
+        serializedVersion: 2
+        x: 948
+        y: 1934
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_68
+      rect:
+        serializedVersion: 2
+        x: 948
+        y: 1724
+        width: 74
+        height: 210
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_69
+      rect:
+        serializedVersion: 2
+        x: 948
+        y: 1654
+        width: 74
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_70
+      rect:
+        serializedVersion: 2
+        x: 948
+        y: 1444
+        width: 74
+        height: 210
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_71
+      rect:
+        serializedVersion: 2
+        x: 948
+        y: 1370
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_72
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 1370
+        width: 210
+        height: 74
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_73
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 1444
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_74
+      rect:
+        serializedVersion: 2
+        x: 808
+        y: 1444
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_75
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 1444
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_76
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 1514
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_77
+      rect:
+        serializedVersion: 2
+        x: 808
+        y: 1514
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_78
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 1514
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_79
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 1584
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_80
+      rect:
+        serializedVersion: 2
+        x: 808
+        y: 1584
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_81
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 1584
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_82
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 1654
+        width: 210
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_83
+      rect:
+        serializedVersion: 2
+        x: 668
+        y: 1444
+        width: 70
+        height: 210
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_84
+      rect:
+        serializedVersion: 2
+        x: 668
+        y: 1654
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_85
+      rect:
+        serializedVersion: 2
+        x: 668
+        y: 1370
+        width: 70
+        height: 74
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_86
+      rect:
+        serializedVersion: 2
+        x: 668
+        y: 1724
+        width: 70
+        height: 210
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_87
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 1724
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_88
+      rect:
+        serializedVersion: 2
+        x: 808
+        y: 1724
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_89
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 1724
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_90
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 1794
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_91
+      rect:
+        serializedVersion: 2
+        x: 808
+        y: 1794
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_92
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 1794
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_93
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 1864
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_94
+      rect:
+        serializedVersion: 2
+        x: 808
+        y: 1864
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_95
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 1864
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_96
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 1934
+        width: 210
+        height: 74
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_97
+      rect:
+        serializedVersion: 2
+        x: 668
+        y: 1934
+        width: 70
+        height: 74
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_98
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 1934
+        width: 210
+        height: 74
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_99
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 1934
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_100
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 1864
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_101
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 1864
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_102
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 1864
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_103
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 1794
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_104
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 1724
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_105
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 1654
+        width: 210
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_106
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 1724
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_107
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 1794
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_108
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 1794
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_109
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 1724
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_110
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 1724
+        width: 74
+        height: 210
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_111
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 1654
+        width: 74
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_112
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 1584
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_113
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 1584
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_114
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 1584
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_115
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 1514
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_116
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 1444
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_117
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 1370
+        width: 210
+        height: 74
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_118
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 1444
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_119
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 1514
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_120
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 1514
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_121
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 1444
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_122
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 1444
+        width: 74
+        height: 210
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_123
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 1370
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_124
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 1080
+        width: 151
+        height: 151
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: FORCE-AD-13a_125
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 1083
+        width: 101
+        height: 148
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
