@@ -6,6 +6,23 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale).
 
 ---
 
+## 2026-05-24 23:48:00 — Plateau graphique fidèle (atlas FORCE-AD-13a)
+
+### Réalisé
+
+- **`board_atlas.gd`** + **`parse_atlas_meta.py`** — 87 sprites extraits du `.meta` Unity, tuiles HQ/terre/mer
+- **`board_map.gd`** refondu — fond diagramme Unity (`FORCE-AD-13a_13`), tuiles atlas teintées par camp, anneau de sélection, pastilles pièces, badges V×2 B×1…
+- **`atlas_sprites.json`** — régions atlas en coords Godot
+- Panneau carte agrandi (520×380)
+
+### À faire (plateau)
+
+- [ ] Calibrer positions secteurs sur le diagramme (Battleground.unity manquant)
+- [ ] Connecteurs 210×70 entre cases, sprites pièces depuis atlas
+- [ ] Animations déplacement / combat
+
+---
+
 ## 2026-05-24 23:39:01 — Mer/air, Power, carte visuelle, audio legacy
 
 ### Réalisé

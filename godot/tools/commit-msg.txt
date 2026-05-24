@@ -1,0 +1,7 @@
+feat(godot): plateau graphique fidèle via atlas FORCE-AD-13a
+
+Changelog 2026-05-24 23:48:00 — godot/CHANGELOG.md
+
+- BoardAtlas + parse_atlas_meta.py (87 sprites Unity)
+- Carte : fond diagramme original, tuiles teintées camp, jetons, sélection
+- Remplace les boutons ronds debug
