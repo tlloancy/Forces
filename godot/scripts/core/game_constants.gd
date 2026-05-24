@@ -19,7 +19,11 @@ enum SectorKind { HQ, LAND, SEA, SPECIAL }
 
 enum GamePhase { MENU, PLANNING, RESOLUTION, GAME_OVER }
 
+enum MovementDomain { LAND, SEA, AIR, NONE }
+
 const MAX_ORDERS_PER_ROUND: int = 5
+const STARTING_POWER: int = 12
+const POWER_PER_ROUND: int = 3
 
 const PIECE_STATS: Dictionary = {
 	PieceType.SOLDIER: { "force": 2, "max_move": 2, "power_cost": 2 },
@@ -59,3 +63,33 @@ static func piece_type_label(piece: PieceType) -> String:
 		PieceType.DESTROYER: return "Destroyer"
 		PieceType.HBOMB: return "Bombe H"
 		_: return "?"
+
+
+static func piece_movement_domain(piece: PieceType) -> MovementDomain:
+	match piece:
+		PieceType.SOLDIER, PieceType.RAIDER, PieceType.COMMANDO:
+			return MovementDomain.LAND
+		PieceType.CRUISER, PieceType.DESTROYER:
+			return MovementDomain.SEA
+		PieceType.HUNTER, PieceType.BOMBER, PieceType.FIGHTER:
+			return MovementDomain.AIR
+		_:
+			return MovementDomain.NONE
+
+
+static func is_basic_buy(piece: PieceType) -> bool:
+	return piece in [PieceType.SOLDIER, PieceType.RAIDER, PieceType.HUNTER, PieceType.CRUISER]
+
+
+static func exchange_recipe(result: PieceType) -> Dictionary:
+	match result:
+		PieceType.COMMANDO:
+			return {"from": PieceType.SOLDIER, "count": 3}
+		PieceType.BOMBER:
+			return {"from": PieceType.RAIDER, "count": 3}
+		PieceType.FIGHTER:
+			return {"from": PieceType.HUNTER, "count": 3}
+		PieceType.DESTROYER:
+			return {"from": PieceType.CRUISER, "count": 3}
+		_:
+			return {}

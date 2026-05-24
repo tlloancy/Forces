@@ -1,0 +1,348 @@
+{
+  "HQ_Green": [
+    "Plains_NW",
+    "Space_5",
+    "Space_6"
+  ],
+  "HQ_Blue": [
+    "Ice_NE",
+    "Space_7",
+    "Space_8"
+  ],
+  "HQ_Red": [
+    "Jungle_SW",
+    "Space_11",
+    "Space_12"
+  ],
+  "HQ_Yellow": [
+    "Desert_SE",
+    "Space_10",
+    "Space_9"
+  ],
+  "Plains_NW": [
+    "HQ_Green",
+    "Plains_N",
+    "Plains_W",
+    "Space_5",
+    "Space_6"
+  ],
+  "Ice_NE": [
+    "HQ_Blue",
+    "Ice_E",
+    "Ice_N",
+    "Space_7",
+    "Space_8"
+  ],
+  "Jungle_SW": [
+    "HQ_Red",
+    "Jungle_S",
+    "Jungle_W",
+    "Space_11",
+    "Space_12"
+  ],
+  "Desert_SE": [
+    "Desert_E",
+    "Desert_S",
+    "HQ_Yellow",
+    "Space_10",
+    "Space_9"
+  ],
+  "Plains_N": [
+    "Plains_NE",
+    "Plains_NW",
+    "Space_6"
+  ],
+  "Ice_N": [
+    "Ice_NE",
+    "Ice_NW",
+    "Space_7"
+  ],
+  "Jungle_S": [
+    "Jungle_SE",
+    "Jungle_SW",
+    "Space_11"
+  ],
+  "Desert_S": [
+    "Desert_SE",
+    "Desert_SW",
+    "Space_10"
+  ],
+  "Plains_NE": [
+    "Moon_N",
+    "Plains_E",
+    "Plains_N",
+    "Space_1",
+    "Space_6"
+  ],
+  "Ice_NW": [
+    "Ice_N",
+    "Ice_W",
+    "Moon_N",
+    "Space_1",
+    "Space_7"
+  ],
+  "Jungle_SE": [
+    "Jungle_E",
+    "Jungle_S",
+    "Moon_S",
+    "Space_11",
+    "Space_3"
+  ],
+  "Desert_SW": [
+    "Desert_S",
+    "Desert_W",
+    "Moon_S",
+    "Space_10",
+    "Space_3"
+  ],
+  "Plains_W": [
+    "Plains_NW",
+    "Plains_SW",
+    "Space_5"
+  ],
+  "Ice_E": [
+    "Ice_NE",
+    "Ice_SE",
+    "Space_8"
+  ],
+  "Jungle_W": [
+    "Jungle_NW",
+    "Jungle_SW",
+    "Space_12"
+  ],
+  "Desert_E": [
+    "Desert_NE",
+    "Desert_SE",
+    "Space_9"
+  ],
+  "Plains_E": [
+    "Plains_NE",
+    "Plains_SE",
+    "Space_1"
+  ],
+  "Ice_W": [
+    "Ice_NW",
+    "Ice_SW",
+    "Space_1"
+  ],
+  "Jungle_E": [
+    "Jungle_NE",
+    "Jungle_SE",
+    "Space_3"
+  ],
+  "Desert_W": [
+    "Desert_NW",
+    "Desert_SW",
+    "Space_3"
+  ],
+  "Plains_SW": [
+    "Moon_W",
+    "Plains_S",
+    "Plains_W",
+    "Space_4",
+    "Space_5"
+  ],
+  "Ice_SE": [
+    "Ice_E",
+    "Ice_S",
+    "Moon_E",
+    "Space_2",
+    "Space_8"
+  ],
+  "Jungle_NW": [
+    "Jungle_N",
+    "Jungle_W",
+    "Moon_W",
+    "Space_12",
+    "Space_4"
+  ],
+  "Desert_NE": [
+    "Desert_E",
+    "Desert_N",
+    "Moon_E",
+    "Space_2",
+    "Space_9"
+  ],
+  "Plains_S": [
+    "Plains_SE",
+    "Plains_SW",
+    "Space_4"
+  ],
+  "Ice_S": [
+    "Ice_SE",
+    "Ice_SW",
+    "Space_2"
+  ],
+  "Jungle_N": [
+    "Jungle_NE",
+    "Jungle_NW",
+    "Space_4"
+  ],
+  "Desert_N": [
+    "Desert_NE",
+    "Desert_NW",
+    "Space_2"
+  ],
+  "Plains_SE": [
+    "Plains_E",
+    "Plains_S",
+    "Space_1",
+    "Space_4",
+    "Sun"
+  ],
+  "Ice_SW": [
+    "Ice_S",
+    "Ice_W",
+    "Space_1",
+    "Space_2",
+    "Sun"
+  ],
+  "Jungle_NE": [
+    "Jungle_E",
+    "Jungle_N",
+    "Space_3",
+    "Space_4",
+    "Sun"
+  ],
+  "Desert_NW": [
+    "Desert_N",
+    "Desert_W",
+    "Space_2",
+    "Space_3",
+    "Sun"
+  ],
+  "Moon_N": [
+    "Ice_NW",
+    "Plains_NE",
+    "Space_1",
+    "Space_6",
+    "Space_7"
+  ],
+  "Moon_S": [
+    "Desert_SW",
+    "Jungle_SE",
+    "Space_10",
+    "Space_11",
+    "Space_3"
+  ],
+  "Moon_W": [
+    "Jungle_NW",
+    "Plains_SW",
+    "Space_12",
+    "Space_4",
+    "Space_5"
+  ],
+  "Moon_E": [
+    "Desert_NE",
+    "Ice_SE",
+    "Space_2",
+    "Space_8",
+    "Space_9"
+  ],
+  "Sun": [
+    "Desert_NW",
+    "Ice_SW",
+    "Jungle_NE",
+    "Plains_SE",
+    "Space_1",
+    "Space_2",
+    "Space_3",
+    "Space_4"
+  ],
+  "Space_1": [
+    "Ice_NW",
+    "Ice_SW",
+    "Ice_W",
+    "Moon_N",
+    "Plains_E",
+    "Plains_NE",
+    "Plains_SE",
+    "Sun"
+  ],
+  "Space_2": [
+    "Desert_N",
+    "Desert_NE",
+    "Desert_NW",
+    "Ice_S",
+    "Ice_SE",
+    "Ice_SW",
+    "Moon_E",
+    "Sun"
+  ],
+  "Space_3": [
+    "Desert_NW",
+    "Desert_SW",
+    "Desert_W",
+    "Jungle_E",
+    "Jungle_NE",
+    "Jungle_SE",
+    "Moon_S",
+    "Sun"
+  ],
+  "Space_4": [
+    "Jungle_N",
+    "Jungle_NE",
+    "Jungle_NW",
+    "Moon_W",
+    "Plains_S",
+    "Plains_SE",
+    "Plains_SW",
+    "Sun"
+  ],
+  "Space_5": [
+    "HQ_Green",
+    "Moon_W",
+    "Plains_NW",
+    "Plains_SW",
+    "Plains_W"
+  ],
+  "Space_6": [
+    "HQ_Green",
+    "Moon_N",
+    "Plains_N",
+    "Plains_NE",
+    "Plains_NW"
+  ],
+  "Space_7": [
+    "HQ_Blue",
+    "Ice_N",
+    "Ice_NE",
+    "Ice_NW",
+    "Moon_N"
+  ],
+  "Space_8": [
+    "HQ_Blue",
+    "Ice_E",
+    "Ice_NE",
+    "Ice_SE",
+    "Moon_E"
+  ],
+  "Space_9": [
+    "Desert_E",
+    "Desert_NE",
+    "Desert_SE",
+    "HQ_Yellow",
+    "Moon_E"
+  ],
+  "Space_10": [
+    "Desert_S",
+    "Desert_SE",
+    "Desert_SW",
+    "HQ_Yellow",
+    "Moon_S"
+  ],
+  "Space_11": [
+    "HQ_Red",
+    "Jungle_S",
+    "Jungle_SE",
+    "Jungle_SW",
+    "Moon_S"
+  ],
+  "Space_12": [
+    "HQ_Red",
+    "Jungle_NW",
+    "Jungle_SW",
+    "Jungle_W",
+    "Moon_W"
+  ]
+}

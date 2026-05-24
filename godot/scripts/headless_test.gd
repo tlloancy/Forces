@@ -19,12 +19,24 @@ func _run_checks() -> PackedStringArray:
 	var failures: PackedStringArray = PackedStringArray()
 	if BoardGraph.land_sector_count() < 40:
 		failures.append("BoardGraph: land_adjacency.json incomplet")
+	if BoardGraph.sea_sector_count() < 40:
+		failures.append("BoardGraph: sea_adjacency.json incomplet")
+	if BoardGraph.air_sector_count() < 30:
+		failures.append("BoardGraph: air_adjacency.json incomplet")
 	GameSession.reset_to_solo_defaults()
 	if GameSession.human_camp != GameConstants.Camp.GREEN:
 		failures.append("GameSession: camp humain attendu Vert")
 	var state := GameState.new()
 	state.human_camp = GameSession.human_camp
 	state.reset_match()
+	if state.camp_power(GameConstants.Camp.GREEN) != GameConstants.STARTING_POWER:
+		failures.append("GameState: Power de départ incorrect")
+	var sea_from_hq: PackedStringArray = BoardGraph.sea_destinations("HQ_Green")
+	if sea_from_hq.is_empty():
+		failures.append("BoardGraph: pas de voisins mer depuis HQ_Green")
+	var air_from_hq: PackedStringArray = BoardGraph.air_destinations("HQ_Green")
+	if air_from_hq.is_empty():
+		failures.append("BoardGraph: pas de voisins air depuis HQ_Green")
 	if state.pieces.is_empty():
 		failures.append("GameState: aucune pièce")
 	var ai_logs: Array[String] = AiPlanner.run_all_ai(state)

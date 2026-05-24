@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://forces_battle"]
+[gd_scene load_steps=3 format=3 uid="uid://forces_battle"]
 
 [ext_resource type="Script" path="res://scripts/battle/battle.gd" id="1_battle"]
+[ext_resource type="Script" path="res://scripts/battle/board_map.gd" id="2_map"]
 
 [node name="Battle" type="Control"]
 layout_mode = 3
@@ -27,14 +28,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
 
 [node name="VBoxRoot" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="Header" type="HBoxContainer" parent="Margin/VBoxRoot"]
 layout_mode = 2
@@ -43,8 +44,14 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 24
 text = "Forces"
+
+[node name="PowerLabel" type="Label" parent="Margin/VBoxRoot/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.82, 0.35, 1)
+text = "Power : 0"
 
 [node name="MenuButton" type="Button" parent="Margin/VBoxRoot/Header"]
 layout_mode = 2
@@ -61,15 +68,64 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.75, 0.8, 0.85, 1)
 text = "Phase: Planification"
 
+[node name="BuyBar" type="HBoxContainer" parent="Margin/VBoxRoot"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="BuySoldierButton" type="Button" parent="Margin/VBoxRoot/BuyBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Recruter Soldat (2P)"
+
+[node name="BuyRaiderButton" type="Button" parent="Margin/VBoxRoot/BuyBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Recruter Tank (3P)"
+
+[node name="BuyHunterButton" type="Button" parent="Margin/VBoxRoot/BuyBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Recruter Chasseur (5P)"
+
+[node name="BuyCruiserButton" type="Button" parent="Margin/VBoxRoot/BuyBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Recruter Croiseur (10P)"
+
+[node name="ExchangeBar" type="HBoxContainer" parent="Margin/VBoxRoot"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ExchangeCommandoButton" type="Button" parent="Margin/VBoxRoot/ExchangeBar"]
+layout_mode = 2
+text = "3 Soldats → Régiment"
+
+[node name="ExchangeBomberButton" type="Button" parent="Margin/VBoxRoot/ExchangeBar"]
+layout_mode = 2
+text = "3 Tanks → Bombardier"
+
+[node name="ExchangeFighterButton" type="Button" parent="Margin/VBoxRoot/ExchangeBar"]
+layout_mode = 2
+text = "3 Chasseurs → Ch. lourd"
+
+[node name="ExchangeDestroyerButton" type="Button" parent="Margin/VBoxRoot/ExchangeBar"]
+layout_mode = 2
+text = "3 Croiseurs → Destroyer"
+
+[node name="DeployButton" type="Button" parent="Margin/VBoxRoot/BuyBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Déployer réserve"
+
 [node name="HBox" type="HBoxContainer" parent="Margin/VBoxRoot"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 
 [node name="Left" type="VBoxContainer" parent="Margin/VBoxRoot/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.22
+size_flags_stretch_ratio = 0.18
 theme_override_constants/separation = 4
 
 [node name="LabelSectors" type="Label" parent="Margin/VBoxRoot/HBox/Left"]
@@ -81,10 +137,23 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
+[node name="MapPanel" type="PanelContainer" parent="Margin/VBoxRoot/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.44
+
+[node name="BoardMap" type="Control" parent="Margin/VBoxRoot/HBox/MapPanel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 320)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("2_map")
+
 [node name="Mid" type="VBoxContainer" parent="Margin/VBoxRoot/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.22
+size_flags_stretch_ratio = 0.18
 theme_override_constants/separation = 4
 
 [node name="PiecesLabel" type="Label" parent="Margin/VBoxRoot/HBox/Mid"]
@@ -109,7 +178,7 @@ size_flags_vertical = 3
 [node name="Right" type="VBoxContainer" parent="Margin/VBoxRoot/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.56
+size_flags_stretch_ratio = 0.2
 
 [node name="LabelLog" type="Label" parent="Margin/VBoxRoot/HBox/Right"]
 layout_mode = 2
@@ -125,6 +194,15 @@ text = ""
 
 [connection signal="pressed" from="Margin/VBoxRoot/Header/MenuButton" to="." method="_on_menu_pressed"]
 [connection signal="pressed" from="Margin/VBoxRoot/Header/EndRoundButton" to="." method="_on_end_round_pressed"]
+[connection signal="pressed" from="Margin/VBoxRoot/BuyBar/BuySoldierButton" to="." method="_on_buy_soldier_pressed"]
+[connection signal="pressed" from="Margin/VBoxRoot/BuyBar/BuyRaiderButton" to="." method="_on_buy_raider_pressed"]
+[connection signal="pressed" from="Margin/VBoxRoot/BuyBar/BuyHunterButton" to="." method="_on_buy_hunter_pressed"]
+[connection signal="pressed" from="Margin/VBoxRoot/BuyBar/BuyCruiserButton" to="." method="_on_buy_cruiser_pressed"]
+[connection signal="pressed" from="Margin/VBoxRoot/ExchangeBar/ExchangeCommandoButton" to="." method="_on_exchange_commando_pressed"]
+[connection signal="pressed" from="Margin/VBoxRoot/ExchangeBar/ExchangeBomberButton" to="." method="_on_exchange_bomber_pressed"]
+[connection signal="pressed" from="Margin/VBoxRoot/ExchangeBar/ExchangeFighterButton" to="." method="_on_exchange_fighter_pressed"]
+[connection signal="pressed" from="Margin/VBoxRoot/ExchangeBar/ExchangeDestroyerButton" to="." method="_on_exchange_destroyer_pressed"]
+[connection signal="pressed" from="Margin/VBoxRoot/BuyBar/DeployButton" to="." method="_on_deploy_pressed"]
 [connection signal="item_selected" from="Margin/VBoxRoot/HBox/Left/SectorList" to="." method="_on_sector_selected"]
 [connection signal="item_selected" from="Margin/VBoxRoot/HBox/Mid/PieceList" to="." method="_on_piece_selected"]
 [connection signal="item_selected" from="Margin/VBoxRoot/HBox/Mid/DestList" to="." method="_on_dest_selected"]

@@ -10,6 +10,13 @@ const AiPlanner = preload("res://scripts/ai/ai_planner.gd")
 @onready var _log: RichTextLabel = %LogLabel
 @onready var _end_round_btn: Button = %EndRoundButton
 @onready var _pieces_label: Label = %PiecesLabel
+@onready var _board_map: Control = %BoardMap
+@onready var _power_label: Label = %PowerLabel
+@onready var _buy_soldier_btn: Button = %BuySoldierButton
+@onready var _buy_raider_btn: Button = %BuyRaiderButton
+@onready var _buy_hunter_btn: Button = %BuyHunterButton
+@onready var _buy_cruiser_btn: Button = %BuyCruiserButton
+@onready var _deploy_btn: Button = %DeployButton
 
 var _state: GameState
 var _selected_sector: String = ""
@@ -22,7 +29,11 @@ func _ready() -> void:
 	_state.phase_changed.connect(_on_phase_changed)
 	_state.round_advanced.connect(_on_round_advanced)
 	_state.piece_moved.connect(_on_piece_moved)
+	_state.power_changed.connect(_on_power_changed)
 	_pieces_label.text = "Vos pièces (%s)" % GameConstants.camp_to_string(_state.human_camp).to_lower()
+	_board_map.sector_pressed.connect(_on_map_sector_pressed)
+	_sector_list.visible = false
+	AudioManager.play_battle_music()
 	_populate_sector_list()
 	_begin_match()
 	_refresh_ui()
@@ -36,6 +47,7 @@ func _begin_match() -> void:
 	for line: String in GameSession.setup_summary_lines():
 		_log.append_text("  · %s\n" % line)
 	_log.append_text("\n[color=green]Manche 1[/color] — planifiez vos ordres (max %d).\n" % GameConstants.MAX_ORDERS_PER_ROUND)
+	_log.append_text("[color=yellow]Power[/color] : recrutez ou fusionnez en réserve, puis déployez sur votre QG.\n")
 
 
 func _populate_sector_list() -> void:
@@ -60,7 +72,20 @@ func _refresh_ui() -> void:
 		GameConstants.MAX_ORDERS_PER_ROUND,
 		alive_count,
 	]
-	_end_round_btn.disabled = _state.phase != GameConstants.GamePhase.PLANNING
+	_power_label.text = "Power : %d  |  Réserve : %d" % [
+		_state.camp_power(_state.human_camp),
+		_state.reserve_pieces(_state.human_camp).size(),
+	]
+	var planning: bool = _state.phase == GameConstants.GamePhase.PLANNING
+	_end_round_btn.disabled = not planning
+	_buy_soldier_btn.disabled = not planning
+	_buy_raider_btn.disabled = not planning
+	_buy_hunter_btn.disabled = not planning
+	_buy_cruiser_btn.disabled = not planning
+	_deploy_btn.disabled = not planning or _selected_piece_id < 0
+	if _board_map.has_method("refresh"):
+		_board_map.call("refresh", _state)
+
 
 func _phase_name(phase: GameConstants.GamePhase) -> String:
 	match phase:
@@ -71,16 +96,31 @@ func _phase_name(phase: GameConstants.GamePhase) -> String:
 		_: return "?"
 
 
+func _select_sector(sector_id: String) -> void:
+	_selected_sector = sector_id
+	_selected_piece_id = -1
+	var idx: int = BoardCatalog.SECTOR_IDS.find(sector_id)
+	if idx >= 0:
+		_sector_list.select(idx)
+	if _board_map.has_method("set_selected"):
+		_board_map.call("set_selected", sector_id)
+	_update_sector_panel()
+
+
 func _on_menu_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/menu/main_menu.tscn")
+
+
+func _on_map_sector_pressed(sector_id: String) -> void:
+	if _state.phase != GameConstants.GamePhase.PLANNING:
+		return
+	_select_sector(sector_id)
 
 
 func _on_sector_selected(index: int) -> void:
 	if _state.phase != GameConstants.GamePhase.PLANNING:
 		return
-	_selected_sector = BoardCatalog.SECTOR_IDS[index]
-	_selected_piece_id = -1
-	_update_sector_panel()
+	_select_sector(BoardCatalog.SECTOR_IDS[index])
 
 
 func _update_sector_panel() -> void:
@@ -104,15 +144,16 @@ func _update_sector_panel() -> void:
 		var idx: int = _piece_list.get_item_count()
 		_piece_list.add_item("%s (id %d)" % [p.label(), p.id])
 		_piece_list.set_item_metadata(idx, p.id)
+	for p: PieceInstance in _state.reserve_pieces(_state.human_camp):
+		if p.sector_id != BoardCatalog.hq_for_camp(_state.human_camp):
+			continue
+		var idx: int = _piece_list.get_item_count()
+		_piece_list.add_item("[réserve] %s (id %d)" % [p.label(), p.id])
+		_piece_list.set_item_metadata(idx, p.id)
 	if _selected_piece_id >= 0:
 		var piece: PieceInstance = _state.find_piece(_selected_piece_id)
-		if piece != null:
-			var stats_variant: Variant = GameConstants.PIECE_STATS.get(piece.type, null)
-			if stats_variant == null or typeof(stats_variant) != TYPE_DICTIONARY:
-				return
-			var stats: Dictionary = stats_variant as Dictionary
-			var max_move: int = int(stats.get("max_move", 1))
-			var dests: PackedStringArray = BoardGraph.land_destinations(piece.sector_id, max_move)
+		if piece != null and not piece.in_reserve:
+			var dests: PackedStringArray = _state.destinations_for(piece)
 			for dest: String in dests:
 				var di: int = _dest_list.get_item_count()
 				_dest_list.add_item(dest)
@@ -126,13 +167,11 @@ func _on_piece_selected(index: int) -> void:
 	_update_sector_panel()
 	var piece: PieceInstance = _state.find_piece(_selected_piece_id)
 	if piece != null:
-		var max_move: int = 1
-		var stats_variant: Variant = GameConstants.PIECE_STATS.get(piece.type, null)
-		if stats_variant != null and typeof(stats_variant) == TYPE_DICTIONARY:
-			var stats: Dictionary = stats_variant as Dictionary
-			max_move = int(stats.get("max_move", 1))
-			_log.append_text("Pièce : %s — portée terre %d\n" % [piece.label(), max_move])
-		_log.append_text("  → %s\n" % BoardGraph.format_destinations(piece.sector_id, max_move))
+		if piece.in_reserve:
+			_log.append_text("Réserve : %s — déployez sur votre QG\n" % piece.label())
+		else:
+			_log.append_text("Pièce : %s\n" % piece.label())
+			_log.append_text("  → %s\n" % BoardGraph.format_destinations(piece.type, piece.sector_id, int(GameConstants.PIECE_STATS[piece.type]["max_move"])))
 
 
 func _on_dest_selected(index: int) -> void:
@@ -145,9 +184,79 @@ func _on_dest_selected(index: int) -> void:
 	var err: String = _state.try_move_human_piece(piece, to_sector)
 	if err.is_empty():
 		_log.append_text("[color=cyan]Déplacement OK[/color] → %s\n" % to_sector)
+		AudioManager.play_sfx("res://assets/audio/GoConquer.mp3")
 		_selected_sector = to_sector
 		_selected_piece_id = -1
 		_update_sector_panel()
+		_refresh_ui()
+	else:
+		_log.append_text("[color=orange]%s[/color]\n" % err)
+
+
+func _on_buy_pressed(piece_type: GameConstants.PieceType) -> void:
+	var err: String = _state.try_buy_human(piece_type)
+	if err.is_empty():
+		_log.append_text("[color=gold]Recruté[/color] : %s → réserve\n" % GameConstants.piece_type_label(piece_type))
+		_refresh_ui()
+	else:
+		_log.append_text("[color=orange]%s[/color]\n" % err)
+
+
+func _on_buy_soldier_pressed() -> void:
+	_on_buy_pressed(GameConstants.PieceType.SOLDIER)
+
+
+func _on_buy_raider_pressed() -> void:
+	_on_buy_pressed(GameConstants.PieceType.RAIDER)
+
+
+func _on_buy_hunter_pressed() -> void:
+	_on_buy_pressed(GameConstants.PieceType.HUNTER)
+
+
+func _on_buy_cruiser_pressed() -> void:
+	_on_buy_pressed(GameConstants.PieceType.CRUISER)
+
+
+func _on_exchange_pressed(result_type: GameConstants.PieceType) -> void:
+	var err: String = _state.try_exchange_human(result_type)
+	if err.is_empty():
+		_log.append_text("[color=gold]Fusion[/color] : %s → réserve\n" % GameConstants.piece_type_label(result_type))
+		_refresh_ui()
+	else:
+		_log.append_text("[color=orange]%s[/color]\n" % err)
+
+
+func _on_exchange_commando_pressed() -> void:
+	_on_exchange_pressed(GameConstants.PieceType.COMMANDO)
+
+
+func _on_exchange_bomber_pressed() -> void:
+	_on_exchange_pressed(GameConstants.PieceType.BOMBER)
+
+
+func _on_exchange_fighter_pressed() -> void:
+	_on_exchange_pressed(GameConstants.PieceType.FIGHTER)
+
+
+func _on_exchange_destroyer_pressed() -> void:
+	_on_exchange_pressed(GameConstants.PieceType.DESTROYER)
+
+
+func _on_deploy_pressed() -> void:
+	if _selected_piece_id < 0:
+		return
+	var piece: PieceInstance = _state.find_piece(_selected_piece_id)
+	if piece == null:
+		return
+	var hq: String = BoardCatalog.hq_for_camp(_state.human_camp)
+	var err: String = _state.try_deploy_human(piece, hq)
+	if err.is_empty():
+		_log.append_text("[color=cyan]Déploiement[/color] %s → %s\n" % [piece.label(), hq])
+		_selected_sector = hq
+		_selected_piece_id = -1
+		_update_sector_panel()
+		_refresh_ui()
 	else:
 		_log.append_text("[color=orange]%s[/color]\n" % err)
 
@@ -182,9 +291,12 @@ func _on_phase_changed(phase: GameConstants.GamePhase) -> void:
 
 
 func _on_round_advanced(round_number: int) -> void:
-	_log.append_text("—— Manche %d ——\n" % round_number)
+	_log.append_text("—— Manche %d —— (+ %d Power/camp)\n" % [round_number, GameConstants.POWER_PER_ROUND])
 
 
-func _on_piece_moved(piece_id: int, from_sector: String, to_sector: String) -> void:
-	_status.text = "Déplacé %d : %s → %s" % [piece_id, from_sector, to_sector]
+func _on_piece_moved(_piece_id: int, _from_sector: String, _to_sector: String) -> void:
+	_refresh_ui()
+
+
+func _on_power_changed(_camp: GameConstants.Camp, _amount: int) -> void:
 	_refresh_ui()

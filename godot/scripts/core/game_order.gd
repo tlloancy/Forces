@@ -1,7 +1,7 @@
 class_name GameOrder
 extends RefCounted
 
-enum Kind { MOVE, EXCHANGE, DEPLOY_FROM_RESERVE, HBOMB }
+enum Kind { MOVE, BUY, EXCHANGE, DEPLOY_FROM_RESERVE, HBOMB }
 
 var kind: Kind = Kind.MOVE
 var camp: GameConstants.Camp
@@ -34,6 +34,11 @@ func describe() -> String:
 			return "%s: réserve → %s (%s)" % [
 				GameConstants.camp_to_string(camp),
 				to_sector,
+				GameConstants.piece_type_label(piece_type),
+			]
+		Kind.BUY:
+			return "%s: achat %s (réserve)" % [
+				GameConstants.camp_to_string(camp),
 				GameConstants.piece_type_label(piece_type),
 			]
 		Kind.HBOMB:

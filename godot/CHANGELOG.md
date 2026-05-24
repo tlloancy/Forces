@@ -6,6 +6,29 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale).
 
 ---
 
+## 2026-05-24 23:39:01 — Mer/air, Power, carte visuelle, audio legacy
+
+### Réalisé
+
+- **Graphes mer & air** — `parse_dep_adjacency.py`, `sea_adjacency.json` (53), `air_adjacency.json` (40), API `BoardGraph.piece_destinations()` par domaine (terre/mer/air)
+- **Moteur Power** — jetons de départ/revenu par manche, recrutement en réserve, fusion 3→1 (Régiment, Bombardier…), déploiement QG *(mécanique du jeu original, pas monétisation réelle)*
+- **Carte cliquable** — `board_map.gd` + `sector_layout.json`, fond océan, sélection sur la carte (liste secteurs masquée)
+- **UI bataille** — barres Recruter / Fusion / Déployer, compteur Power
+- **Audio** — `AudioManager`, musiques legacy `FORCE7.mp3` / `GoConquer.mp3` copiées dans `assets/audio/`
+- **Présentation** — thème menu type stratégie mobile (or/bleu nuit), splash `FORCE-AD-13a.png`
+- **Tests** — smoke headless étendu (mer, air, Power)
+
+### À faire (priorité jeu complet)
+
+- [ ] Plateau graphique fidèle (hex/cases Unity, pas seulement boutons)
+- [ ] Bombes H, combats détaillés, ordre de résolution legacy
+- [ ] IA : mer/air, Power, fusions, bombes
+- [ ] Tutoriel jouable, polish animations
+- [ ] Multijoueur
+- [ ] Monétisation / pub — **tout dernier**, si jamais
+
+---
+
 ## 2026-05-24 22:59:33 — Moteur jouable, menus, IA, CI headless
 
 ### Réalisé

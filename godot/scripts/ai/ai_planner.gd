@@ -64,10 +64,22 @@ static func _movable_pieces(state: GameState, camp: GameConstants.Camp) -> Array
 			continue
 		if state.has_piece_moved(p.id):
 			continue
-		if not BoardGraph.has_sector(p.sector_id):
+		if not _sector_valid_for_piece(p):
 			continue
 		result.append(p)
 	return result
+
+
+static func _sector_valid_for_piece(piece: PieceInstance) -> bool:
+	match GameConstants.piece_movement_domain(piece.type):
+		GameConstants.MovementDomain.LAND:
+			return BoardGraph.has_land_sector(piece.sector_id)
+		GameConstants.MovementDomain.SEA:
+			return BoardGraph.has_sea_sector(piece.sector_id)
+		GameConstants.MovementDomain.AIR:
+			return BoardGraph.has_air_sector(piece.sector_id)
+		_:
+			return false
 
 
 static func _pick_target_hq(state: GameState, camp: GameConstants.Camp) -> String:
@@ -103,7 +115,7 @@ static func _pick_destination(
 		return ""
 	var stats: Dictionary = stats_variant as Dictionary
 	var max_move: int = int(stats.get("max_move", 1))
-	var dests: PackedStringArray = BoardGraph.land_destinations(piece.sector_id, max_move)
+	var dests: PackedStringArray = BoardGraph.piece_destinations(piece.type, piece.sector_id, max_move)
 	if dests.is_empty():
 		return ""
 	var best_sector: String = ""

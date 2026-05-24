@@ -11,10 +11,12 @@ func _ready() -> void:
 
 func _on_music_changed(value: float) -> void:
 	GameSession.music_volume = value / 100.0
+	AudioManager.refresh_volumes()
 
 
 func _on_sfx_changed(value: float) -> void:
 	GameSession.sfx_volume = value / 100.0
+	AudioManager.refresh_volumes()
 
 
 func _on_back_pressed() -> void:
