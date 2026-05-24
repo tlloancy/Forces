@@ -2,9 +2,11 @@
 
 Journal des évolutions du dossier `godot/` (hors dépôt Unity legacy).
 
+Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale).
+
 ---
 
-## 2026-05-24 — Moteur jouable, menus, IA, CI headless
+## 2026-05-24 22:59:33 — Moteur jouable, menus, IA, CI headless
 
 ### Réalisé
 
