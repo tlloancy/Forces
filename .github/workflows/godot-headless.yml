@@ -1,0 +1,31 @@
+name: Godot headless
+
+on:
+  push:
+    paths:
+      - "godot/**"
+      - ".github/workflows/godot-headless.yml"
+  pull_request:
+    paths:
+      - "godot/**"
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot 4.6
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip
+          unzip -q Godot_v4.6.3-stable_linux.x86_64.zip
+          chmod +x Godot_v4.6.3-stable_linux.x86_64
+          echo "GODOT_BIN=$PWD/Godot_v4.6.3-stable_linux.x86_64" >> "$GITHUB_ENV"
+
+      - name: Smoke tests
+        working-directory: godot
+        run: $GODOT_BIN --headless --path . "res://scenes/headless_test.tscn"
+
+      - name: Compile main scene
+        working-directory: godot
+        run: $GODOT_BIN --headless --path . "res://scenes/menu/main_menu.tscn" --quit-after 2

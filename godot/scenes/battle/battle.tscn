@@ -1,0 +1,130 @@
+[gd_scene load_steps=2 format=3 uid="uid://forces_battle"]
+
+[ext_resource type="Script" path="res://scripts/battle/battle.gd" id="1_battle"]
+
+[node name="Battle" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_battle")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.102, 0.133, 0.165, 1)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxRoot" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Header" type="HBoxContainer" parent="Margin/VBoxRoot"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Margin/VBoxRoot/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 28
+text = "Forces"
+
+[node name="MenuButton" type="Button" parent="Margin/VBoxRoot/Header"]
+layout_mode = 2
+text = "Menu"
+
+[node name="EndRoundButton" type="Button" parent="Margin/VBoxRoot/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fin de manche"
+
+[node name="StatusLabel" type="Label" parent="Margin/VBoxRoot"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.8, 0.85, 1)
+text = "Phase: Planification"
+
+[node name="HBox" type="HBoxContainer" parent="Margin/VBoxRoot"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="Left" type="VBoxContainer" parent="Margin/VBoxRoot/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.22
+theme_override_constants/separation = 4
+
+[node name="LabelSectors" type="Label" parent="Margin/VBoxRoot/HBox/Left"]
+layout_mode = 2
+text = "Secteurs"
+
+[node name="SectorList" type="ItemList" parent="Margin/VBoxRoot/HBox/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Mid" type="VBoxContainer" parent="Margin/VBoxRoot/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.22
+theme_override_constants/separation = 4
+
+[node name="PiecesLabel" type="Label" parent="Margin/VBoxRoot/HBox/Mid"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Vos pièces"
+
+[node name="PieceList" type="ItemList" parent="Margin/VBoxRoot/HBox/Mid"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LabelDest" type="Label" parent="Margin/VBoxRoot/HBox/Mid"]
+layout_mode = 2
+text = "Destinations"
+
+[node name="DestList" type="ItemList" parent="Margin/VBoxRoot/HBox/Mid"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Right" type="VBoxContainer" parent="Margin/VBoxRoot/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.56
+
+[node name="LabelLog" type="Label" parent="Margin/VBoxRoot/HBox/Right"]
+layout_mode = 2
+text = "Journal"
+
+[node name="LogLabel" type="RichTextLabel" parent="Margin/VBoxRoot/HBox/Right"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+scroll_following = true
+text = ""
+
+[connection signal="pressed" from="Margin/VBoxRoot/Header/MenuButton" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="Margin/VBoxRoot/Header/EndRoundButton" to="." method="_on_end_round_pressed"]
+[connection signal="item_selected" from="Margin/VBoxRoot/HBox/Left/SectorList" to="." method="_on_sector_selected"]
+[connection signal="item_selected" from="Margin/VBoxRoot/HBox/Mid/PieceList" to="." method="_on_piece_selected"]
+[connection signal="item_selected" from="Margin/VBoxRoot/HBox/Mid/DestList" to="." method="_on_dest_selected"]

@@ -1,0 +1,844 @@
+{
+  "HQ_Green": {
+    "move_1": [
+      "Plains_C",
+      "Plains_N",
+      "Plains_NW",
+      "Plains_W"
+    ],
+    "move_3": [
+      "Plains_E",
+      "Plains_NE",
+      "Plains_S",
+      "Plains_SE",
+      "Plains_SW"
+    ]
+  },
+  "HQ_Blue": {
+    "move_1": [
+      "Ice_C",
+      "Ice_E",
+      "Ice_N",
+      "Ice_NE"
+    ],
+    "move_3": [
+      "Ice_NW",
+      "Ice_S",
+      "Ice_SE",
+      "Ice_SW",
+      "Ice_W"
+    ]
+  },
+  "HQ_Red": {
+    "move_1": [
+      "Jungle_C",
+      "Jungle_S",
+      "Jungle_SW",
+      "Jungle_W"
+    ],
+    "move_3": [
+      "Jungle_E",
+      "Jungle_N",
+      "Jungle_NE",
+      "Jungle_NW",
+      "Jungle_SE"
+    ]
+  },
+  "HQ_Yellow": {
+    "move_1": [
+      "Desert_C",
+      "Desert_E",
+      "Desert_S",
+      "Desert_SE"
+    ],
+    "move_3": [
+      "Desert_N",
+      "Desert_NE",
+      "Desert_NW",
+      "Desert_SW",
+      "Desert_W"
+    ]
+  },
+  "Plains_NW": {
+    "move_1": [
+      "HQ_Green",
+      "Plains_C",
+      "Plains_E",
+      "Plains_N",
+      "Plains_NE",
+      "Plains_S",
+      "Plains_SE",
+      "Plains_SW",
+      "Plains_W"
+    ],
+    "move_3": [
+      "Moon_N",
+      "Moon_W",
+      "Sun"
+    ]
+  },
+  "Ice_NE": {
+    "move_1": [
+      "HQ_Blue",
+      "Ice_C",
+      "Ice_E",
+      "Ice_N",
+      "Ice_NW",
+      "Ice_S",
+      "Ice_SE",
+      "Ice_SW",
+      "Ice_W"
+    ],
+    "move_3": [
+      "Moon_E",
+      "Moon_N",
+      "Sun"
+    ]
+  },
+  "Jungle_SW": {
+    "move_1": [
+      "HQ_Red",
+      "Jungle_C",
+      "Jungle_E",
+      "Jungle_N",
+      "Jungle_NE",
+      "Jungle_NW",
+      "Jungle_S",
+      "Jungle_SE",
+      "Jungle_W"
+    ],
+    "move_3": [
+      "Moon_S",
+      "Moon_W",
+      "Sun"
+    ]
+  },
+  "Desert_SE": {
+    "move_1": [
+      "Desert_C",
+      "Desert_E",
+      "Desert_N",
+      "Desert_NE",
+      "Desert_NW",
+      "Desert_S",
+      "Desert_SW",
+      "Desert_W",
+      "HQ_Yellow"
+    ],
+    "move_3": [
+      "Moon_E",
+      "Moon_S",
+      "Sun"
+    ]
+  },
+  "Plains_N": {
+    "move_1": [
+      "HQ_Green",
+      "Moon_N",
+      "Plains_C",
+      "Plains_E",
+      "Plains_NE",
+      "Plains_NW",
+      "Plains_S",
+      "Plains_SE",
+      "Plains_SW",
+      "Plains_W"
+    ],
+    "move_3": [
+      "Moon_W",
+      "Sun"
+    ]
+  },
+  "Ice_N": {
+    "move_1": [
+      "HQ_Blue",
+      "Ice_C",
+      "Ice_E",
+      "Ice_NE",
+      "Ice_NW",
+      "Ice_S",
+      "Ice_SE",
+      "Ice_SW",
+      "Ice_W",
+      "Moon_N"
+    ],
+    "move_3": [
+      "Moon_E",
+      "Sun"
+    ]
+  },
+  "Jungle_S": {
+    "move_1": [
+      "HQ_Red",
+      "Jungle_C",
+      "Jungle_E",
+      "Jungle_N",
+      "Jungle_NE",
+      "Jungle_NW",
+      "Jungle_SE",
+      "Jungle_SW",
+      "Jungle_W",
+      "Moon_S"
+    ],
+    "move_3": [
+      "Moon_W",
+      "Sun"
+    ]
+  },
+  "Desert_S": {
+    "move_1": [
+      "Desert_C",
+      "Desert_E",
+      "Desert_N",
+      "Desert_NE",
+      "Desert_NW",
+      "Desert_SE",
+      "Desert_SW",
+      "Desert_W",
+      "HQ_Yellow",
+      "Moon_S"
+    ],
+    "move_3": [
+      "Moon_E",
+      "Sun"
+    ]
+  },
+  "Plains_NE": {
+    "move_1": [
+      "Moon_N",
+      "Plains_C",
+      "Plains_E",
+      "Plains_N",
+      "Plains_NW",
+      "Plains_S",
+      "Plains_SE",
+      "Plains_SW",
+      "Plains_W"
+    ],
+    "move_3": [
+      "HQ_Green",
+      "Moon_W",
+      "Sun"
+    ]
+  },
+  "Ice_NW": {
+    "move_1": [
+      "Ice_C",
+      "Ice_E",
+      "Ice_N",
+      "Ice_NE",
+      "Ice_S",
+      "Ice_SE",
+      "Ice_SW",
+      "Ice_W",
+      "Moon_N"
+    ],
+    "move_3": [
+      "HQ_Blue",
+      "Moon_E",
+      "Sun"
+    ]
+  },
+  "Jungle_SE": {
+    "move_1": [
+      "Jungle_C",
+      "Jungle_E",
+      "Jungle_N",
+      "Jungle_NE",
+      "Jungle_NW",
+      "Jungle_S",
+      "Jungle_SW",
+      "Jungle_W",
+      "Moon_S"
+    ],
+    "move_3": [
+      "HQ_Red",
+      "Moon_W",
+      "Sun"
+    ]
+  },
+  "Desert_SW": {
+    "move_1": [
+      "Desert_C",
+      "Desert_E",
+      "Desert_N",
+      "Desert_NE",
+      "Desert_NW",
+      "Desert_S",
+      "Desert_SE",
+      "Desert_W",
+      "Moon_S"
+    ],
+    "move_3": [
+      "HQ_Yellow",
+      "Moon_E",
+      "Sun"
+    ]
+  },
+  "Plains_W": {
+    "move_1": [
+      "HQ_Green",
+      "Moon_W",
+      "Plains_C",
+      "Plains_E",
+      "Plains_N",
+      "Plains_NE",
+      "Plains_NW",
+      "Plains_S",
+      "Plains_SE",
+      "Plains_SW"
+    ],
+    "move_3": [
+      "Moon_N",
+      "Sun"
+    ]
+  },
+  "Ice_E": {
+    "move_1": [
+      "HQ_Blue",
+      "Ice_C",
+      "Ice_N",
+      "Ice_NE",
+      "Ice_NW",
+      "Ice_S",
+      "Ice_SE",
+      "Ice_SW",
+      "Ice_W",
+      "Moon_E"
+    ],
+    "move_3": [
+      "Moon_N",
+      "Sun"
+    ]
+  },
+  "Jungle_W": {
+    "move_1": [
+      "HQ_Red",
+      "Jungle_C",
+      "Jungle_E",
+      "Jungle_N",
+      "Jungle_NE",
+      "Jungle_NW",
+      "Jungle_S",
+      "Jungle_SE",
+      "Jungle_SW",
+      "Moon_W"
+    ],
+    "move_3": [
+      "Moon_S",
+      "Sun"
+    ]
+  },
+  "Desert_E": {
+    "move_1": [
+      "Desert_C",
+      "Desert_N",
+      "Desert_NE",
+      "Desert_NW",
+      "Desert_S",
+      "Desert_SE",
+      "Desert_SW",
+      "Desert_W",
+      "HQ_Yellow",
+      "Moon_E"
+    ],
+    "move_3": [
+      "Moon_S",
+      "Sun"
+    ]
+  },
+  "Plains_C": {
+    "move_1": [
+      "HQ_Green",
+      "Moon_N",
+      "Moon_W",
+      "Plains_E",
+      "Plains_N",
+      "Plains_NE",
+      "Plains_NW",
+      "Plains_S",
+      "Plains_SE",
+      "Plains_SW",
+      "Plains_W",
+      "Sun"
+    ],
+    "move_3": []
+  },
+  "Ice_C": {
+    "move_1": [
+      "HQ_Blue",
+      "Ice_E",
+      "Ice_N",
+      "Ice_NE",
+      "Ice_NW",
+      "Ice_S",
+      "Ice_SE",
+      "Ice_SW",
+      "Ice_W",
+      "Moon_E",
+      "Moon_N",
+      "Sun"
+    ],
+    "move_3": []
+  },
+  "Jungle_C": {
+    "move_1": [
+      "HQ_Red",
+      "Jungle_E",
+      "Jungle_N",
+      "Jungle_NE",
+      "Jungle_NW",
+      "Jungle_S",
+      "Jungle_SE",
+      "Jungle_SW",
+      "Jungle_W",
+      "Moon_S",
+      "Moon_W",
+      "Sun"
+    ],
+    "move_3": []
+  },
+  "Desert_C": {
+    "move_1": [
+      "Desert_E",
+      "Desert_N",
+      "Desert_NE",
+      "Desert_NW",
+      "Desert_S",
+      "Desert_SE",
+      "Desert_SW",
+      "Desert_W",
+      "HQ_Yellow",
+      "Moon_E",
+      "Moon_S",
+      "Sun"
+    ],
+    "move_3": []
+  },
+  "Plains_E": {
+    "move_1": [
+      "Moon_N",
+      "Plains_C",
+      "Plains_N",
+      "Plains_NE",
+      "Plains_NW",
+      "Plains_S",
+      "Plains_SE",
+      "Plains_SW",
+      "Plains_W",
+      "Sun"
+    ],
+    "move_3": [
+      "HQ_Green",
+      "Moon_W"
+    ]
+  },
+  "Ice_W": {
+    "move_1": [
+      "Ice_C",
+      "Ice_E",
+      "Ice_N",
+      "Ice_NE",
+      "Ice_NW",
+      "Ice_S",
+      "Ice_SE",
+      "Ice_SW",
+      "Moon_N",
+      "Sun"
+    ],
+    "move_3": [
+      "HQ_Blue",
+      "Moon_E"
+    ]
+  },
+  "Jungle_E": {
+    "move_1": [
+      "Jungle_C",
+      "Jungle_N",
+      "Jungle_NE",
+      "Jungle_NW",
+      "Jungle_S",
+      "Jungle_SE",
+      "Jungle_SW",
+      "Jungle_W",
+      "Moon_S",
+      "Sun"
+    ],
+    "move_3": [
+      "HQ_Red",
+      "Moon_W"
+    ]
+  },
+  "Desert_W": {
+    "move_1": [
+      "Desert_C",
+      "Desert_E",
+      "Desert_N",
+      "Desert_NE",
+      "Desert_NW",
+      "Desert_S",
+      "Desert_SE",
+      "Desert_SW",
+      "Moon_S",
+      "Sun"
+    ],
+    "move_3": [
+      "HQ_Yellow",
+      "Moon_E"
+    ]
+  },
+  "Plains_SW": {
+    "move_1": [
+      "Moon_W",
+      "Plains_C",
+      "Plains_E",
+      "Plains_N",
+      "Plains_NE",
+      "Plains_NW",
+      "Plains_S",
+      "Plains_SE",
+      "Plains_W"
+    ],
+    "move_3": [
+      "HQ_Green",
+      "Moon_N",
+      "Sun"
+    ]
+  },
+  "Ice_SE": {
+    "move_1": [
+      "Ice_C",
+      "Ice_E",
+      "Ice_N",
+      "Ice_NE",
+      "Ice_NW",
+      "Ice_S",
+      "Ice_SW",
+      "Ice_W",
+      "Moon_E"
+    ],
+    "move_3": [
+      "HQ_Blue",
+      "Moon_N",
+      "Sun"
+    ]
+  },
+  "Jungle_NW": {
+    "move_1": [
+      "Jungle_C",
+      "Jungle_E",
+      "Jungle_N",
+      "Jungle_NE",
+      "Jungle_S",
+      "Jungle_SE",
+      "Jungle_SW",
+      "Jungle_W",
+      "Moon_W"
+    ],
+    "move_3": [
+      "HQ_Red",
+      "Moon_S",
+      "Sun"
+    ]
+  },
+  "Desert_NE": {
+    "move_1": [
+      "Desert_C",
+      "Desert_E",
+      "Desert_N",
+      "Desert_NW",
+      "Desert_S",
+      "Desert_SE",
+      "Desert_SW",
+      "Desert_W",
+      "Moon_E"
+    ],
+    "move_3": [
+      "HQ_Yellow",
+      "Moon_S",
+      "Sun"
+    ]
+  },
+  "Plains_S": {
+    "move_1": [
+      "Moon_W",
+      "Plains_C",
+      "Plains_E",
+      "Plains_N",
+      "Plains_NE",
+      "Plains_NW",
+      "Plains_SE",
+      "Plains_SW",
+      "Plains_W",
+      "Sun"
+    ],
+    "move_3": [
+      "HQ_Green",
+      "Moon_N"
+    ]
+  },
+  "Ice_S": {
+    "move_1": [
+      "Ice_C",
+      "Ice_E",
+      "Ice_N",
+      "Ice_NE",
+      "Ice_NW",
+      "Ice_SE",
+      "Ice_SW",
+      "Ice_W",
+      "Moon_E",
+      "Sun"
+    ],
+    "move_3": [
+      "HQ_Blue",
+      "Moon_N"
+    ]
+  },
+  "Jungle_N": {
+    "move_1": [
+      "Jungle_C",
+      "Jungle_E",
+      "Jungle_NE",
+      "Jungle_NW",
+      "Jungle_S",
+      "Jungle_SE",
+      "Jungle_SW",
+      "Jungle_W",
+      "Moon_W",
+      "Sun"
+    ],
+    "move_3": [
+      "HQ_Red",
+      "Moon_S"
+    ]
+  },
+  "Desert_N": {
+    "move_1": [
+      "Desert_C",
+      "Desert_E",
+      "Desert_NE",
+      "Desert_NW",
+      "Desert_S",
+      "Desert_SE",
+      "Desert_SW",
+      "Desert_W",
+      "Moon_E",
+      "Sun"
+    ],
+    "move_3": [
+      "HQ_Yellow",
+      "Moon_S"
+    ]
+  },
+  "Plains_SE": {
+    "move_1": [
+      "Plains_C",
+      "Plains_E",
+      "Plains_N",
+      "Plains_NE",
+      "Plains_NW",
+      "Plains_S",
+      "Plains_SW",
+      "Plains_W",
+      "Sun"
+    ],
+    "move_3": [
+      "HQ_Green",
+      "Moon_N",
+      "Moon_W"
+    ]
+  },
+  "Ice_SW": {
+    "move_1": [
+      "Ice_C",
+      "Ice_E",
+      "Ice_N",
+      "Ice_NE",
+      "Ice_NW",
+      "Ice_S",
+      "Ice_SE",
+      "Ice_W",
+      "Sun"
+    ],
+    "move_3": [
+      "HQ_Blue",
+      "Moon_E",
+      "Moon_N"
+    ]
+  },
+  "Jungle_NE": {
+    "move_1": [
+      "Jungle_C",
+      "Jungle_E",
+      "Jungle_N",
+      "Jungle_NW",
+      "Jungle_S",
+      "Jungle_SE",
+      "Jungle_SW",
+      "Jungle_W",
+      "Sun"
+    ],
+    "move_3": [
+      "HQ_Red",
+      "Moon_S",
+      "Moon_W"
+    ]
+  },
+  "Desert_NW": {
+    "move_1": [
+      "Desert_C",
+      "Desert_E",
+      "Desert_N",
+      "Desert_NE",
+      "Desert_S",
+      "Desert_SE",
+      "Desert_SW",
+      "Desert_W",
+      "Sun"
+    ],
+    "move_3": [
+      "HQ_Yellow",
+      "Moon_E",
+      "Moon_S"
+    ]
+  },
+  "Moon_N": {
+    "move_1": [
+      "Ice_C",
+      "Ice_N",
+      "Ice_NW",
+      "Ice_W",
+      "Plains_C",
+      "Plains_E",
+      "Plains_N",
+      "Plains_NE"
+    ],
+    "move_3": [
+      "Ice_E",
+      "Ice_NE",
+      "Ice_S",
+      "Ice_SE",
+      "Ice_SW",
+      "Plains_NW",
+      "Plains_S",
+      "Plains_SE",
+      "Plains_SW",
+      "Plains_W"
+    ]
+  },
+  "Moon_S": {
+    "move_1": [
+      "Desert_C",
+      "Desert_S",
+      "Desert_SW",
+      "Desert_W",
+      "Jungle_C",
+      "Jungle_E",
+      "Jungle_S",
+      "Jungle_SE"
+    ],
+    "move_3": [
+      "Desert_E",
+      "Desert_N",
+      "Desert_NE",
+      "Desert_NW",
+      "Desert_SE",
+      "Jungle_N",
+      "Jungle_NE",
+      "Jungle_NW",
+      "Jungle_SW",
+      "Jungle_W"
+    ]
+  },
+  "Moon_W": {
+    "move_1": [
+      "Jungle_C",
+      "Jungle_N",
+      "Jungle_NW",
+      "Jungle_W",
+      "Plains_C",
+      "Plains_S",
+      "Plains_SW",
+      "Plains_W"
+    ],
+    "move_3": [
+      "Jungle_E",
+      "Jungle_NE",
+      "Jungle_S",
+      "Jungle_SE",
+      "Jungle_SW",
+      "Plains_E",
+      "Plains_N",
+      "Plains_NE",
+      "Plains_NW",
+      "Plains_SE"
+    ]
+  },
+  "Moon_E": {
+    "move_1": [
+      "Desert_C",
+      "Desert_E",
+      "Desert_N",
+      "Desert_NE",
+      "Ice_C",
+      "Ice_E",
+      "Ice_S",
+      "Ice_SE"
+    ],
+    "move_3": [
+      "Desert_NW",
+      "Desert_S",
+      "Desert_SE",
+      "Desert_SW",
+      "Desert_W",
+      "Ice_N",
+      "Ice_NE",
+      "Ice_NW",
+      "Ice_SW",
+      "Ice_W"
+    ]
+  },
+  "Sun": {
+    "move_1": [
+      "Desert_C",
+      "Desert_N",
+      "Desert_NW",
+      "Desert_W",
+      "Ice_C",
+      "Ice_S",
+      "Ice_SW",
+      "Ice_W",
+      "Jungle_C",
+      "Jungle_E",
+      "Jungle_N",
+      "Jungle_NE",
+      "Plains_C",
+      "Plains_E",
+      "Plains_S",
+      "Plains_SE"
+    ],
+    "move_3": [
+      "Desert_E",
+      "Desert_NE",
+      "Desert_S",
+      "Desert_SE",
+      "Desert_SW",
+      "Ice_E",
+      "Ice_N",
+      "Ice_NE",
+      "Ice_NW",
+      "Ice_SE",
+      "Jungle_NW",
+      "Jungle_S",
+      "Jungle_SE",
+      "Jungle_SW",
+      "Jungle_W",
+      "Plains_N",
+      "Plains_NE",
+      "Plains_NW",
+      "Plains_SW",
+      "Plains_W"
+    ]
+  }
+}

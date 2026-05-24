@@ -1,0 +1,25 @@
+# Godot 4
+.godot/
+tools/godot.env
+*.translation
+export.cfg
+export_presets.cfg
+
+# Imported artifacts
+*.import
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+
+# Builds
+build/
+exports/
+*.apk
+*.aab
+*.ipa
+*.exe
+*.pck
+*.zip

@@ -1,0 +1,162 @@
+[gd_scene load_steps=2 format=3 uid="uid://forces_game_setup"]
+
+[ext_resource type="Script" path="res://scripts/menu/game_setup.gd" id="1_setup"]
+
+[node name="GameSetup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_setup")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.102, 0.133, 0.165, 1)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Créer une partie"
+
+[node name="Hint" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.72, 0.78, 1)
+text = "Vert = vous. Configurez Bleu, Rouge et Jaune (IA ou joueur)."
+
+[node name="Grid" type="GridContainer" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 8
+columns = 4
+
+[node name="H0" type="Label" parent="Margin/VBox/Grid"]
+layout_mode = 2
+text = "Camp"
+
+[node name="H1" type="Label" parent="Margin/VBox/Grid"]
+layout_mode = 2
+text = "Type"
+
+[node name="H2" type="Label" parent="Margin/VBox/Grid"]
+layout_mode = 2
+text = "Difficulté"
+
+[node name="H3" type="Label" parent="Margin/VBox/Grid"]
+layout_mode = 2
+text = ""
+
+[node name="GreenLabel" type="Label" parent="Margin/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.24, 0.62, 0.34, 1)
+text = "Vert"
+
+[node name="GreenFixed" type="Label" parent="Margin/VBox/Grid"]
+layout_mode = 2
+text = "Joueur (vous)"
+
+[node name="GreenDash" type="Label" parent="Margin/VBox/Grid"]
+layout_mode = 2
+text = "—"
+
+[node name="SpacerG" type="Control" parent="Margin/VBox/Grid"]
+layout_mode = 2
+
+[node name="BlueLabel" type="Label" parent="Margin/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.25, 0.45, 0.85, 1)
+text = "Bleu"
+
+[node name="BlueKind" type="OptionButton" parent="Margin/VBox/Grid"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BlueDiff" type="OptionButton" parent="Margin/VBox/Grid"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SpacerB" type="Control" parent="Margin/VBox/Grid"]
+layout_mode = 2
+
+[node name="RedLabel" type="Label" parent="Margin/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.22, 0.22, 1)
+text = "Rouge"
+
+[node name="RedKind" type="OptionButton" parent="Margin/VBox/Grid"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RedDiff" type="OptionButton" parent="Margin/VBox/Grid"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SpacerR" type="Control" parent="Margin/VBox/Grid"]
+layout_mode = 2
+
+[node name="YellowLabel" type="Label" parent="Margin/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.78, 0.18, 1)
+text = "Jaune"
+
+[node name="YellowKind" type="OptionButton" parent="Margin/VBox/Grid"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="YellowDiff" type="OptionButton" parent="Margin/VBox/Grid"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SpacerY" type="Control" parent="Margin/VBox/Grid"]
+layout_mode = 2
+
+[node name="SummaryLabel" type="RichTextLabel" parent="Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 120)
+bbcode_enabled = true
+fit_content = true
+
+[node name="Buttons" type="HBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+alignment = 2
+theme_override_constants/separation = 12
+
+[node name="BackButton" type="Button" parent="Margin/VBox/Buttons"]
+layout_mode = 2
+text = "Retour"
+
+[node name="StartButton" type="Button" parent="Margin/VBox/Buttons"]
+layout_mode = 2
+text = "Lancer la bataille"
+
+[connection signal="item_selected" from="Margin/VBox/Grid/BlueKind" to="." method="_on_slot_changed"]
+[connection signal="item_selected" from="Margin/VBox/Grid/BlueDiff" to="." method="_on_slot_changed"]
+[connection signal="item_selected" from="Margin/VBox/Grid/RedKind" to="." method="_on_slot_changed"]
+[connection signal="item_selected" from="Margin/VBox/Grid/RedDiff" to="." method="_on_slot_changed"]
+[connection signal="item_selected" from="Margin/VBox/Grid/YellowKind" to="." method="_on_slot_changed"]
+[connection signal="item_selected" from="Margin/VBox/Grid/YellowDiff" to="." method="_on_slot_changed"]
+[connection signal="pressed" from="Margin/VBox/Buttons/BackButton" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="Margin/VBox/Buttons/StartButton" to="." method="_on_start_pressed"]
