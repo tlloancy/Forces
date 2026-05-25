@@ -1,6 +1,6 @@
 extends Control
 
-const PAGES: PackedStringArray = PackedStringArray([
+var _pages: PackedStringArray = PackedStringArray([
 	"""[b]Forces[/b] — wargame au tour par tour.
 
 Chaque manche, tu prépares jusqu'à [b]5 ordres[/b] secret(s) : déplacements, échanges de pièces, déploiement depuis la réserve.
@@ -24,10 +24,10 @@ func _ready() -> void:
 
 
 func _show_page() -> void:
-	%PageLabel.text = PAGES[_page]
-	%PageCounter.text = "%d / %d" % [_page + 1, PAGES.size()]
+	%PageLabel.text = _pages[_page]
+	%PageCounter.text = "%d / %d" % [_page + 1, _pages.size()]
 	%PrevButton.disabled = _page <= 0
-	%NextButton.text = "Suivant" if _page < PAGES.size() - 1 else "Retour menu"
+	%NextButton.text = "Suivant" if _page < _pages.size() - 1 else "Retour menu"
 
 
 func _on_prev_pressed() -> void:
@@ -37,7 +37,7 @@ func _on_prev_pressed() -> void:
 
 
 func _on_next_pressed() -> void:
-	if _page < PAGES.size() - 1:
+	if _page < _pages.size() - 1:
 		_page += 1
 		_show_page()
 	else:

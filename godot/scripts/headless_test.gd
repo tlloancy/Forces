@@ -55,9 +55,12 @@ func _run_checks() -> PackedStringArray:
 			break
 	if cruiser == null:
 		failures.append("GameState: pas de croiseur vert")
-	elif "Space_5" not in state.destinations_for(cruiser):
-		failures.append("GameState: croiseur sans destination mer depuis QG")
 	else:
+		var sea_dests: PackedStringArray = state.destinations_for(cruiser)
+		if "Space_5" not in sea_dests and "Space_6" not in sea_dests:
+			failures.append("GameState: croiseur sans destination mer depuis QG")
+		if "Plains_NE" in sea_dests:
+			failures.append("GameState: croiseur QG ne doit pas atteindre Plains_NE en 1 pas mer")
 		var err: String = state.try_move_human_piece(cruiser, "Space_5")
 		if not err.is_empty():
 			failures.append("GameState: déplacement mer refusé (%s)" % err)

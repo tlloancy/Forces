@@ -172,16 +172,18 @@ func _draw() -> void:
 	for sector_id: String in _move_highlights:
 		if not _layout.has(sector_id):
 			continue
-		var tile_rect := _sector_tile_rect(board, sx, sy, scale, sector_id)
-		draw_rect(tile_rect.grow(2.0), Color(_highlight_color.r, _highlight_color.g, _highlight_color.b, 0.42))
-		draw_rect(tile_rect.grow(2.0), _highlight_color, false, 2.0)
+		if sector_id.begins_with("Space_"):
+			_draw_sea_corridor_marker(board, sx, sy, scale, sector_id, _highlight_color)
+		var tile_rect := _sector_highlight_rect(board, sx, sy, scale, sector_id)
+		draw_rect(tile_rect.grow(1.0), Color(_highlight_color.r, _highlight_color.g, _highlight_color.b, 0.45))
+		draw_rect(tile_rect.grow(1.0), _highlight_color, false, 2.5)
 
 	if _state != null:
 		var pending: Dictionary = _state.human_pending_move_targets()
 		for sector_id: String in pending:
 			if not _layout.has(sector_id):
 				continue
-			var ghost_rect := _sector_tile_rect(board, sx, sy, scale, sector_id)
+			var ghost_rect := _sector_highlight_rect(board, sx, sy, scale, sector_id)
 			draw_rect(ghost_rect, Color(0.35, 0.85, 0.45, 0.35))
 			draw_rect(ghost_rect, Color(0.5, 1.0, 0.55, 0.85), false, 1.5)
 
@@ -240,12 +242,48 @@ func _draw_tile_for_sector(sector_id: String) -> bool:
 	return true
 
 
-func _sector_tile_rect(board: Rect2, sx: float, sy: float, scale: float, sector_id: String) -> Rect2:
+func _sector_center(board: Rect2, sx: float, sy: float, sector_id: String) -> Vector2:
 	var d: Dictionary = _layout[sector_id] as Dictionary
-	var cx := board.position.x + float(d["x"]) * sx
-	var cy := board.position.y + float(d["y"]) * sy
+	return Vector2(
+		board.position.x + float(d["x"]) * sx,
+		board.position.y + float(d["y"]) * sy,
+	)
+
+
+func _sector_tile_rect(board: Rect2, sx: float, sy: float, scale: float, sector_id: String) -> Rect2:
+	var center := _sector_center(board, sx, sy, sector_id)
 	var design := BoardAtlas.tile_design_size(sector_id) * scale
-	return Rect2(Vector2(cx - design.x * 0.5, cy - design.y * 0.5), design)
+	return Rect2(center - design * 0.5, design)
+
+
+## Surbrillance alignée sur les zones cliquables (layout), pas sur la taille atlas.
+func _sector_highlight_rect(board: Rect2, sx: float, sy: float, scale: float, sector_id: String) -> Rect2:
+	var d: Dictionary = _layout[sector_id] as Dictionary
+	var center := _sector_center(board, sx, sy, sector_id)
+	if sector_id.begins_with("Space_") or sector_id.begins_with("Moon_") or sector_id == "Sun":
+		var r: float = float(d.get("r", 10)) * scale * (2.2 if sector_id.begins_with("Space_") else 1.6)
+		return Rect2(center - Vector2(r, r), Vector2(r * 2.0, r * 2.0))
+	if sector_id.begins_with("HQ_"):
+		var hr: float = float(d.get("r", 14)) * scale * 1.15
+		return Rect2(center - Vector2(hr, hr), Vector2(hr * 2.0, hr * 2.0))
+	return _sector_tile_rect(board, sx, sy, scale, sector_id)
+
+
+func _draw_sea_corridor_marker(
+	board: Rect2,
+	sx: float,
+	sy: float,
+	scale: float,
+	sector_id: String,
+	tint: Color,
+) -> void:
+	var tex: AtlasTexture = BoardAtlas.tile_texture(sector_id)
+	if tex == null or tex.atlas == null:
+		return
+	var center := _sector_center(board, sx, sy, sector_id)
+	var design := BoardAtlas.tile_design_size(sector_id) * scale
+	var rect := Rect2(center - design * 0.5, design)
+	draw_texture_rect(tex, rect, false, Color(tint.r, tint.g, tint.b, 0.55))
 
 
 func _draw_tiles(board: Rect2, sx: float, sy: float, scale: float) -> void:
