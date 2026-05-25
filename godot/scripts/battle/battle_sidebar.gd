@@ -113,5 +113,7 @@ static func _shape_label(piece_type: GameConstants.PieceType) -> String:
 			return "▲"
 		GameConstants.PieceType.CRUISER, GameConstants.PieceType.DESTROYER:
 			return "◆"
+		GameConstants.PieceType.HBOMB:
+			return "☢"
 		_:
 			return "·"
