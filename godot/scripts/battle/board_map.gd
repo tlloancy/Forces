@@ -194,34 +194,19 @@ func _draw_layer(sector_id: String) -> int:
 	return 1
 
 
-func _tile_design_diameter(sector_id: String) -> float:
-	if sector_id.begins_with("HQ_"):
-		return 34.0
-	if sector_id == "Sun":
-		return 36.0
-	if sector_id.begins_with("Moon_"):
-		return 22.0
-	# Correspond à LAND_STEP — tuiles jointives sans empilement alpha excessif.
-	return LAND_STEP
-
-
 func _draw_tiles(board: Rect2, sx: float, sy: float, scale: float) -> void:
 	for sector_id: String in _sorted_sector_ids():
-		# Connecteurs mer : zones cliquables conservées, rendu simplifié (fond bleu nuit).
-		if sector_id.begins_with("Space_"):
-			continue
 		var d: Dictionary = _layout[sector_id] as Dictionary
 		var cx := board.position.x + float(d["x"]) * sx
 		var cy := board.position.y + float(d["y"]) * sy
 		var tex: AtlasTexture = BoardAtlas.tile_texture(sector_id)
 		if tex == null or tex.atlas == null:
 			continue
-		var native := BoardAtlas.tile_native_size(sector_id)
-		var diameter := _tile_design_diameter(sector_id) * scale
-		var fit := diameter / maxf(native.x, native.y)
-		var w := native.x * fit
-		var h := native.y * fit
-		var rect := Rect2(Vector2(cx - w * 0.5, cy - h * 0.5), Vector2(w, h))
+		var design := BoardAtlas.tile_design_size(sector_id) * scale
+		var rect := Rect2(
+			Vector2(cx - design.x * 0.5, cy - design.y * 0.5),
+			design
+		)
 		draw_texture_rect(tex, rect, false, BoardAtlas.sector_tile_modulate(sector_id))
 
 

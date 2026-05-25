@@ -4,6 +4,7 @@ extends RefCounted
 
 const ATLAS_PATH := "res://assets/textures/FORCE-AD-13a.png"
 const DATA_PATH := "res://data/atlas_sprites.json"
+const LAND_STEP := 88.0 / 3.0
 
 static var _data: Dictionary = {}
 static var _texture: Texture2D
@@ -114,6 +115,8 @@ static func tile_sprite_id(sector_id: String) -> String:
 		var sp_key := "Sp" + sector_id.trim_prefix("Space_")
 		if shapes.has(sp_key):
 			return str(shapes[sp_key])
+		if sector_id in ["Space_5", "Space_8", "Space_12", "Space_11"]:
+			return str(defaults.get("connector_v", "FORCE-AD-13a_83"))
 		return str(defaults.get("connector_h", "FORCE-AD-13a_105"))
 	if sector_id == "Sun" or sector_id.begins_with("Moon_"):
 		return str(shapes.get("CE", defaults.get("neutral", "FORCE-AD-13a_77")))
@@ -151,6 +154,30 @@ static func tile_native_size(sector_id: String) -> Vector2:
 		return Vector2(70.0, 70.0)
 	var sz := tex.get_size()
 	return Vector2(float(sz.x), float(sz.y))
+
+
+static func tile_design_size(sector_id: String) -> Vector2:
+	if sector_id.begins_with("Space_"):
+		return _sea_connector_design_size(sector_id)
+	if sector_id.begins_with("HQ_"):
+		return Vector2(34.0, 34.0)
+	if sector_id == "Sun":
+		return Vector2(36.0, 36.0)
+	if sector_id.begins_with("Moon_"):
+		return Vector2(22.0, 22.0)
+	return Vector2(LAND_STEP, LAND_STEP)
+
+
+static func _sea_connector_design_size(sector_id: String) -> Vector2:
+	var native := tile_native_size(sector_id)
+	var long_side := 40.0
+	if native.x > native.y * 1.25:
+		var h := long_side * (native.y / native.x)
+		return Vector2(long_side, h)
+	if native.y > native.x * 1.25:
+		var w := long_side * (native.x / native.y)
+		return Vector2(w, long_side)
+	return Vector2(20.0, 20.0)
 
 
 static func _camp_multiply_color(camp: GameConstants.Camp) -> Color:

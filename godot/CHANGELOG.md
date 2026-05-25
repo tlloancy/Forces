@@ -19,9 +19,13 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale).
 - **`export_board_image.py`**, **`calibrate_sector_layout.py`** — outils référence (PNG composé optionnel)
 - **`assets/textures/board_reference.png`** — preview export 4 quadrants
 
+### Réalisé (suite)
+
+- **Connecteurs mer** — `Space_*` rendus (Sp + `connector_h`/`connector_v`), tailles selon aspect atlas, positions couloirs entre quadrants
+
 ### À faire (prochaine étape critique)
 
-- [ ] **Connecteurs mer** (`Space_*`) — sprites Sp1–Sp12 visibles entre quadrants
+- [ ] Synchroniser journal d’ordres sidebar ↔ `%OrdersLog` bataille
 - [ ] Tuiles directionnelles emboîtées (échelle Unity) si souhaité
 - [ ] `Battleground.unity` pour calibration pixel-perfect
 - [ ] Bombes H, combats détaillés, animations
