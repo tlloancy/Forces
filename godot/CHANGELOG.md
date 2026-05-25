@@ -10,7 +10,7 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ## 2026-05-25 — Partie complète headless, fixes H / carte / play
 
-**Commits** : _(voir `git log -3`)_
+**Commit** : `4c3694b` — `Fix H atlas, carte mer laterale, tests partie complete, timeout.`
 
 ### Bugs corrigés
 
