@@ -42,10 +42,28 @@ layout_mode = 2
 layout_mode = 2
 theme_override_constants/separation = 4
 
+[node name="CaseHeaderRow" type="HBoxContainer" parent="Sidebar/CasePanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="CaseInfoLabel" type="Label" parent="Sidebar/CasePanel/VBox/CaseHeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.62, 0.65, 0.75, 1)
+text = "Case Info"
+
+[node name="HQLabel" type="Label" parent="Sidebar/CasePanel/VBox/CaseHeaderRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.85, 0.28, 0.28, 1)
+text = ""
+
 [node name="CaseTitle" type="Label" parent="Sidebar/CasePanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 13
 text = "—"
 
 [node name="CaseUnitsRow" type="HBoxContainer" parent="Sidebar/CasePanel/VBox"]
@@ -76,6 +94,13 @@ layout_mode = 2
 
 [node name="VBox" type="VBoxContainer" parent="Sidebar/ReservePanel"]
 layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ReserveSectionLabel" type="Label" parent="Sidebar/ReservePanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.62, 0.65, 0.75, 1)
+text = "Reserve"
 
 [node name="ReservePower" type="Label" parent="Sidebar/ReservePanel/VBox"]
 unique_name_in_owner = true
@@ -146,6 +171,13 @@ size_flags_vertical = 3
 [node name="VBox" type="VBoxContainer" parent="Sidebar/OrdersPanel"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="OrdersSectionLabel" type="Label" parent="Sidebar/OrdersPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.62, 0.65, 0.75, 1)
+text = "Orders"
 
 [node name="OrdersTimer" type="Label" parent="Sidebar/OrdersPanel/VBox"]
 unique_name_in_owner = true

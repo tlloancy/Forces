@@ -7,6 +7,7 @@ const UiPieceIcons = preload("res://scripts/ui/ui_piece_icons.gd")
 signal unit_pressed(piece_type: GameConstants.PieceType)
 
 @onready var _case_title: Label = %CaseTitle
+@onready var _hq_label: Label = %HQLabel
 @onready var _case_units: HBoxContainer = %CaseUnitsRow
 @onready var _case_piece_icon: TextureRect = %CasePieceIcon
 @onready var _case_piece_meta: Label = %CasePieceMeta
@@ -63,6 +64,9 @@ func refresh(
 	_case_piece_icon.texture = null
 	_case_piece_meta.text = ""
 	_clear_unit_buttons()
+
+	var is_hq: bool = (selected_sector != "" and selected_sector == BoardCatalog.hq_for_camp(human_camp))
+	_hq_label.text = "HQ" if is_hq else ""
 
 	if selected_sector != "":
 		var short := BoardCatalog.sector_short_label(selected_sector)
@@ -129,7 +133,7 @@ func refresh(
 	if _exchange_row:
 		_exchange_row.visible = any_exchange
 
-	_orders_timer.text = "R%d %s" % [state.round_number, _format_timer(planning_elapsed)]
+	_orders_timer.text = "%s  R%d" % [_format_timer(planning_elapsed), state.round_number]
 	_orders_queue.text = _format_orders_queue(state, human_camp)
 
 

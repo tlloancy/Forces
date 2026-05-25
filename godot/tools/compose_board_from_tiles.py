@@ -26,17 +26,17 @@ OUT = ROOT / "assets" / "textures" / "board_composed.png"
 W, H = 280, 280
 
 # Couleurs Unity (capture 216 prélevée pixel).
-BG_DARK = (28, 30, 52, 255)
-GRID_LINE = (60, 65, 90, 255)
-COULOIR_GREY = (68, 72, 84, 255)
-SEA_OCTAGON = (110, 115, 128, 255)
-MOON_GREY = (135, 140, 150, 255)
-SUN_GREY = (110, 115, 128, 255)
+BG_DARK = (43, 45, 74, 255)        # #2b2d4a — slate Unity exact
+GRID_LINE = (58, 62, 90, 255)
+COULOIR_GREY = (72, 76, 95, 255)
+SEA_OCTAGON = (100, 105, 120, 255)
+MOON_GREY = (120, 126, 142, 255)
+SUN_GREY = (100, 105, 120, 255)
 CAMP_TINT = {
-    "Plains": (190, 90, 95),
-    "Ice": (135, 105, 185),
-    "Jungle": (80, 155, 145),
-    "Desert": (190, 155, 80),
+    "Plains": (175, 60, 78),        # → bordeaux Unity #8b3040
+    "Ice": (68, 58, 158),           # → violet Unity #4a3578
+    "Jungle": (38, 108, 104),       # → teal Unity #2a6e6a
+    "Desert": (175, 138, 52),       # → doré Unity #8a6a30
 }
 
 # Bandes couloir (zones grises sur les bords extérieurs entre HQs).
@@ -131,7 +131,7 @@ def main() -> None:
                 continue
             tile = _tint(tile, tint)
             pos = layout[sid]
-            _paste_at(board, tile, pos["x"], pos["y"], 27, 27)
+            _paste_at(board, tile, pos["x"], pos["y"], 33, 33)
 
     # 4. HQ tiles aux 4 coins (teintés par camp adverse au CE des îles).
     hq_tints = {
@@ -151,7 +151,7 @@ def main() -> None:
             # Assombrir le HQ (drapeau coloré dans fond plus sombre).
             dark_overlay = Image.new("RGBA", tinted.size, (50, 50, 60, 255))
             tinted = ImageChops.multiply(tinted, dark_overlay)
-            _paste_at(board, tinted, pos["x"], pos["y"], 28, 28)
+            _paste_at(board, tinted, pos["x"], pos["y"], 32, 32)
 
     # 5. Moons + Sun + Space connectors (octogones gris).
     moon_sprite_id = shapes.get("CE", defaults["neutral"])
@@ -162,18 +162,18 @@ def main() -> None:
                 continue
             pos = layout[sid]
             tinted = _tint(moon_tile, MOON_GREY[:3])
-            _paste_at(board, tinted, pos["x"], pos["y"], 22, 22)
+            _paste_at(board, tinted, pos["x"], pos["y"], 26, 26)
         if "Sun" in layout:
             pos = layout["Sun"]
             tinted = _tint(moon_tile, SUN_GREY[:3])
-            _paste_at(board, tinted, pos["x"], pos["y"], 24, 24)
+            _paste_at(board, tinted, pos["x"], pos["y"], 28, 28)
         for n in range(1, 13):
             sid = f"Space_{n}"
             if sid not in layout:
                 continue
             pos = layout[sid]
             tinted = _tint(moon_tile, SEA_OCTAGON[:3])
-            _paste_at(board, tinted, pos["x"], pos["y"], 14, 14)
+            _paste_at(board, tinted, pos["x"], pos["y"], 16, 16)
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     board.convert("RGB").save(OUT)

@@ -8,6 +8,39 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ---
 
+## 2026-05-25 (nuit 2) — Design plateau : fidélité Unity (fond, îles, surbrillances, sidebar)
+
+**Référence** : captures Unity `Screenshot_20260525-000216_Forc2.jpg` / `000226`.
+
+### Plateau (`board_map.gd` + `compose_board_from_tiles.py`)
+
+| Élément | Avant | Après |
+|---------|-------|-------|
+| Fond écran | `#171c2b` | **`#2b2d4a`** — slate Unity exact |
+| Fond `board_composed.png` | `#1c1e34` | **`#2b2d4a`** |
+| Surbrillances déplacement | fill coloré (pâtés) | **pointillé blanc** seul (alpha 0.42) |
+| Pending moves | fill vert + stroke | stroke vert seul |
+| Tuiles îles | 27×27 px | **33×33 px** (îles plus présentes) |
+| Tuiles HQ | 28×28 px | **32×32 px** |
+| Tuiles Moons / Sun / Space | 22/24/14 | **26/28/16 px** |
+
+### Couleurs îles (`compose_board_from_tiles.py`)
+
+| Camp | Avant | Après | Cible Unity |
+|------|-------|-------|-------------|
+| Plains | `(190,90,95)` | `(175,60,78)` | `#8b3040` bordeaux |
+| Ice | `(135,105,185)` | `(68,58,158)` | `#4a3578` violet profond |
+| Jungle | `(80,155,145)` | `(38,108,104)` | `#2a6e6a` teal sombre |
+| Desert | `(190,155,80)` | `(175,138,52)` | `#8a6a30` doré |
+
+### Sidebar (`battle.tscn` + `battle_sidebar.gd`)
+
+- Labels de section ajoutés : **« Case Info »**, **« Reserve »**, **« Orders »** (gris clair 10 px)
+- Badge **« HQ »** rouge visible quand le secteur sélectionné est le QG humain
+- Timer reformaté : `59:43  R1` (temps devant, manche derrière)
+
+---
+
 ## 2026-05-25 (nuit) — Surbrillances déplacements alignées sur les tuiles
 
 **Problème** : rectangles de surbrillance / sélection trop grands (31×31 îles, connecteurs mer jusqu’à 46 px) → chevauchements en « pâtés » sur la grille.

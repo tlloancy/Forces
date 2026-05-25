@@ -164,7 +164,7 @@ func _hit_rect(board: Rect2, sx: float, sy: float, _sc: float, sector_id: String
 
 func _draw() -> void:
 	var board := _board_rect()
-	draw_rect(Rect2(Vector2.ZERO, size), Color(0.09, 0.11, 0.17))
+	draw_rect(Rect2(Vector2.ZERO, size), Color(0.168, 0.176, 0.29))
 	if _board_tex != null:
 		draw_texture_rect(_board_tex, board, false)
 	else:
@@ -192,8 +192,7 @@ func _draw() -> void:
 	for sector_id: String in _state.human_pending_move_targets():
 		if _layout.has(sector_id):
 			var r := _hit_rect(board, sx, sy, sc, sector_id)
-			draw_rect(r, Color(0.35, 0.85, 0.45, 0.35))
-			draw_rect(r, Color(0.5, 1.0, 0.55, 0.85), false, 1.5)
+			draw_rect(r, Color(0.45, 1.0, 0.6, 0.72), false, 1.5)
 
 	if _selected != "" and _layout.has(_selected):
 		_draw_dashed_rect(_hit_rect(board, sx, sy, sc, _selected).grow(2.0), Color(1, 1, 1, 0.92), 5.0)
@@ -217,13 +216,8 @@ func _draw() -> void:
 			)
 
 
-func _draw_move_highlight(rect: Rect2, sector_id: String) -> void:
-	var sea: bool = sector_id.begins_with("Space_") or BoardCatalog.is_neutral(sector_id)
-	if sea:
-		draw_rect(rect.grow(1.0), _highlight_color, false, 2.5)
-	else:
-		draw_rect(rect.grow(1.0), Color(_highlight_color.r, _highlight_color.g, _highlight_color.b, 0.35))
-		draw_rect(rect.grow(1.0), _highlight_color, false, 2.5)
+func _draw_move_highlight(rect: Rect2, _sector_id: String) -> void:
+	_draw_dashed_rect(rect.grow(1.0), Color(1.0, 1.0, 1.0, 0.42), 4.0)
 
 
 func _draw_piece_icon(center: Vector2, icon_size: float, piece_type: GameConstants.PieceType, color: Color) -> void:
