@@ -40,6 +40,8 @@ python tools/compose_board_from_tiles.py
 .\tools\run_headless.ps1 -Mode smoke
 ```
 
+**Commit** : `8d0b215` — `Carte Unity complete: iles, couloirs bordure, board_composed.`
+
 ---
 
 ## 2026-05-25 (suite) — Fix atlas : F/H inversés avec losange/carré
