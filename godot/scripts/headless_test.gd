@@ -48,6 +48,28 @@ func _run_checks() -> PackedStringArray:
 	var dests: PackedStringArray = BoardGraph.land_destinations("HQ_Green", 2)
 	if dests.is_empty():
 		failures.append("BoardGraph: pas de voisins HQ_Green")
+	var cruiser: PieceInstance = null
+	for p: PieceInstance in state.pieces:
+		if p.camp == GameConstants.Camp.GREEN and p.type == GameConstants.PieceType.CRUISER:
+			cruiser = p
+			break
+	if cruiser == null:
+		failures.append("GameState: pas de croiseur vert")
+	elif "Space_5" not in state.destinations_for(cruiser):
+		failures.append("GameState: croiseur sans destination mer depuis QG")
+	else:
+		var err: String = state.try_move_human_piece(cruiser, "Space_5")
+		if not err.is_empty():
+			failures.append("GameState: déplacement mer refusé (%s)" % err)
+	var hunter: PieceInstance = null
+	for p: PieceInstance in state.pieces:
+		if p.camp == GameConstants.Camp.GREEN and p.type == GameConstants.PieceType.HUNTER:
+			hunter = p
+			break
+	if hunter != null and not hunter.in_reserve:
+		var air_dests: PackedStringArray = state.destinations_for(hunter)
+		if air_dests.is_empty():
+			failures.append("GameState: chasseur sans destination air depuis QG")
 	for path: String in [
 		"res://scenes/menu/main_menu.tscn",
 		"res://scenes/menu/game_setup.tscn",

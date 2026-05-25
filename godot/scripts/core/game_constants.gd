@@ -78,6 +78,18 @@ static func piece_movement_domain(piece: PieceType) -> MovementDomain:
 			return MovementDomain.NONE
 
 
+static func movement_domain_label(domain: MovementDomain) -> String:
+	match domain:
+		MovementDomain.LAND:
+			return "terre"
+		MovementDomain.SEA:
+			return "mer"
+		MovementDomain.AIR:
+			return "air"
+		_:
+			return "—"
+
+
 static func is_basic_buy(piece: PieceType) -> bool:
 	return piece in [PieceType.SOLDIER, PieceType.RAIDER, PieceType.HUNTER, PieceType.CRUISER]
 

@@ -5,6 +5,7 @@ extends Control
 @onready var _case_title: Label = %CaseTitle
 @onready var _case_hq: Label = %CaseHq
 @onready var _case_stats: Label = %CaseStats
+@onready var _case_piece: Label = %CasePiece
 @onready var _reserve_power: Label = %ReservePower
 @onready var _reserve_outline: Label = %ReserveOutline
 @onready var _reserve_counts: Label = %ReserveCounts
@@ -18,9 +19,11 @@ func refresh(
 	human_camp: GameConstants.Camp,
 	selected_sector: String,
 	planning_elapsed: int = 1,
+	selected_piece: PieceInstance = null,
 ) -> void:
 	_case_hq.visible = false
 	_case_stats.text = ""
+	_case_piece.text = ""
 	if selected_sector != "":
 		var short := BoardCatalog.sector_short_label(selected_sector)
 		_case_title.text = "Case Info — %s" % short
@@ -35,6 +38,15 @@ func refresh(
 		for key: String in counts:
 			lines.append("%s %d" % [key, int(counts[key])])
 		_case_stats.text = "\n".join(lines) if not lines.is_empty() else "—"
+
+	if selected_piece != null and selected_sector != "" and selected_piece.sector_id == selected_sector:
+		var domain := GameConstants.movement_domain_label(
+			GameConstants.piece_movement_domain(selected_piece.type)
+		)
+		_case_piece.text = "Pièce : %s (%s) — recliquez la case pour changer" % [
+			selected_piece.label(),
+			domain,
+		]
 
 	_reserve_power.text = "F %d" % state.camp_power(human_camp)
 	var res: Dictionary = {}

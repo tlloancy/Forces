@@ -14,6 +14,7 @@ var _layout_meta: Dictionary = {}
 var _hits: Dictionary = {}
 var _selected: String = ""
 var _move_highlights: PackedStringArray = PackedStringArray()
+var _highlight_color: Color = Color(0.95, 0.85, 0.35, 0.55)
 var _state: GameState
 
 
@@ -112,6 +113,11 @@ func set_move_highlights(sectors: PackedStringArray) -> void:
 	queue_redraw()
 
 
+func set_highlight_color(color: Color) -> void:
+	_highlight_color = color
+	queue_redraw()
+
+
 func _on_hit(event: InputEvent, sector_id: String) -> void:
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
@@ -143,7 +149,7 @@ func _draw() -> void:
 		var hr: float = float(hd.get("r", 10)) * scale * 1.25
 		var hcx := board.position.x + float(hd["x"]) * sx
 		var hcy := board.position.y + float(hd["y"]) * sy
-		draw_arc(Vector2(hcx, hcy), hr, 0.0, TAU, 32, Color(0.95, 0.85, 0.35, 0.55), 2.0)
+		draw_arc(Vector2(hcx, hcy), hr, 0.0, TAU, 32, _highlight_color, 2.0)
 
 	if _selected != "" and _layout.has(_selected):
 		var d: Dictionary = _layout[_selected] as Dictionary

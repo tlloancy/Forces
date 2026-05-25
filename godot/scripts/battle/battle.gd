@@ -19,6 +19,7 @@ const AiPlanner = preload("res://scripts/ai/ai_planner.gd")
 var _state: GameState
 var _selected_sector: String = ""
 var _selected_piece_id: int = -1
+var _sector_pick_index: int = 0
 var _planning_elapsed: int = 1
 var _timer_accum: float = 0.0
 
@@ -54,6 +55,7 @@ func _process(delta: float) -> void:
 				_state.human_camp,
 				_selected_sector,
 				_planning_elapsed,
+				_selected_piece(),
 			)
 
 
@@ -98,6 +100,7 @@ func _refresh_ui() -> void:
 			_state.human_camp,
 			_selected_sector,
 			_planning_elapsed,
+			_selected_piece(),
 		)
 	if _status:
 		_status.text = "Phase %s | ordres %d/%d" % [
@@ -107,17 +110,48 @@ func _refresh_ui() -> void:
 		]
 
 
+func _selected_piece() -> PieceInstance:
+	if _selected_piece_id < 0:
+		return null
+	return _state.find_piece(_selected_piece_id)
+
+
+func _movable_human_on_sector(sector_id: String) -> Array[PieceInstance]:
+	var result: Array[PieceInstance] = []
+	for p: PieceInstance in _state.human_pieces_on_sector(sector_id):
+		if not _state.has_piece_moved(p.id):
+			result.append(p)
+	result.sort_custom(func(a: PieceInstance, b: PieceInstance) -> bool:
+		return int(a.type) < int(b.type)
+	)
+	return result
+
+
 func _update_move_highlights() -> void:
 	if not _board_map.has_method("set_move_highlights"):
 		return
 	if _selected_piece_id < 0:
 		_board_map.call("set_move_highlights", PackedStringArray())
+		if _board_map.has_method("set_highlight_color"):
+			_board_map.call("set_highlight_color", Color(0.95, 0.85, 0.35, 0.55))
 		return
-	var piece: PieceInstance = _state.find_piece(_selected_piece_id)
+	var piece: PieceInstance = _selected_piece()
 	if piece == null or piece.in_reserve:
 		_board_map.call("set_move_highlights", PackedStringArray())
 		return
+	if _board_map.has_method("set_highlight_color"):
+		_board_map.call("set_highlight_color", _highlight_color_for_piece(piece))
 	_board_map.call("set_move_highlights", _state.destinations_for(piece))
+
+
+func _highlight_color_for_piece(piece: PieceInstance) -> Color:
+	match GameConstants.piece_movement_domain(piece.type):
+		GameConstants.MovementDomain.SEA:
+			return Color(0.45, 0.75, 0.95, 0.65)
+		GameConstants.MovementDomain.AIR:
+			return Color(0.85, 0.9, 0.45, 0.65)
+		_:
+			return Color(0.95, 0.85, 0.35, 0.55)
 
 
 func _log_last_order() -> void:
@@ -133,22 +167,41 @@ func _phase_name(phase: GameConstants.GamePhase) -> String:
 
 func _select_sector(sector_id: String) -> void:
 	if _selected_piece_id >= 0:
-		var active: PieceInstance = _state.find_piece(_selected_piece_id)
+		var active: PieceInstance = _selected_piece()
 		if active != null and not active.in_reserve and sector_id != active.sector_id:
 			var dests := _state.destinations_for(active)
 			if sector_id in dests:
 				_try_move_to(sector_id)
 				return
 
-	_selected_sector = sector_id
-	_selected_piece_id = -1
+	if sector_id == _selected_sector:
+		_cycle_movable_piece(sector_id)
+	else:
+		_selected_sector = sector_id
+		_sector_pick_index = 0
+		_select_movable_piece_by_index(sector_id, 0)
+
 	if _board_map.has_method("set_selected"):
 		_board_map.call("set_selected", sector_id)
 	_update_sector_panel()
-	for i in range(_piece_list.get_item_count()):
-		_on_piece_selected(i)
-		break
 	_refresh_ui()
+
+
+func _cycle_movable_piece(sector_id: String) -> void:
+	var movable := _movable_human_on_sector(sector_id)
+	if movable.size() <= 1:
+		return
+	_sector_pick_index = (_sector_pick_index + 1) % movable.size()
+	_selected_piece_id = movable[_sector_pick_index].id
+
+
+func _select_movable_piece_by_index(sector_id: String, index: int) -> void:
+	var movable := _movable_human_on_sector(sector_id)
+	if movable.is_empty():
+		_selected_piece_id = -1
+		return
+	_sector_pick_index = index % movable.size()
+	_selected_piece_id = movable[_sector_pick_index].id
 
 
 func _try_move_to(to_sector: String) -> void:

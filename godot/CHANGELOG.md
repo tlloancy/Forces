@@ -27,9 +27,13 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale).
 
 - **File d’ordres** — `%OrdersQueue` dans la sidebar (pad `O : HQ > CE`, compteur 0/5), journal `%OrdersLog` pour événements de manche
 
+### Réalisé (suite)
+
+- **Déplacements mer/air** — sélection pièce par reclic sur la case (cycle soldat/tank/chasseur/croiseur), surbrillance bleue mer / jaune air, tests smoke croiseur QG→`Space_5`
+
 ### À faire (prochaine étape critique)
 
-- [ ] Déplacements mer/air depuis la carte (pas seulement terre)
+- [ ] Bombes H et combats détaillés (résolution legacy)
 - [ ] Tuiles directionnelles emboîtées (échelle Unity) si souhaité
 - [ ] `Battleground.unity` pour calibration pixel-perfect
 - [ ] Bombes H, combats détaillés, animations
