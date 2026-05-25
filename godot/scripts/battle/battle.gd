@@ -15,6 +15,7 @@ const AiPlanner = preload("res://scripts/ai/ai_planner.gd")
 @onready var _buy_hunter_btn: Button = %BuyHunterButton
 @onready var _buy_cruiser_btn: Button = %BuyCruiserButton
 @onready var _deploy_btn: Button = %DeployButton
+@onready var _hbomb_fuse_btn: Button = %HbombFuseButton
 
 var _state: GameState
 var _selected_sector: String = ""
@@ -90,6 +91,17 @@ func _refresh_ui() -> void:
 	_buy_hunter_btn.disabled = not planning
 	_buy_cruiser_btn.disabled = not planning
 	_deploy_btn.disabled = not planning or _selected_piece_id < 0
+	var fusion_ok: bool = (
+		not _selected_sector.is_empty()
+		and _state.hbomb_fusion_force_available(_state.human_camp, _selected_sector)
+		>= GameConstants.HBOMB_FUSION_FORCE
+	)
+	_hbomb_fuse_btn.disabled = (
+		not planning
+		or _selected_sector.is_empty()
+		or _state.hbomb_on_board(_state.human_camp) != null
+		or not fusion_ok
+	)
 	if _board_map.has_method("refresh"):
 		_board_map.call("refresh", _state)
 	_update_move_highlights()
@@ -145,6 +157,8 @@ func _update_move_highlights() -> void:
 
 
 func _highlight_color_for_piece(piece: PieceInstance) -> Color:
+	if piece.type == GameConstants.PieceType.HBOMB:
+		return Color(1.0, 0.35, 0.35, 0.75)
 	match GameConstants.piece_movement_domain(piece.type):
 		GameConstants.MovementDomain.SEA:
 			return Color(0.45, 0.75, 0.95, 0.65)
@@ -317,6 +331,18 @@ func _on_exchange_fighter_pressed() -> void:
 
 func _on_exchange_destroyer_pressed() -> void:
 	_on_exchange_pressed(GameConstants.PieceType.DESTROYER)
+
+
+func _on_hbomb_fuse_pressed() -> void:
+	if _selected_sector.is_empty():
+		return
+	var err: String = _state.try_place_hbomb_human(_selected_sector)
+	if err.is_empty():
+		_log.append_text("[color=#ff6666]Bombe H posée sur %s[/color]\n" % _selected_sector)
+		_select_movable_piece_by_index(_selected_sector, 0)
+	else:
+		_log.append_text("[color=orange]%s[/color]\n" % err)
+	_refresh_ui()
 
 
 func _on_deploy_pressed() -> void:

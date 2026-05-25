@@ -1,7 +1,7 @@
 class_name GameOrder
 extends RefCounted
 
-enum Kind { MOVE, BUY, EXCHANGE, DEPLOY_FROM_RESERVE, HBOMB }
+enum Kind { MOVE, BUY, EXCHANGE, DEPLOY_FROM_RESERVE, HBOMB_PLACE, HBOMB_STRIKE }
 
 var kind: Kind = Kind.MOVE
 var camp: GameConstants.Camp
@@ -41,8 +41,10 @@ func describe() -> String:
 				GameConstants.camp_to_string(camp),
 				GameConstants.piece_type_label(piece_type),
 			]
-		Kind.HBOMB:
-			return "%s: bombe H → %s" % [GameConstants.camp_to_string(camp), to_sector]
+		Kind.HBOMB_PLACE:
+			return "%s: pose bombe H sur %s" % [GameConstants.camp_to_string(camp), to_sector]
+		Kind.HBOMB_STRIKE:
+			return "%s: bombe H frappe %s" % [GameConstants.camp_to_string(camp), to_sector]
 		_:
 			return "Ordre inconnu"
 
@@ -61,7 +63,9 @@ func pad_label() -> String:
 			return "O : achat %s" % GameConstants.piece_type_label(piece_type)
 		Kind.EXCHANGE:
 			return "O : fusion %s" % GameConstants.piece_type_label(exchange_result)
-		Kind.HBOMB:
+		Kind.HBOMB_PLACE:
+			return "O : fusion H → %s" % BoardCatalog.sector_short_label(to_sector)
+		Kind.HBOMB_STRIKE:
 			return "O : H → %s" % BoardCatalog.sector_short_label(to_sector)
 		_:
 			return "O : ?"

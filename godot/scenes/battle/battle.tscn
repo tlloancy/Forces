@@ -123,6 +123,11 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Déployer"
 
+[node name="HbombFuseButton" type="Button" parent="Sidebar/ReservePanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fusion H (100 F réserve)"
+
 [node name="ExchangeRow" type="HBoxContainer" parent="Sidebar/ReservePanel/VBox"]
 layout_mode = 2
 
@@ -260,6 +265,7 @@ offset_bottom = 300.0
 [connection signal="pressed" from="Sidebar/ReservePanel/VBox/ReserveActions/BuyHunterButton" to="." method="_on_buy_hunter_pressed"]
 [connection signal="pressed" from="Sidebar/ReservePanel/VBox/ReserveActions/BuyCruiserButton" to="." method="_on_buy_cruiser_pressed"]
 [connection signal="pressed" from="Sidebar/ReservePanel/VBox/DeployButton" to="." method="_on_deploy_pressed"]
+[connection signal="pressed" from="Sidebar/ReservePanel/VBox/HbombFuseButton" to="." method="_on_hbomb_fuse_pressed"]
 [connection signal="pressed" from="Sidebar/ReservePanel/VBox/ExchangeRow/ExchangeCommandoButton" to="." method="_on_exchange_commando_pressed"]
 [connection signal="pressed" from="Sidebar/ReservePanel/VBox/ExchangeRow/ExchangeBomberButton" to="." method="_on_exchange_bomber_pressed"]
 [connection signal="pressed" from="Sidebar/ReservePanel/VBox/ExchangeRow/ExchangeFighterButton" to="." method="_on_exchange_fighter_pressed"]

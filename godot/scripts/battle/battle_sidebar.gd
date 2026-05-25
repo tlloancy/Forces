@@ -48,13 +48,23 @@ func refresh(
 			domain,
 		]
 
-	_reserve_power.text = "F %d" % state.camp_power(human_camp)
+	var fusion_f: int = state.hbomb_fusion_force_available(human_camp, selected_sector)
+	_reserve_power.text = "Power %d  |  fusion %d F" % [
+		state.camp_power(human_camp),
+		fusion_f,
+	]
+	var hbomb_board: bool = state.hbomb_on_board(human_camp) != null
 	var res: Dictionary = {}
 	for p: PieceInstance in state.reserve_pieces(human_camp):
 		var k: String = _shape_label(p.type)
 		res[k] = int(res.get(k, 0)) + 1
-	_reserve_outline.text = _shape_row(["●", "■", "▲", "◆"], res, true)
-	_reserve_counts.text = _shape_row(["●", "■", "▲", "◆"], res, false)
+	var outline_row := _shape_row(["●", "■", "▲", "◆"], res, true)
+	var count_row := _shape_row(["●", "■", "▲", "◆"], res, false)
+	if hbomb_board:
+		outline_row += "  ☢ en jeu"
+		count_row += "  ☢"
+	_reserve_outline.text = outline_row
+	_reserve_counts.text = count_row
 
 	_orders_timer.text = "Orders / timer : %s" % _format_timer(planning_elapsed)
 	_orders_queue.text = _format_orders_queue(state, human_camp)

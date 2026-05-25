@@ -143,6 +143,8 @@ func _piece_stats(piece: PieceInstance) -> Dictionary:
 
 
 func _sector_valid_for_piece(piece: PieceInstance) -> bool:
+	if piece.type == GameConstants.PieceType.HBOMB:
+		return BoardGraph.has_sector(piece.sector_id)
 	match GameConstants.piece_movement_domain(piece.type):
 		GameConstants.MovementDomain.LAND:
 			return BoardGraph.has_land_sector(piece.sector_id)
@@ -155,11 +157,176 @@ func _sector_valid_for_piece(piece: PieceInstance) -> bool:
 
 
 func destinations_for(piece: PieceInstance) -> PackedStringArray:
+	if piece.type == GameConstants.PieceType.HBOMB:
+		return _hbomb_strike_targets(piece)
 	var stats: Dictionary = _piece_stats(piece)
 	if stats.is_empty():
 		return PackedStringArray()
 	var max_move: int = int(stats.get("max_move", 1))
 	return BoardGraph.piece_destinations(piece.type, piece.sector_id, max_move)
+
+
+func _hbomb_strike_targets(hbomb: PieceInstance) -> PackedStringArray:
+	var result: Array[String] = []
+	for sector_id: String in BoardCatalog.SECTOR_IDS:
+		if sector_id == hbomb.sector_id:
+			continue
+		result.append(sector_id)
+	return PackedStringArray(result)
+
+
+func hbomb_on_board(camp: GameConstants.Camp) -> PieceInstance:
+	for p: PieceInstance in pieces:
+		if p.camp == camp and p.type == GameConstants.PieceType.HBOMB and not p.in_reserve:
+			return p
+	return null
+
+
+func reserve_force_available(camp: GameConstants.Camp) -> int:
+	var total: int = 0
+	for p: PieceInstance in reserve_pieces(camp):
+		total += GameConstants.reserve_force_value(p.type)
+	return total
+
+
+func hbomb_fusion_force_available(camp: GameConstants.Camp, fusion_sector: String) -> int:
+	var total: int = reserve_force_available(camp) + camp_power(camp)
+	if fusion_sector != "":
+		for p: PieceInstance in pieces_on_sector(fusion_sector):
+			if p.camp == camp and not p.in_reserve and p.type != GameConstants.PieceType.HBOMB:
+				total += GameConstants.reserve_force_value(p.type)
+	return total
+
+
+func try_place_hbomb(camp: GameConstants.Camp, board_sector: String) -> String:
+	if phase != GameConstants.GamePhase.PLANNING:
+		return "Pas en phase de planification."
+	if not is_alive(camp):
+		return "Camp éliminé."
+	if hbomb_on_board(camp) != null:
+		return "Une bombe H est déjà en jeu."
+	if not BoardGraph.has_sector(board_sector):
+		return "Secteur invalide."
+	var available: int = hbomb_fusion_force_available(camp, board_sector)
+	if available < GameConstants.HBOMB_FUSION_FORCE:
+		return "Fusion insuffisante (%d F requis, %d sur %s)." % [
+			GameConstants.HBOMB_FUSION_FORCE,
+			available,
+			BoardCatalog.sector_short_label(board_sector),
+		]
+	var consumed: int = _consume_hbomb_fusion_budget(camp, board_sector, GameConstants.HBOMB_FUSION_FORCE)
+	if consumed < GameConstants.HBOMB_FUSION_FORCE:
+		return "Fusion H impossible (%d/%d F consommés)." % [consumed, GameConstants.HBOMB_FUSION_FORCE]
+	var bomb := _add_piece(camp, GameConstants.PieceType.HBOMB, board_sector, false)
+	var order := GameOrder.new(GameOrder.Kind.HBOMB_PLACE, camp)
+	order.to_sector = board_sector
+	if not queue_order(order):
+		pieces.pop_back()
+		_next_piece_id -= 1
+		pieces_moved_this_round.erase(bomb.id)
+		return "Nombre max d'ordres atteint."
+	return ""
+
+
+func try_hbomb_strike(camp: GameConstants.Camp, target_sector: String) -> String:
+	if phase != GameConstants.GamePhase.PLANNING:
+		return "Pas en phase de planification."
+	var hbomb: PieceInstance = hbomb_on_board(camp)
+	if hbomb == null:
+		return "Aucune bombe H sur le plateau."
+	if target_sector == hbomb.sector_id:
+		return "Cible invalide."
+	if not BoardGraph.has_sector(target_sector):
+		return "Secteur inconnu."
+	var from_sector: String = hbomb.sector_id
+	var order := GameOrder.new(GameOrder.Kind.HBOMB_STRIKE, camp)
+	order.from_sector = from_sector
+	order.to_sector = target_sector
+	if not queue_order(order):
+		return "Nombre max d'ordres atteint."
+	_remove_piece_by_id(hbomb.id)
+	return ""
+
+
+func try_place_hbomb_human(board_sector: String) -> String:
+	return try_place_hbomb(human_camp, board_sector)
+
+
+func try_hbomb_strike_human(target_sector: String) -> String:
+	return try_hbomb_strike(human_camp, target_sector)
+
+
+func _consume_hbomb_fusion_budget(camp: GameConstants.Camp, fusion_sector: String, need: int) -> int:
+	var consumed: int = 0
+	consumed += _consume_force_from_sector(camp, fusion_sector, need - consumed)
+	if consumed >= need:
+		return consumed
+	consumed += _consume_reserve_force_budget(camp, need - consumed)
+	if consumed >= need:
+		return consumed
+	while consumed < need and camp_power(camp) > 0:
+		power_tokens[camp] = camp_power(camp) - 1
+		power_changed.emit(camp, camp_power(camp))
+		consumed += 1
+	return consumed
+
+
+func _consume_force_from_sector(camp: GameConstants.Camp, sector_id: String, need: int) -> int:
+	var types: Array[GameConstants.PieceType] = _fusion_consume_priority()
+	var consumed: int = 0
+	while consumed < need:
+		var removed: bool = false
+		for t: GameConstants.PieceType in types:
+			for i in range(pieces.size() - 1, -1, -1):
+				var p: PieceInstance = pieces[i]
+				if p.camp != camp or p.sector_id != sector_id or p.in_reserve or p.type != t:
+					continue
+				if p.type == GameConstants.PieceType.HBOMB:
+					continue
+				pieces.remove_at(i)
+				consumed += GameConstants.reserve_force_value(t)
+				removed = true
+				break
+			if removed:
+				break
+		if not removed:
+			break
+	return consumed
+
+
+func _consume_reserve_force_budget(camp: GameConstants.Camp, need: int) -> int:
+	var types: Array[GameConstants.PieceType] = _fusion_consume_priority()
+	var consumed: int = 0
+	while consumed < need:
+		var removed: bool = false
+		for t: GameConstants.PieceType in types:
+			if _consume_reserve(camp, t, 1):
+				consumed += GameConstants.reserve_force_value(t)
+				removed = true
+				break
+		if not removed:
+			break
+	return consumed
+
+
+static func _fusion_consume_priority() -> Array[GameConstants.PieceType]:
+	return [
+		GameConstants.PieceType.DESTROYER,
+		GameConstants.PieceType.BOMBER,
+		GameConstants.PieceType.FIGHTER,
+		GameConstants.PieceType.COMMANDO,
+		GameConstants.PieceType.CRUISER,
+		GameConstants.PieceType.HUNTER,
+		GameConstants.PieceType.RAIDER,
+		GameConstants.PieceType.SOLDIER,
+	]
+
+
+func _remove_piece_by_id(piece_id: int) -> void:
+	for i in range(pieces.size() - 1, -1, -1):
+		if pieces[i].id == piece_id:
+			pieces.remove_at(i)
+			return
 
 
 func try_buy_to_reserve(camp: GameConstants.Camp, piece_type: GameConstants.PieceType) -> String:
@@ -225,6 +392,8 @@ func try_move_piece(piece: PieceInstance, to_sector: String) -> String:
 		return "Pas en phase de planification."
 	if not is_alive(piece.camp):
 		return "Camp éliminé."
+	if piece.type == GameConstants.PieceType.HBOMB:
+		return try_hbomb_strike(piece.camp, to_sector)
 	if piece.in_reserve:
 		return "Pièce en réserve — déployez-la d'abord."
 	if has_piece_moved(piece.id):
@@ -322,6 +491,8 @@ func end_planning_round() -> Array[String]:
 	var logs: Array[String] = []
 	for order: GameOrder in pending_orders:
 		logs.append("  · " + order.describe())
+		if order.kind == GameOrder.Kind.HBOMB_STRIKE:
+			logs.append("  · " + BattleResolver.resolve_hbomb_strike(self, order.to_sector, order.camp))
 	logs.append_array(BattleResolver.resolve_all_conflicts(self))
 	_check_flag_captures(logs)
 	advance_round()

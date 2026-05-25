@@ -70,6 +70,33 @@ func _run_checks() -> PackedStringArray:
 		var air_dests: PackedStringArray = state.destinations_for(hunter)
 		if air_dests.is_empty():
 			failures.append("GameState: chasseur sans destination air depuis QG")
+	var hbomb_state := GameState.new()
+	hbomb_state.human_camp = GameConstants.Camp.GREEN
+	hbomb_state.reset_match()
+	var hq_green: String = BoardCatalog.hq_for_camp(GameConstants.Camp.GREEN)
+	for _i in 50:
+		hbomb_state._add_piece(GameConstants.Camp.GREEN, GameConstants.PieceType.SOLDIER, hq_green, true)
+	if hbomb_state.hbomb_fusion_force_available(GameConstants.Camp.GREEN, hq_green) < GameConstants.HBOMB_FUSION_FORCE:
+		failures.append("GameState: fusion H insuffisante après seed réserve")
+	var fuse_err: String = hbomb_state.try_place_hbomb(GameConstants.Camp.GREEN, hq_green)
+	if not fuse_err.is_empty():
+		failures.append("GameState: fusion H refusée (%s)" % fuse_err)
+	elif hbomb_state.hbomb_on_board(GameConstants.Camp.GREEN) == null:
+		failures.append("GameState: bombe H absente après fusion")
+	else:
+		var target: String = "Sun"
+		hbomb_state._add_piece(GameConstants.Camp.BLUE, GameConstants.PieceType.SOLDIER, target, false)
+		var bomb: PieceInstance = hbomb_state.hbomb_on_board(GameConstants.Camp.GREEN)
+		if target not in hbomb_state.destinations_for(bomb):
+			failures.append("GameState: bombe H sans cibles de frappe")
+		var strike_err: String = hbomb_state.try_hbomb_strike(GameConstants.Camp.GREEN, target)
+		if not strike_err.is_empty():
+			failures.append("GameState: frappe H refusée (%s)" % strike_err)
+		else:
+			hbomb_state.end_planning_round()
+			for p: PieceInstance in hbomb_state.pieces_on_sector(target):
+				failures.append("GameState: frappe H n'a pas vidé %s" % target)
+				break
 	for path: String in [
 		"res://scenes/menu/main_menu.tscn",
 		"res://scenes/menu/game_setup.tscn",

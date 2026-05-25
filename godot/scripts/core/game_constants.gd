@@ -25,6 +25,7 @@ const MAX_ORDERS_PER_ROUND: int = 5
 const PLANNING_TIMER_SECONDS: int = 3600
 const STARTING_POWER: int = 12
 const POWER_PER_ROUND: int = 3
+const HBOMB_FUSION_FORCE: int = 100
 
 const PIECE_STATS: Dictionary = {
 	PieceType.SOLDIER: { "force": 2, "max_move": 2, "power_cost": 2 },
@@ -92,6 +93,28 @@ static func movement_domain_label(domain: MovementDomain) -> String:
 
 static func is_basic_buy(piece: PieceType) -> bool:
 	return piece in [PieceType.SOLDIER, PieceType.RAIDER, PieceType.HUNTER, PieceType.CRUISER]
+
+
+static func reserve_force_value(piece_type: PieceType) -> int:
+	match piece_type:
+		PieceType.SOLDIER:
+			return 2
+		PieceType.RAIDER:
+			return 3
+		PieceType.HUNTER:
+			return 5
+		PieceType.CRUISER:
+			return 10
+		PieceType.COMMANDO:
+			return 20
+		PieceType.BOMBER:
+			return 30
+		PieceType.FIGHTER:
+			return 25
+		PieceType.DESTROYER:
+			return 50
+		_:
+			return 0
 
 
 static func exchange_recipe(result: PieceType) -> Dictionary:
