@@ -8,9 +8,9 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ---
 
-## 2026-05-25 — UI atlas, sidebar épurée, losange mécanique, warnings GDScript
+## 2026-05-25 04:35:57 — UI atlas, sidebar épurée, losange mécanique, warnings GDScript
 
-**Commit** : _(après `git commit`)_
+**Commit** : `ae45e26` — `UI icônes atlas, sidebar sans doublons, losange mécanique, fix warnings.`
 
 ### Réalisé
 
