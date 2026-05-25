@@ -39,6 +39,8 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 - Badge **« HQ »** rouge visible quand le secteur sélectionné est le QG humain
 - Timer reformaté : `59:43  R1` (temps devant, manche derrière)
 
+**Commit** : `60d0422` — `Design plateau: fond #2b2d4a, iles teintees Unity, surbrillances propres.`
+
 ---
 
 ## 2026-05-25 (nuit) — Surbrillances déplacements alignées sur les tuiles
