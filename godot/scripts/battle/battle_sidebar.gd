@@ -1,6 +1,6 @@
 class_name BattleSidebar
 extends Control
-## Panneaux latéraux style original (Case Info, Reserve, Orders / timer).
+## Panneaux latéraux — libellés symboles (pas de traduction).
 
 signal unit_pressed(piece_type: GameConstants.PieceType)
 
@@ -33,10 +33,10 @@ func refresh(
 
 	if selected_sector != "":
 		var short := BoardCatalog.sector_short_label(selected_sector)
-		_case_title.text = "Case Info — %s" % short
+		_case_title.text = "◎ %s" % short
 		if selected_sector.begins_with("HQ_"):
 			_case_hq.visible = true
-			_case_hq.text = "QG"
+			_case_hq.text = "⚑"
 
 		var counts: Dictionary = {}
 		for p: PieceInstance in state.pieces_on_sector(selected_sector):
@@ -60,30 +60,20 @@ func refresh(
 
 	if selected_piece != null:
 		if selected_piece.in_reserve:
-			_case_piece.text = "Réserve : %s — touchez le QG ou Déployer" % selected_piece.label()
+			_case_piece.text = "↓ %s" % _shape_label(selected_piece.type)
 		else:
-			var domain := GameConstants.movement_domain_label(
-				GameConstants.piece_movement_domain(selected_piece.type)
-			)
-			var hint := "cases surlignées = destinations"
+			var domain_sym := "·"
 			match GameConstants.piece_movement_domain(selected_piece.type):
 				GameConstants.MovementDomain.LAND:
-					hint = "cases dorées (portée %d)" % GameConstants.unity_land_nbmove(selected_piece.type)
+					domain_sym = "▣%d" % GameConstants.unity_land_nbmove(selected_piece.type)
 				GameConstants.MovementDomain.SEA:
-					hint = "couloirs bleus Sp + côte (1 case mer)"
+					domain_sym = "◆"
 				GameConstants.MovementDomain.AIR:
-					hint = "cases jaunes (portée air)"
-			_case_piece.text = "Active : %s [%s] — %s" % [
-				selected_piece.label(),
-				domain,
-				hint,
-			]
+					domain_sym = "▲"
+			_case_piece.text = "%s %s" % [_shape_label(selected_piece.type), domain_sym]
 
 	var fusion_f: int = state.hbomb_fusion_force_available(human_camp, selected_sector)
-	_reserve_power.text = "Power %d  |  fusion %d F" % [
-		state.camp_power(human_camp),
-		fusion_f,
-	]
+	_reserve_power.text = "P %d  ☢%d" % [state.camp_power(human_camp), fusion_f]
 	var hbomb_board: bool = state.hbomb_on_board(human_camp) != null
 	var res: Dictionary = {}
 	for p: PieceInstance in state.reserve_pieces(human_camp):
@@ -92,15 +82,12 @@ func refresh(
 	var outline_row := _shape_row(["●", "■", "▲", "◆"], res, true)
 	var count_row := _shape_row(["●", "■", "▲", "◆"], res, false)
 	if hbomb_board:
-		outline_row += "  ☢ en jeu"
+		outline_row += "  ☢"
 		count_row += "  ☢"
 	_reserve_outline.text = outline_row
 	_reserve_counts.text = count_row
 
-	_orders_timer.text = "Manche %d — timer %s" % [
-		state.round_number,
-		_format_timer(planning_elapsed),
-	]
+	_orders_timer.text = "R%d ⏱%s" % [state.round_number, _format_timer(planning_elapsed)]
 	_orders_queue.text = _format_orders_queue(state, human_camp)
 
 
@@ -117,7 +104,7 @@ func _build_unit_buttons(counts: Dictionary, selected_piece: PieceInstance) -> v
 		var piece_type: GameConstants.PieceType = key as GameConstants.PieceType
 		var n: int = int(counts[key])
 		var btn := Button.new()
-		btn.text = "%s %s %d" % [_shape_label(piece_type), _short_type(piece_type), n]
+		btn.text = "%s %d" % [_shape_label(piece_type), n]
 		btn.focus_mode = Control.FOCUS_NONE
 		if selected_piece != null and selected_piece.type == piece_type:
 			btn.modulate = Color(1.0, 0.95, 0.7)
@@ -137,7 +124,7 @@ static func _format_orders_queue(state: GameState, human_camp: GameConstants.Cam
 	for order: GameOrder in state.orders_for_camp(human_camp):
 		lines.append("[color=#e8a060]%s[/color]" % order.pad_label())
 	if lines.is_empty():
-		lines.append("[color=#888]— aucun ordre —[/color]")
+		lines.append("[color=#888]—[/color]")
 	lines.append("[color=#aaa](%d/%d)[/color]" % [used, max_o])
 	return "\n".join(lines)
 
@@ -161,28 +148,6 @@ func _shape_row(symbols: PackedStringArray, counts: Dictionary, outline: bool) -
 		var n: int = int(counts.get(sym, 0)) if not outline else 0
 		parts.append("%s %d" % [sym, n])
 	return "  ".join(parts)
-
-
-static func _short_type(piece_type: GameConstants.PieceType) -> String:
-	match piece_type:
-		GameConstants.PieceType.SOLDIER:
-			return "Sold."
-		GameConstants.PieceType.RAIDER:
-			return "Tank"
-		GameConstants.PieceType.HUNTER:
-			return "Chas."
-		GameConstants.PieceType.CRUISER:
-			return "Crois."
-		GameConstants.PieceType.COMMANDO:
-			return "Rég."
-		GameConstants.PieceType.BOMBER:
-			return "Bmb."
-		GameConstants.PieceType.FIGHTER:
-			return "Ch.l"
-		GameConstants.PieceType.DESTROYER:
-			return "Destr."
-		_:
-			return ""
 
 
 static func _shape_label(piece_type: GameConstants.PieceType) -> String:

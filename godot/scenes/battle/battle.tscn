@@ -46,14 +46,14 @@ theme_override_constants/separation = 4
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "Case Info"
+text = "◎"
 
 [node name="CaseHq" type="Label" parent="Sidebar/CasePanel/VBox"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.25, 0.25, 1)
-text = "HQ"
+text = "⚑"
 
 [node name="CaseStats" type="Label" parent="Sidebar/CasePanel/VBox"]
 unique_name_in_owner = true
@@ -126,12 +126,12 @@ text = "◆10"
 [node name="DeployButton" type="Button" parent="Sidebar/ReservePanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Déployer"
+text = "↓"
 
 [node name="HbombFuseButton" type="Button" parent="Sidebar/ReservePanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Fusion H (100 F réserve)"
+text = "☢100"
 
 [node name="ExchangeRow" type="HBoxContainer" parent="Sidebar/ReservePanel/VBox"]
 layout_mode = 2
@@ -167,14 +167,7 @@ size_flags_vertical = 3
 [node name="OrdersTimer" type="Label" parent="Sidebar/OrdersPanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Orders / timer"
-
-[node name="OrdersHint" type="Label" parent="Sidebar/OrdersPanel/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.75, 0.78, 0.85, 1)
-theme_override_font_sizes/font_size = 11
-autowrap_mode = 2
-text = "Case Info : touchez une unité. Puis une case verte = destination. Max 5 ordres."
+text = "⏱"
 
 [node name="OrdersQueue" type="RichTextLabel" parent="Sidebar/OrdersPanel/VBox"]
 unique_name_in_owner = true
@@ -207,7 +200,7 @@ text = "▶▶"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Lecture"
+text = "▶▶"
 
 [node name="GameOverLayer" type="CanvasLayer" parent="."]
 layer = 10
@@ -240,13 +233,7 @@ theme_override_constants/separation = 12
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Victoire"
-horizontal_alignment = 1
-
-[node name="GameOverHint" type="Label" parent="GameOverLayer/Center/Panel/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.75, 0.78, 0.85, 1)
-text = "Un seul camp reste en jeu."
+text = "★"
 horizontal_alignment = 1
 
 [node name="Buttons" type="HBoxContainer" parent="GameOverLayer/Center/Panel/VBox"]
@@ -257,12 +244,12 @@ theme_override_constants/separation = 10
 [node name="ReplayButton" type="Button" parent="GameOverLayer/Center/Panel/VBox/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Rejouer"
+text = "↻"
 
 [node name="MenuButtonGO" type="Button" parent="GameOverLayer/Center/Panel/VBox/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Menu"
+text = "☰"
 
 [node name="DebugLayer" type="Control" parent="."]
 visible = false
