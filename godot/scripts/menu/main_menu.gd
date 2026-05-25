@@ -3,17 +3,12 @@ extends Control
 @onready var _logo_f: Label = %LogoF
 @onready var _logo_rest: Label = %LogoRest
 @onready var _panel: PanelContainer = %Panel
-@onready var _backdrop_diamond: Control = $BackdropDiamond
-
-
 func _ready() -> void:
 	DisplayServer.window_set_title("Forces")
 	MenuTheme.style_panel(_panel)
 	MenuTheme.style_title(_logo_f, 48)
 	MenuTheme.style_title(_logo_rest, 48)
 	_logo_rest.add_theme_color_override("font_color", Color(0.72, 0.52, 0.95))
-	if _backdrop_diamond:
-		_backdrop_diamond.modulate = Color(1, 1, 1, 0.14)
 	for btn: Button in [%PlayButton, %QuickPlayButton, %TutorialButton, %OptionsButton, %QuitButton]:
 		MenuTheme.style_primary_button(btn)
 	AudioManager.play_menu_music()

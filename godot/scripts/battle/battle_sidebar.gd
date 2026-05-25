@@ -10,7 +10,6 @@ signal unit_pressed(piece_type: GameConstants.PieceType)
 @onready var _case_units: HBoxContainer = %CaseUnitsRow
 @onready var _case_piece: Label = %CasePiece
 @onready var _reserve_power: Label = %ReservePower
-@onready var _reserve_outline: Label = %ReserveOutline
 @onready var _reserve_counts: Label = %ReserveCounts
 @onready var _orders_timer: Label = %OrdersTimer
 @onready var _orders_queue: RichTextLabel = %OrdersQueue
@@ -79,12 +78,9 @@ func refresh(
 	for p: PieceInstance in state.reserve_pieces(human_camp):
 		var k: String = _shape_label(p.type)
 		res[k] = int(res.get(k, 0)) + 1
-	var outline_row := _shape_row(["●", "■", "▲", "◆"], res, true)
 	var count_row := _shape_row(["●", "■", "▲", "◆"], res, false)
 	if hbomb_board:
-		outline_row += "  ☢"
 		count_row += "  ☢"
-	_reserve_outline.text = outline_row
 	_reserve_counts.text = count_row
 
 	_orders_timer.text = "R%d ⏱%s" % [state.round_number, _format_timer(planning_elapsed)]

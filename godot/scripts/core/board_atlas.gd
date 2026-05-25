@@ -130,7 +130,7 @@ static func sector_tint(sector_id: String) -> Color:
 
 static func sector_tile_modulate(sector_id: String) -> Color:
 	if sector_id.begins_with("Space_"):
-		return Color(0.62, 0.65, 0.72, 1.0)
+		return Color(0.5, 0.7, 0.92, 1.0)
 	if BoardCatalog.is_neutral(sector_id):
 		return Color(0.92, 0.93, 0.96, 1.0)
 	var tint := _camp_multiply_color(BoardCatalog.camp_for_sector(sector_id))
@@ -170,7 +170,7 @@ static func tile_design_size(sector_id: String) -> Vector2:
 
 static func _sea_connector_design_size(sector_id: String) -> Vector2:
 	var native := tile_native_size(sector_id)
-	var long_side := 40.0
+	var long_side := 52.0
 	if native.x > native.y * 1.25:
 		var h := long_side * (native.y / native.x)
 		return Vector2(long_side, h)

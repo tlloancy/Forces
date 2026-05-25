@@ -88,12 +88,6 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.82, 0.35, 1)
 text = "F 0"
 
-[node name="ReserveOutline" type="Label" parent="Sidebar/ReservePanel/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.95, 0.35, 0.35, 0.85)
-text = "● 0 ■ 0 ▲ 0 ◆ 0"
-
 [node name="ReserveCounts" type="Label" parent="Sidebar/ReservePanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -139,22 +133,22 @@ layout_mode = 2
 [node name="ExchangeCommandoButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "3●→Cmd"
+text = "3●→◎"
 
 [node name="ExchangeBomberButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "3■→Bmb"
+text = "3■→□"
 
 [node name="ExchangeFighterButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "3▲→Ch"
+text = "3▲→△"
 
 [node name="ExchangeDestroyerButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "3◆→Dst"
+text = "3◆→◇"
 
 [node name="OrdersPanel" type="PanelContainer" parent="Sidebar"]
 layout_mode = 2

@@ -8,6 +8,48 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ---
 
+## 2026-05-25 — Couloirs mer visibles, UI épurée, menu nettoyé
+
+**Commit** : _(à renseigner après `git commit`)_
+
+### Problème utilisateur
+
+- Couloirs d’eau **invisibles** → déplacements croiseur incompréhensibles
+- Boutons échange encore `Cmd` / `Bmb` / `Ch` / `Dst`
+- Menu : losange géant + `④` + texture O avec motif interne = « c’est quoi cette merde »
+- Carte : carrés bleus empilés au centre à la sélection mer (surbrillance texture × N)
+
+### Réalisé
+
+- **`board_map.gd`** — tuiles `Space_*` (Sp1–Sp12, connecteurs H/V) **toujours dessinées** (plus masquées) ; teinte mer `Color(0.5, 0.7, 0.92)` ; surbrillance mer = **contour seule** (plus de empilement de textures semi-transparentes)
+- **`board_atlas.gd`** — connecteurs mer agrandis (`long_side` 40 → 52) ; modulate mer aligné
+- **`board_catalog.gd`** — pads courts symboles : `⚑` `☀` `◇{n}` (plus `HQ` / `Sp3`)
+- **`battle.tscn`** — échanges `3●→◎` `3■→□` `3▲→△` `3◆→◇` ; ligne `ReserveOutline` dupliquée supprimée
+- **`battle_sidebar.gd`** — une seule ligne compteurs réserve
+- **Menu** — `BackdropDiamond` et sous-titre `④` supprimés ; `logo_rotating_o.gd` : losange **plat** (`plain_rhombus`) pour le O du titre (sans chevron atlas)
+
+### Fichiers
+
+- `scripts/battle/board_map.gd`
+- `scripts/core/board_atlas.gd`
+- `scripts/core/board_catalog.gd`
+- `scenes/battle/battle.tscn`
+- `scripts/battle/battle_sidebar.gd`
+- `scenes/menu/main_menu.tscn`
+- `scripts/menu/main_menu.gd`
+- `scripts/menu/logo_rotating_o.gd`
+
+### Tests
+
+- `.\tools\run_headless.ps1 -Mode smoke` → OK
+
+### À faire
+
+- [ ] Réduire texte `%OrdersLog` / résolution
+- [ ] Vérifier visuellement les 12 couloirs Sp entre quadrants (F5)
+
+---
+
 ## 2026-05-25 04:01:45 — UI bataille symboles + tests non-régression headless
 
 **Commit** : `25322fb` — `UI bataille en symboles et tests de non-régression headless.`
@@ -34,7 +76,7 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ### À faire
 
-- [ ] Symboliser les échanges (`3●→Cmd` → symboles purs)
+- [x] Symboliser les échanges (`3●→◎` etc., commit couloirs mer)
 - [ ] Réduire texte dans `%OrdersLog` / résolution (pads encore en français)
 
 ---

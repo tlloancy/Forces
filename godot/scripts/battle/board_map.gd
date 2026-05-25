@@ -172,11 +172,13 @@ func _draw() -> void:
 	for sector_id: String in _move_highlights:
 		if not _layout.has(sector_id):
 			continue
-		if sector_id.begins_with("Space_"):
-			_draw_sea_corridor_marker(board, sx, sy, scale, sector_id, _highlight_color)
 		var tile_rect := _sector_highlight_rect(board, sx, sy, scale, sector_id)
-		draw_rect(tile_rect.grow(1.0), Color(_highlight_color.r, _highlight_color.g, _highlight_color.b, 0.45))
-		draw_rect(tile_rect.grow(1.0), _highlight_color, false, 2.5)
+		if sector_id.begins_with("Space_"):
+			draw_rect(tile_rect.grow(1.0), Color(_highlight_color.r, _highlight_color.g, _highlight_color.b, 0.2))
+			draw_rect(tile_rect.grow(1.0), _highlight_color, false, 2.5)
+		else:
+			draw_rect(tile_rect.grow(1.0), Color(_highlight_color.r, _highlight_color.g, _highlight_color.b, 0.45))
+			draw_rect(tile_rect.grow(1.0), _highlight_color, false, 2.5)
 
 	if _state != null:
 		var pending: Dictionary = _state.human_pending_move_targets()
@@ -237,8 +239,6 @@ func _draw_layer(sector_id: String) -> int:
 
 
 func _draw_tile_for_sector(sector_id: String) -> bool:
-	if sector_id.begins_with("Space_"):
-		return false
 	return true
 
 
@@ -301,7 +301,10 @@ func _draw_tiles(board: Rect2, sx: float, sy: float, scale: float) -> void:
 			Vector2(cx - design.x * 0.5, cy - design.y * 0.5),
 			design
 		)
-		draw_texture_rect(tex, rect, false, BoardAtlas.sector_tile_modulate(sector_id))
+		var tint: Color = BoardAtlas.sector_tile_modulate(sector_id)
+		if sector_id.begins_with("Space_"):
+			tint = Color(0.5, 0.7, 0.92, 1.0)
+		draw_texture_rect(tex, rect, false, tint)
 
 
 func _draw_piece_icon(center: Vector2, icon_size: float, piece_type: GameConstants.PieceType, color: Color) -> void:
