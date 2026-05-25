@@ -1,78 +1,57 @@
 # Forces — Godot 4
 
-Portage du jeu **Forces** (Unity / JavaScript, stage 42, 2013) vers **Godot 4.6** (4.x compatible).
+Portage jouable du jeu **Forces** (Unity / JavaScript, 2013) vers **Godot 4.6**.
 
-Le dépôt Unity d’origine reste à la racine (`Assets/`, etc.). Ce dossier est le client Godot autonome.
+Le dépôt Unity d’origine reste à la racine (`Assets/`). Ce dossier est le client Godot autonome.
+
+## Statut (v1 solo)
+
+| Domaine | État |
+|---------|------|
+| Menu → config → bataille | OK |
+| Plateau atlas (tuiles, mer, QG) | OK |
+| Terre / mer / air + surbrillances | OK |
+| Power, réserve, achats, échanges 3→1, déploiement QG | OK |
+| Bombes H (fusion 100 F, frappe) | OK |
+| Combats multi-camps + capture drapeau | OK |
+| IA (Facile / Normal / Difficile) | OK |
+| Tutoriel, options (volumes persistés) | OK |
+| Multijoueur réseau | Non |
+| Monétisation / pub | Hors scope (sur demande) |
+| Tuiles directionnelles pixel-perfect Unity | Optionnel |
 
 ## Branche
 
-Développement sur `godot4-port`.
+`godot4-port`
 
-## Ouvrir le projet
+## Lancer
 
-1. Installer [Godot 4.6](https://godotengine.org/download) (ou la version que tu utilises déjà).
-2. Importer le dossier `godot/` comme projet.
-## Flux joueur
+1. Godot 4.6 → importer `godot/`
+2. **F5** : menu principal
+3. **Partie rapide** ou **Jouer** → bataille
 
-1. **Menu** — Jouer / Partie rapide / Tutoriel / Options / Quitter  
-2. **Créer partie** — Vert = vous ; Bleu/Rouge/Jaune = IA ou joueur (+ difficulté IA)  
-3. **Bataille** — planification des ordres (moteur actuel)
+Contrôles bataille : clic case ; reclic = changer de pièce ; clic destination = ordre ; **Fin manche** = IA + résolution.
 
-F5 démarre sur le **menu principal**.
-
-## Tests headless (CLI / CI / agent)
-
-Sans ouvrir l’éditeur, pour vérifier compilation + moteur :
+## Tests headless
 
 ```powershell
 cd godot
-# Une fois Godot installé, optionnel :
-$env:GODOT_BIN = "C:\Users\tom\Downloads\Godot_v4.6.3-stable_win64.exe"
-.\tools\run_headless.ps1          # smoke (défaut)
-.\tools\run_headless.ps1 compile  # charge le projet 3 frames
-.\tools\run_headless.ps1 import   # importe les assets
+$env:GODOT_BIN = "C:\...\Godot_v4.6.3-stable_win64_console.exe"
+.\tools\run_headless.ps1
 ```
-
-Linux/macOS :
-
-```bash
-cd godot
-export GODOT_BIN=/path/to/godot
-./tools/run_headless.sh smoke
-```
-
-Équivalent manuel :
-
-```bash
-godot --headless --path . "res://scenes/headless_test.tscn"
-godot --headless --path . "res://scenes/menu/main_menu.tscn" --quit-after 2
-```
-
-Le workflow GitHub `.github/workflows/godot-headless.yml` lance les mêmes checks sur push `godot/**`.
 
 ## Architecture
 
 | Dossier | Rôle |
 |---------|------|
-| `scenes/menu/` | Menu principal, config partie, options, tutoriel |
-| `scenes/battle/` | Écran de bataille (ex-UI debug) |
-| `scripts/app/game_session.gd` | Autoload — config persistée menu → bataille |
-| `scripts/core/` | Moteur sans UI |
-| `data/land_adjacency.json` | Graphe terrestre |
+| `scenes/menu/` | Menu, config, options, tutoriel |
+| `scenes/battle/` | Carte + sidebar |
+| `scripts/core/` | Moteur (`game_state`, graphes, combats) |
+| `scripts/ai/` | `ai_planner.gd` |
+| `data/*.json` | Layout plateau, adjacences, atlas |
 
-## Roadmap
-
-Voir [`CHANGELOG.md`](CHANGELOG.md) pour le détail daté.
-
-1. ~~**Moteur terrestre**~~ — état, ordres multi-camps, résolution simplifiée, capture drapeau
-2. ~~**Menus & flux**~~ — menu → config → bataille
-3. ~~**IA basique**~~ — `ai_planner.gd` (Facile/Normal/Difficile)
-4. **Mer / air** — parsers `Dep_mer.js` / `Dep_air.js`
-5. **Plateau visuel** — assets Unity / JP
-6. **Règles Power** — jetons, réserve, échanges, bombes H
-7. **UI bataille** — remplacement `infoButtons.js` / `playerTurn.js`
-8. **Multijoueur** — WebSocket / ENet
+Journal détaillé : [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Legacy Unity
 
-Référence : `../Assets/Scripts/`
+Référence règles / parsers : `../Assets/Scripts/`

@@ -53,6 +53,7 @@ static func plan_turn(state: GameState, camp: GameConstants.Camp, difficulty: Ga
 		if err.is_empty():
 			logs.append("  · %s : %s → %s" % [piece.label(), from_sector, dest])
 	_maybe_ai_buy(state, camp, difficulty, rng, logs)
+	_maybe_ai_deploy(state, camp, difficulty, rng, logs)
 	_maybe_ai_hbomb(state, camp, difficulty, rng, logs)
 	if logs.is_empty():
 		logs.append("  · (aucun ordre)")
@@ -211,6 +212,33 @@ static func _maybe_ai_buy(
 	var err: String = state.try_buy_to_reserve(camp, pick)
 	if err.is_empty():
 		logs.append("  · achat %s (réserve)" % GameConstants.piece_type_label(pick))
+
+
+static func _maybe_ai_deploy(
+	state: GameState,
+	camp: GameConstants.Camp,
+	difficulty: GameSession.Difficulty,
+	rng: RandomNumberGenerator,
+	logs: Array[String],
+) -> void:
+	if difficulty == GameSession.Difficulty.EASY:
+		return
+	if state.camp_orders_used(camp) >= GameConstants.MAX_ORDERS_PER_ROUND:
+		return
+	var reserves: Array[PieceInstance] = state.reserve_pieces(camp)
+	if reserves.is_empty() or rng.randf() > 0.55:
+		return
+	reserves.sort_custom(func(a: PieceInstance, b: PieceInstance) -> bool:
+		return a.combat_force() > b.combat_force()
+	)
+	var hq: String = BoardCatalog.hq_for_camp(camp)
+	for piece: PieceInstance in reserves:
+		if state.has_piece_moved(piece.id):
+			continue
+		var err: String = state.try_deploy_from_reserve(piece, hq)
+		if err.is_empty():
+			logs.append("  · déploiement %s sur %s" % [piece.label(), hq])
+			return
 
 
 static func _maybe_ai_hbomb(

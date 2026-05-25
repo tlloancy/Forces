@@ -16,6 +16,8 @@ const AiPlanner = preload("res://scripts/ai/ai_planner.gd")
 @onready var _buy_cruiser_btn: Button = %BuyCruiserButton
 @onready var _deploy_btn: Button = %DeployButton
 @onready var _hbomb_fuse_btn: Button = %HbombFuseButton
+@onready var _game_over_layer: CanvasLayer = $GameOverLayer
+@onready var _game_over_label: Label = %GameOverLabel
 
 var _state: GameState
 var _selected_sector: String = ""
@@ -34,6 +36,12 @@ func _ready() -> void:
 	_state.power_changed.connect(_on_power_changed)
 	_board_map.sector_pressed.connect(_on_map_sector_pressed)
 	_style_sidebar()
+	if _game_over_layer:
+		_game_over_layer.visible = false
+	if _game_over_layer:
+		var go_panel: PanelContainer = _game_over_layer.get_node("Center/Panel") as PanelContainer
+		if go_panel:
+			MenuTheme.style_panel(go_panel)
 	AudioManager.play_battle_music()
 	_populate_sector_list()
 	_begin_match()
@@ -85,12 +93,17 @@ func _populate_sector_list() -> void:
 
 func _refresh_ui() -> void:
 	var planning: bool = _state.phase == GameConstants.GamePhase.PLANNING
+	var game_over: bool = _state.phase == GameConstants.GamePhase.GAME_OVER
 	_end_round_btn.disabled = not planning
+	if _game_over_layer:
+		_game_over_layer.visible = game_over
 	_buy_soldier_btn.disabled = not planning
 	_buy_raider_btn.disabled = not planning
 	_buy_hunter_btn.disabled = not planning
 	_buy_cruiser_btn.disabled = not planning
-	_deploy_btn.disabled = not planning or _selected_piece_id < 0
+	var sel: PieceInstance = _selected_piece()
+	var can_deploy: bool = sel != null and sel.in_reserve and not _state.has_piece_moved(sel.id)
+	_deploy_btn.disabled = not planning or not can_deploy
 	var fusion_ok: bool = (
 		not _selected_sector.is_empty()
 		and _state.hbomb_fusion_force_available(_state.human_camp, _selected_sector)
@@ -115,7 +128,8 @@ func _refresh_ui() -> void:
 			_selected_piece(),
 		)
 	if _status:
-		_status.text = "Phase %s | ordres %d/%d" % [
+		_status.text = "%s | %s | ordres %d/%d" % [
+			GameConstants.camp_to_string(_state.human_camp),
 			_phase_name(_state.phase),
 			_state.camp_orders_used(_state.human_camp),
 			GameConstants.MAX_ORDERS_PER_ROUND,
@@ -133,7 +147,14 @@ func _movable_human_on_sector(sector_id: String) -> Array[PieceInstance]:
 	for p: PieceInstance in _state.human_pieces_on_sector(sector_id):
 		if not _state.has_piece_moved(p.id):
 			result.append(p)
+	var hq: String = BoardCatalog.hq_for_camp(_state.human_camp)
+	if sector_id == hq:
+		for p: PieceInstance in _state.reserve_pieces(_state.human_camp):
+			if not _state.has_piece_moved(p.id):
+				result.append(p)
 	result.sort_custom(func(a: PieceInstance, b: PieceInstance) -> bool:
+		if a.in_reserve != b.in_reserve:
+			return not a.in_reserve
 		return int(a.type) < int(b.type)
 	)
 	return result
@@ -169,12 +190,17 @@ func _highlight_color_for_piece(piece: PieceInstance) -> Color:
 
 
 func _log_last_order() -> void:
-	pass
+	var orders: Array[GameOrder] = _state.orders_for_camp(_state.human_camp)
+	if orders.is_empty():
+		return
+	var last: GameOrder = orders[orders.size() - 1]
+	_log.append_text("[color=#c8a878]%s[/color]\n" % last.pad_label())
 
 
 func _phase_name(phase: GameConstants.GamePhase) -> String:
 	match phase:
 		GameConstants.GamePhase.PLANNING: return "Planification"
+		GameConstants.GamePhase.RESOLUTION: return "Résolution"
 		GameConstants.GamePhase.GAME_OVER: return "Fin"
 		_: return "?"
 
@@ -182,6 +208,11 @@ func _phase_name(phase: GameConstants.GamePhase) -> String:
 func _select_sector(sector_id: String) -> void:
 	if _selected_piece_id >= 0:
 		var active: PieceInstance = _selected_piece()
+		if active != null and active.in_reserve:
+			var hq: String = BoardCatalog.hq_for_camp(_state.human_camp)
+			if sector_id == hq:
+				_on_deploy_pressed()
+				return
 		if active != null and not active.in_reserve and sector_id != active.sector_id:
 			var dests := _state.destinations_for(active)
 			if sector_id in dests:
@@ -369,12 +400,39 @@ func _on_end_round_pressed() -> void:
 	_log.append_text("\n[b]Fin manche %d[/b]\n" % _state.round_number)
 	for line: String in AiPlanner.run_all_ai(_state):
 		_log.append_text(line + "\n")
+	var conflict_sectors := _conflict_sectors()
+	_state.set_phase(GameConstants.GamePhase.RESOLUTION)
+	_refresh_ui()
+	if _board_map.has_method("flash_sectors") and not conflict_sectors.is_empty():
+		_board_map.call(
+			"flash_sectors",
+			PackedStringArray(conflict_sectors),
+			Color(1.0, 0.55, 0.35, 0.8),
+			0.9,
+		)
 	for line: String in _state.end_planning_round():
 		_log.append_text(line + "\n")
 	_check_game_over()
 	_planning_elapsed = 1
 	_timer_accum = 0.0
 	_refresh_ui()
+
+
+func _conflict_sectors() -> Array[String]:
+	var result: Array[String] = []
+	var seen: Dictionary = {}
+	for p: PieceInstance in _state.pieces:
+		if p.in_reserve or seen.has(p.sector_id):
+			continue
+		var camps: Dictionary = {}
+		for s: PieceInstance in _state.pieces_on_sector(p.sector_id):
+			if s.type == GameConstants.PieceType.HBOMB:
+				continue
+			camps[s.camp] = true
+		if camps.size() > 1:
+			result.append(p.sector_id)
+		seen[p.sector_id] = true
+	return result
 
 
 func _check_game_over() -> void:
@@ -386,7 +444,18 @@ func _check_game_over() -> void:
 			winner = camp
 	if alive <= 1 and _state.round_number > 1:
 		_state.set_phase(GameConstants.GamePhase.GAME_OVER)
-		_log.append_text("\n[color=yellow]Victoire : %s[/color]\n" % GameConstants.camp_to_string(winner))
+		var msg: String = "Victoire : %s" % GameConstants.camp_to_string(winner)
+		_log.append_text("\n[color=yellow]%s[/color]\n" % msg)
+		if _game_over_label:
+			_game_over_label.text = msg
+
+
+func _on_replay_pressed() -> void:
+	if _game_over_layer:
+		_game_over_layer.visible = false
+	_begin_match()
+	_select_sector(BoardCatalog.hq_for_camp(_state.human_camp))
+	_refresh_ui()
 
 
 func _on_phase_changed(_phase: GameConstants.GamePhase) -> void:

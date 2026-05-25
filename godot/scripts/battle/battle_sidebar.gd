@@ -39,14 +39,17 @@ func refresh(
 			lines.append("%s %d" % [key, int(counts[key])])
 		_case_stats.text = "\n".join(lines) if not lines.is_empty() else "—"
 
-	if selected_piece != null and selected_sector != "" and selected_piece.sector_id == selected_sector:
-		var domain := GameConstants.movement_domain_label(
-			GameConstants.piece_movement_domain(selected_piece.type)
-		)
-		_case_piece.text = "Pièce : %s (%s) — recliquez la case pour changer" % [
-			selected_piece.label(),
-			domain,
-		]
+	if selected_piece != null:
+		if selected_piece.in_reserve:
+			_case_piece.text = "Réserve : %s — Déployer sur votre QG" % selected_piece.label()
+		elif selected_sector != "" and selected_piece.sector_id == selected_sector:
+			var domain := GameConstants.movement_domain_label(
+				GameConstants.piece_movement_domain(selected_piece.type)
+			)
+			_case_piece.text = "Pièce : %s (%s) — recliquez la case pour changer" % [
+				selected_piece.label(),
+				domain,
+			]
 
 	var fusion_f: int = state.hbomb_fusion_force_available(human_camp, selected_sector)
 	_reserve_power.text = "Power %d  |  fusion %d F" % [
@@ -66,7 +69,10 @@ func refresh(
 	_reserve_outline.text = outline_row
 	_reserve_counts.text = count_row
 
-	_orders_timer.text = "Orders / timer : %s" % _format_timer(planning_elapsed)
+	_orders_timer.text = "Manche %d — timer %s" % [
+		state.round_number,
+		_format_timer(planning_elapsed),
+	]
 	_orders_queue.text = _format_orders_queue(state, human_camp)
 
 

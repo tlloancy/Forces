@@ -6,6 +6,27 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale).
 
 ---
 
+## 2026-05-25 18:00:00 — Port solo v1 (jouable de bout en bout)
+
+### Réalisé
+
+- **Écran victoire** — overlay Rejouer / Menu quand un seul camp survit
+- **Résolution visuelle** — flash orange sur les cases en conflit avant résolution des combats
+- **Réserve au QG** — cycle pièce inclut la réserve ; clic QG ou bouton Déployer
+- **Journal d’ordres** — chaque action humaine loggée en pad dans `%OrdersLog`
+- **`GameSettings`** — persistance `user://forces_settings.cfg` (musique / SFX)
+- **IA** — déploiement depuis la réserve (normal+)
+- **`README.md`** — tableau de statut v1
+
+### Hors scope v1 (volontaire)
+
+- Multijoueur réseau
+- Monétisation / publicité (**uniquement sur demande utilisateur**)
+- Tuiles directionnelles emboîtées type Unity (le CE générique suffit pour jouer)
+- `Battleground.unity` absent — calibration pixel-perfect reportée
+
+---
+
 ## 2026-05-25 12:00:00 — Plateau tuiles atlas, grilles ancrées QG, sidebar
 
 ### Réalisé
@@ -41,11 +62,11 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale).
 - **IA** — destinations via `destinations_for`, bonus mer/air, achats réserve (normal+), fusion H (difficile)
 - **Tutoriel** — pages mer/air, combats, bombe H, Power
 
-### À faire (prochaine étape critique)
+### À faire (améliorations futures)
 
 - [ ] Tuiles directionnelles emboîtées (échelle Unity) si souhaité
 - [ ] `Battleground.unity` pour calibration pixel-perfect
-- [ ] Animations fin de manche ; multijoueur ; monétisation
+- [ ] Animations déplacement pièces ; multijoueur
 
 ---
 

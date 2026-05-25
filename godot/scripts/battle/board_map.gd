@@ -16,6 +16,9 @@ var _selected: String = ""
 var _move_highlights: PackedStringArray = PackedStringArray()
 var _highlight_color: Color = Color(0.95, 0.85, 0.35, 0.55)
 var _state: GameState
+var _flash_sectors: PackedStringArray = PackedStringArray()
+var _flash_color: Color = Color(1.0, 0.45, 0.35, 0.7)
+var _flash_time_left: float = 0.0
 
 
 func _ready() -> void:
@@ -118,6 +121,18 @@ func set_highlight_color(color: Color) -> void:
 	queue_redraw()
 
 
+func flash_sectors(sectors: PackedStringArray, color: Color = Color(1.0, 0.45, 0.35, 0.75), duration: float = 0.85) -> void:
+	_flash_sectors = sectors
+	_flash_color = color
+	_flash_time_left = maxf(duration, 0.1)
+
+
+func _process(delta: float) -> void:
+	if _flash_time_left > 0.0:
+		_flash_time_left = maxf(0.0, _flash_time_left - delta)
+		queue_redraw()
+
+
 func _on_hit(event: InputEvent, sector_id: String) -> void:
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
@@ -141,6 +156,18 @@ func _draw() -> void:
 
 	if _state == null:
 		return
+
+	if _flash_time_left > 0.0 and not _flash_sectors.is_empty():
+		var pulse: float = 0.45 + 0.55 * sin(_flash_time_left * 14.0)
+		var fc := Color(_flash_color.r, _flash_color.g, _flash_color.b, _flash_color.a * pulse)
+		for sector_id: String in _flash_sectors:
+			if not _layout.has(sector_id):
+				continue
+			var fd: Dictionary = _layout[sector_id] as Dictionary
+			var fr: float = float(fd.get("r", 10)) * scale * 1.55
+			var fcx := board.position.x + float(fd["x"]) * sx
+			var fcy := board.position.y + float(fd["y"]) * sy
+			draw_arc(Vector2(fcx, fcy), fr, 0.0, TAU, 36, fc, 3.5)
 
 	for sector_id: String in _move_highlights:
 		if not _layout.has(sector_id):

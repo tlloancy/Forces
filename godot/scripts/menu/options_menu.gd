@@ -12,12 +12,15 @@ func _ready() -> void:
 func _on_music_changed(value: float) -> void:
 	GameSession.music_volume = value / 100.0
 	AudioManager.refresh_volumes()
+	GameSettings.save_from_session()
 
 
 func _on_sfx_changed(value: float) -> void:
 	GameSession.sfx_volume = value / 100.0
 	AudioManager.refresh_volumes()
+	GameSettings.save_from_session()
 
 
 func _on_back_pressed() -> void:
+	GameSettings.save_from_session()
 	get_tree().change_scene_to_file("res://scenes/menu/main_menu.tscn")

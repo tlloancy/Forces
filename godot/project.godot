@@ -27,6 +27,7 @@ BoardCatalog="*res://scripts/core/board_catalog.gd"
 BoardGraph="*res://scripts/core/board_graph.gd"
 GameSession="*res://scripts/app/game_session.gd"
 AudioManager="*res://scripts/app/audio_manager.gd"
+GameSettings="*res://scripts/app/game_settings.gd"
 
 [display]
 
