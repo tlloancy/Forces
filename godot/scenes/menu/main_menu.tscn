@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://forces_main_menu"]
+[gd_scene load_steps=3 format=3 uid="uid://forces_main_menu"]
 
 [ext_resource type="Script" path="res://scripts/menu/main_menu.gd" id="1_menu"]
+[ext_resource type="Script" path="res://scripts/menu/logo_rotating_o.gd" id="2_logo_o"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -20,8 +21,21 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.06, 0.09, 0.14, 1)
 
+[node name="BackdropDiamond" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_logo_o")
+icon_size = 220.0
+rotation_speed = 0.22
+
 [node name="SplashTexture" type="TextureRect" parent="."]
 unique_name_in_owner = true
+visible = false
 modulate = Color(1, 1, 1, 0.18)
 layout_mode = 1
 anchors_preset = 15
@@ -49,17 +63,37 @@ layout_mode = 2
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="LogoLabel" type="Label" parent="Center/Panel/VBox"]
+[node name="LogoRow" type="HBoxContainer" parent="Center/Panel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="LogoF" type="Label" parent="Center/Panel/VBox/LogoRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.68, 0.22, 1)
 theme_override_font_sizes/font_size = 48
-text = "FORCES"
-horizontal_alignment = 1
+text = "F"
+
+[node name="LogoO" type="Control" parent="Center/Panel/VBox/LogoRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+script = ExtResource("2_logo_o")
+icon_size = 44.0
+
+[node name="LogoRest" type="Label" parent="Center/Panel/VBox/LogoRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.52, 0.95, 1)
+theme_override_font_sizes/font_size = 48
+text = "RCES"
 
 [node name="Subtitle" type="Label" parent="Center/Panel/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.62, 0.68, 0.74, 1)
-text = "Conquête stratégique — 4 camps"
+text = "④"
 horizontal_alignment = 1
 
 [node name="PlayButton" type="Button" parent="Center/Panel/VBox"]
