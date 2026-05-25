@@ -52,6 +52,8 @@ static func plan_turn(state: GameState, camp: GameConstants.Camp, difficulty: Ga
 		var err: String = state.try_move_piece(piece, dest)
 		if err.is_empty():
 			logs.append("  · %s : %s → %s" % [piece.label(), from_sector, dest])
+	_maybe_ai_buy(state, camp, difficulty, rng, logs)
+	_maybe_ai_hbomb(state, camp, difficulty, rng, logs)
 	if logs.is_empty():
 		logs.append("  · (aucun ordre)")
 	return logs
@@ -114,8 +116,7 @@ static func _pick_destination(
 	if stats_variant == null or typeof(stats_variant) != TYPE_DICTIONARY:
 		return ""
 	var stats: Dictionary = stats_variant as Dictionary
-	var max_move: int = int(stats.get("max_move", 1))
-	var dests: PackedStringArray = BoardGraph.piece_destinations(piece.type, piece.sector_id, max_move)
+	var dests: PackedStringArray = state.destinations_for(piece)
 	if dests.is_empty():
 		return ""
 	var best_sector: String = ""
@@ -168,6 +169,13 @@ static func _score_destination(
 		score += 20.0 * aggression
 	if dest == piece.sector_id:
 		score -= 40.0
+	match GameConstants.piece_movement_domain(piece.type):
+		GameConstants.MovementDomain.SEA:
+			if dest.begins_with("Space_"):
+				score += 18.0
+		GameConstants.MovementDomain.AIR:
+			if dest.begins_with("Space_") or dest.begins_with("Moon_") or dest == "Sun":
+				score += 14.0
 	return score
 
 
@@ -177,6 +185,55 @@ static func _enemy_force_on_sector(state: GameState, sector_id: String, camp: Ga
 		if p.camp != camp:
 			total += p.combat_force()
 	return total
+
+
+static func _maybe_ai_buy(
+	state: GameState,
+	camp: GameConstants.Camp,
+	difficulty: GameSession.Difficulty,
+	rng: RandomNumberGenerator,
+	logs: Array[String],
+) -> void:
+	if difficulty == GameSession.Difficulty.EASY:
+		return
+	if state.camp_orders_used(camp) >= GameConstants.MAX_ORDERS_PER_ROUND:
+		return
+	if state.camp_power(camp) < 8:
+		return
+	if rng.randf() > 0.45:
+		return
+	var types: Array[GameConstants.PieceType] = [
+		GameConstants.PieceType.SOLDIER,
+		GameConstants.PieceType.RAIDER,
+		GameConstants.PieceType.CRUISER,
+	]
+	var pick: GameConstants.PieceType = types[rng.randi_range(0, types.size() - 1)]
+	var err: String = state.try_buy_to_reserve(camp, pick)
+	if err.is_empty():
+		logs.append("  · achat %s (réserve)" % GameConstants.piece_type_label(pick))
+
+
+static func _maybe_ai_hbomb(
+	state: GameState,
+	camp: GameConstants.Camp,
+	difficulty: GameSession.Difficulty,
+	rng: RandomNumberGenerator,
+	logs: Array[String],
+) -> void:
+	if difficulty != GameSession.Difficulty.HARD:
+		return
+	if state.hbomb_on_board(camp) != null:
+		return
+	if state.camp_orders_used(camp) >= GameConstants.MAX_ORDERS_PER_ROUND:
+		return
+	var hq: String = BoardCatalog.hq_for_camp(camp)
+	if state.hbomb_fusion_force_available(camp, hq) < GameConstants.HBOMB_FUSION_FORCE:
+		return
+	if rng.randf() > 0.25:
+		return
+	var err: String = state.try_place_hbomb(camp, hq)
+	if err.is_empty():
+		logs.append("  · fusion bombe H sur %s" % hq)
 
 
 static func _ally_force_on_sector(state: GameState, sector_id: String, camp: GameConstants.Camp, exclude_id: int) -> int:

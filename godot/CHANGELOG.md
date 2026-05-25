@@ -36,11 +36,16 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale).
 - **Bombes H** — fusion 100 F (réserve + pièces sur la case + Power), placement sur case, frappe (toutes pièces du secteur détruites), pad `H : HQ > CE`
 - **Combats** — vainqueur doit dépasser la 2ᵉ force ; égalité = pas de capture ; HBOMB ignorée dans les totaux de combat
 
+### Réalisé (suite)
+
+- **IA** — destinations via `destinations_for`, bonus mer/air, achats réserve (normal+), fusion H (difficile)
+- **Tutoriel** — pages mer/air, combats, bombe H, Power
+
 ### À faire (prochaine étape critique)
 
 - [ ] Tuiles directionnelles emboîtées (échelle Unity) si souhaité
 - [ ] `Battleground.unity` pour calibration pixel-perfect
-- [ ] IA mer/air/Power/fusion H ; tutoriel ; animations
+- [ ] Animations fin de manche ; multijoueur ; monétisation
 
 ---
 
