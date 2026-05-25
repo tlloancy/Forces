@@ -33,9 +33,9 @@ static func run_all_ai(state: GameState) -> Array[String]:
 		if not GameSession.is_ai(camp):
 			continue
 		var diff: GameSession.Difficulty = GameSession.slot_difficulty(camp)
-		logs.append("[b]IA %s[/b] (%s)" % [
-			GameConstants.camp_to_string(camp),
-			GameSession.difficulty_label(diff),
+		var cc: String = GameOrder._camp_hex(camp)
+		logs.append("[color=%s]◈[/color] IA [color=%s]%s[/color]" % [
+			cc, cc, GameSession.difficulty_label(diff).left(1).to_upper(),
 		])
 		logs.append_array(plan_turn(state, camp, diff))
 	return logs
@@ -60,7 +60,9 @@ static func plan_turn(state: GameState, camp: GameConstants.Camp, difficulty: Ga
 			continue
 		var err: String = state.try_move_piece(piece, dest)
 		if err.is_empty():
-			logs.append("  · %s : %s → %s" % [piece.label(), piece.sector_id, dest])
+			var order: GameOrder = state.orders_for_camp(camp).back()
+			if order != null:
+				logs.append("  " + order.bbcode_label())
 	_maybe_ai_buy(state, camp, difficulty, rng, logs)
 	_maybe_ai_deploy(state, camp, difficulty, rng, logs)
 	_maybe_ai_exchange(state, camp, difficulty, rng, logs)
@@ -252,7 +254,9 @@ static func _maybe_ai_buy(
 	var pick: GameConstants.PieceType = types[rng.randi_range(0, types.size() - 1)]
 	var err: String = state.try_buy_to_reserve(camp, pick)
 	if err.is_empty():
-		logs.append("  · achat réserve")
+		var order: GameOrder = state.orders_for_camp(camp).back()
+		if order != null:
+			logs.append("  " + order.bbcode_label())
 
 
 static func _maybe_ai_deploy(
@@ -278,7 +282,9 @@ static func _maybe_ai_deploy(
 			continue
 		var err: String = state.try_deploy_from_reserve(piece, hq)
 		if err.is_empty():
-			logs.append("  · déploiement sur QG")
+			var order: GameOrder = state.orders_for_camp(camp).back()
+			if order != null:
+				logs.append("  " + order.bbcode_label())
 			return
 
 
@@ -300,7 +306,9 @@ static func _maybe_ai_exchange(
 		GameConstants.PieceType.BOMBER,
 	]:
 		if state.try_exchange_to_reserve(camp, result_type).is_empty():
-			logs.append("  · échange elite")
+			var order: GameOrder = state.orders_for_camp(camp).back()
+			if order != null:
+				logs.append("  " + order.bbcode_label())
 			return
 
 
@@ -323,4 +331,6 @@ static func _maybe_ai_hbomb(
 	if rng.randf() > 0.35:
 		return
 	if state.try_place_hbomb(camp, hq).is_empty():
-		logs.append("  · bombe H")
+		var order: GameOrder = state.orders_for_camp(camp).back()
+		if order != null:
+			logs.append("  " + order.bbcode_label())

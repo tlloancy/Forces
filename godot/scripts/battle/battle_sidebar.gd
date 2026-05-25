@@ -166,7 +166,7 @@ static func _format_orders_queue(state: GameState, human_camp: GameConstants.Cam
 	var max_o: int = GameConstants.MAX_ORDERS_PER_ROUND
 	var lines: PackedStringArray = PackedStringArray()
 	for order: GameOrder in state.orders_for_camp(human_camp):
-		lines.append("[color=#e8a060]%s[/color]" % order.pad_label())
+		lines.append(order.bbcode_label())
 	if lines.is_empty():
 		lines.append("[color=#888]—[/color]")
 	lines.append("[color=#aaa](%d/%d)[/color]" % [used, max_o])

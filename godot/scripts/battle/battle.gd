@@ -202,7 +202,7 @@ func _log_last_order() -> void:
 	if orders.is_empty():
 		return
 	var last: GameOrder = orders[orders.size() - 1]
-	_log.append_text("[color=#c8a878]%s[/color]\n" % last.pad_label())
+	_log.append_text(last.bbcode_label() + "\n")
 
 
 func _phase_name(phase: GameConstants.GamePhase) -> String:
@@ -402,7 +402,7 @@ func _on_deploy_pressed() -> void:
 func _on_end_round_pressed() -> void:
 	if _state.phase != GameConstants.GamePhase.PLANNING:
 		return
-	_log.append_text("\n[b]Fin manche %d[/b]\n" % _state.round_number)
+	_log.append_text("[color=#555577]── R%d ──[/color]\n" % _state.round_number)
 	for line: String in AiPlanner.run_all_ai(_state):
 		_log.append_text(line + "\n")
 	var conflict_sectors := _conflict_sectors()

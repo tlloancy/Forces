@@ -33,10 +33,10 @@ SEA_OCTAGON = (100, 105, 120, 255)
 MOON_GREY = (120, 126, 142, 255)
 SUN_GREY = (100, 105, 120, 255)
 CAMP_TINT = {
-    "Plains": (175, 60, 78),        # → bordeaux Unity #8b3040
-    "Ice": (68, 58, 158),           # → violet Unity #4a3578
-    "Jungle": (38, 108, 104),       # → teal Unity #2a6e6a
-    "Desert": (175, 138, 52),       # → doré Unity #8a6a30
+    "Plains": (232, 72, 98),        # → bordeaux Unity #8b3040 (compensé multiply)
+    "Ice": (118, 82, 245),          # → violet Unity #4a3578 (compensé multiply)
+    "Jungle": (60, 165, 158),       # → teal Unity #2a6e6a (compensé multiply)
+    "Desert": (230, 170, 62),       # → doré Unity #8a6a30 (compensé multiply)
 }
 
 # Bandes couloir (zones grises sur les bords extérieurs entre HQs).
@@ -48,10 +48,19 @@ CROSS_HALF = 12  # demi-largeur des bras de la croix
 
 
 def _tint(img: Image.Image, rgb: tuple) -> Image.Image:
+    """Colorie l'image avec rgb en préservant la forme mais évitant le noir total.
+    Luminance remappée sur [0.55, 1.0] : les pixels sombres gardent la teinte cible."""
     base = img.convert("RGBA")
-    overlay = Image.new("RGBA", base.size, rgb + (255,))
-    out = ImageChops.multiply(base, overlay)
-    out.putalpha(base.split()[3])
+    alpha = base.split()[3]
+    from PIL import ImageOps
+    gray = ImageOps.grayscale(base)
+    # Remap luminance → [MIN_LUM, 1.0] pour éviter que multiply → noir
+    MIN_LUM = 0.55
+    scaled = gray.point(lambda p: int(255 * (MIN_LUM + (1.0 - MIN_LUM) * p / 255)))
+    color_fill = Image.new("RGBA", base.size, rgb + (255,))
+    lum_rgba = scaled.convert("RGBA")
+    out = ImageChops.multiply(color_fill, lum_rgba)
+    out.putalpha(alpha)
     return out
 
 

@@ -8,6 +8,25 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ---
 
+## 2026-05-25 (nuit 3) — Log icônes, bouton ▶ fixé, couleurs îles rehaussées
+
+### Bouton ▶ toujours visible
+- `OrdersLog` : `fit_content = false` + `scroll_following = true` — le log n'étire plus la sidebar et ne pousse plus le bouton hors de l'écran.
+- `OrdersQueue` : `custom_minimum_size = (0, 56)` pour un espace minimal garanti.
+
+### Log sans texte — 100 % icônes colorées
+- `GameOrder.bbcode_label()` — format compact BBCode : `[color=camp]piece_sym[/color] secteur_from→secteur_to`
+  - HQ → `[color=camp]⚑[/color]`, mer → gris, île → couleur camp
+  - Achat : `[color=camp]+sym[/color]`, échange : `sym→sym`, H-bombe : `H☠dest`
+- AI planner : `◈ IA N` (N = initial difficulté) + ordres en `bbcode_label()` — plus de "Tank : HQ_Blue → Ice_SW"
+- Séparateur de manche : `── R2 ──` (discret) au lieu de "Fin manche 2" en gras
+
+### Couleurs îles
+- `_tint()` : luminance remappée sur **[0.55, 1.0]** — les zones sombres de l'atlas gardent la teinte cible sans virer au noir
+- `CAMP_TINT` : valeurs compensées pour que le rendu multiply atteigne les hex Unity (`#8b3040`, `#4a3578`, `#2a6e6a`, `#8a6a30`)
+
+---
+
 ## 2026-05-25 (nuit 2) — Design plateau : fidélité Unity (fond, îles, surbrillances, sidebar)
 
 **Référence** : captures Unity `Screenshot_20260525-000216_Forc2.jpg` / `000226`.
