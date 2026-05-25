@@ -1,8 +1,6 @@
 extends Control
 ## Plateau plein écran — tuiles atlas individuelles + zones cliquables + pièces.
 
-const BoardAtlas = preload("res://scripts/core/board_atlas.gd")
-
 signal sector_pressed(sector_id: String)
 
 const DESIGN := Vector2(280.0, 280.0)
@@ -90,11 +88,11 @@ func _relayout_hits() -> void:
 	var design := _design_size()
 	var sx := board.size.x / design.x
 	var sy := board.size.y / design.y
-	var scale := minf(sx, sy)
+	var board_scale := minf(sx, sy)
 	for sector_id: String in _hits:
 		var hit: Control = _hits[sector_id]
 		var d: Dictionary = _layout[sector_id] as Dictionary
-		var r: float = float(d.get("r", 10)) * scale
+		var r: float = float(d.get("r", 10)) * board_scale
 		var cx := board.position.x + float(d["x"]) * sx
 		var cy := board.position.y + float(d["y"]) * sy
 		hit.position = Vector2(cx - r, cy - r)
@@ -150,9 +148,9 @@ func _draw() -> void:
 	var design := _design_size()
 	var sx := board.size.x / design.x
 	var sy := board.size.y / design.y
-	var scale := minf(sx, sy)
+	var board_scale := minf(sx, sy)
 
-	_draw_tiles(board, sx, sy, scale)
+	_draw_tiles(board, sx, sy, board_scale)
 
 	if _state == null:
 		return
@@ -164,7 +162,7 @@ func _draw() -> void:
 			if not _layout.has(sector_id):
 				continue
 			var fd: Dictionary = _layout[sector_id] as Dictionary
-			var fr: float = float(fd.get("r", 10)) * scale * 1.55
+			var fr: float = float(fd.get("r", 10)) * board_scale * 1.55
 			var fcx := board.position.x + float(fd["x"]) * sx
 			var fcy := board.position.y + float(fd["y"]) * sy
 			draw_arc(Vector2(fcx, fcy), fr, 0.0, TAU, 36, fc, 3.5)
@@ -172,7 +170,7 @@ func _draw() -> void:
 	for sector_id: String in _move_highlights:
 		if not _layout.has(sector_id):
 			continue
-		var tile_rect := _sector_highlight_rect(board, sx, sy, scale, sector_id)
+		var tile_rect := _sector_highlight_rect(board, sx, sy, board_scale, sector_id)
 		if sector_id.begins_with("Space_"):
 			draw_rect(tile_rect.grow(1.0), Color(_highlight_color.r, _highlight_color.g, _highlight_color.b, 0.2))
 			draw_rect(tile_rect.grow(1.0), _highlight_color, false, 2.5)
@@ -185,13 +183,13 @@ func _draw() -> void:
 		for sector_id: String in pending:
 			if not _layout.has(sector_id):
 				continue
-			var ghost_rect := _sector_highlight_rect(board, sx, sy, scale, sector_id)
+			var ghost_rect := _sector_highlight_rect(board, sx, sy, board_scale, sector_id)
 			draw_rect(ghost_rect, Color(0.35, 0.85, 0.45, 0.35))
 			draw_rect(ghost_rect, Color(0.5, 1.0, 0.55, 0.85), false, 1.5)
 
 	if _selected != "" and _layout.has(_selected):
 		var d: Dictionary = _layout[_selected] as Dictionary
-		var r: float = float(d.get("r", 10)) * scale * 1.35
+		var r: float = float(d.get("r", 10)) * board_scale * 1.35
 		var cx := board.position.x + float(d["x"]) * sx
 		var cy := board.position.y + float(d["y"]) * sy
 		_draw_dashed_rect(Rect2(cx - r, cy - r, r * 2.0, r * 2.0), Color(1, 1, 1, 0.92), 5.0)
@@ -205,7 +203,7 @@ func _draw() -> void:
 		var cy := board.position.y + float(sd["y"]) * sy
 		var p: PieceInstance = stack[0]
 		var col: Color = GameConstants.CAMP_COLORS[p.camp]
-		_draw_piece_icon(Vector2(cx, cy), 11.0 * scale, p.type, col)
+		_draw_piece_icon(Vector2(cx, cy), 11.0 * board_scale, p.type, col)
 		if stack.size() > 1:
 			var badge := str(stack.size())
 			var font := ThemeDB.fallback_font
@@ -238,7 +236,7 @@ func _draw_layer(sector_id: String) -> int:
 	return 1
 
 
-func _draw_tile_for_sector(sector_id: String) -> bool:
+func _draw_tile_for_sector(_sector_id: String) -> bool:
 	return true
 
 
@@ -250,30 +248,32 @@ func _sector_center(board: Rect2, sx: float, sy: float, sector_id: String) -> Ve
 	)
 
 
-func _sector_tile_rect(board: Rect2, sx: float, sy: float, scale: float, sector_id: String) -> Rect2:
+func _sector_tile_rect(board: Rect2, sx: float, sy: float, board_scale: float, sector_id: String) -> Rect2:
 	var center := _sector_center(board, sx, sy, sector_id)
-	var design := BoardAtlas.tile_design_size(sector_id) * scale
+	var design := BoardAtlas.tile_design_size(sector_id) * board_scale
 	return Rect2(center - design * 0.5, design)
 
 
 ## Surbrillance alignée sur les zones cliquables (layout), pas sur la taille atlas.
-func _sector_highlight_rect(board: Rect2, sx: float, sy: float, scale: float, sector_id: String) -> Rect2:
+func _sector_highlight_rect(board: Rect2, sx: float, sy: float, board_scale: float, sector_id: String) -> Rect2:
 	var d: Dictionary = _layout[sector_id] as Dictionary
 	var center := _sector_center(board, sx, sy, sector_id)
-	if sector_id.begins_with("Space_") or sector_id.begins_with("Moon_") or sector_id == "Sun":
-		var r: float = float(d.get("r", 10)) * scale * (2.2 if sector_id.begins_with("Space_") else 1.6)
+	if sector_id.begins_with("Space_"):
+		return _sector_tile_rect(board, sx, sy, board_scale, sector_id)
+	if sector_id.begins_with("Moon_") or sector_id == "Sun":
+		var r: float = float(d.get("r", 10)) * board_scale * 1.6
 		return Rect2(center - Vector2(r, r), Vector2(r * 2.0, r * 2.0))
 	if sector_id.begins_with("HQ_"):
-		var hr: float = float(d.get("r", 14)) * scale * 1.15
+		var hr: float = float(d.get("r", 14)) * board_scale * 1.15
 		return Rect2(center - Vector2(hr, hr), Vector2(hr * 2.0, hr * 2.0))
-	return _sector_tile_rect(board, sx, sy, scale, sector_id)
+	return _sector_tile_rect(board, sx, sy, board_scale, sector_id)
 
 
 func _draw_sea_corridor_marker(
 	board: Rect2,
 	sx: float,
 	sy: float,
-	scale: float,
+	board_scale: float,
 	sector_id: String,
 	tint: Color,
 ) -> void:
@@ -281,12 +281,12 @@ func _draw_sea_corridor_marker(
 	if tex == null or tex.atlas == null:
 		return
 	var center := _sector_center(board, sx, sy, sector_id)
-	var design := BoardAtlas.tile_design_size(sector_id) * scale
+	var design := BoardAtlas.tile_design_size(sector_id) * board_scale
 	var rect := Rect2(center - design * 0.5, design)
 	draw_texture_rect(tex, rect, false, Color(tint.r, tint.g, tint.b, 0.55))
 
 
-func _draw_tiles(board: Rect2, sx: float, sy: float, scale: float) -> void:
+func _draw_tiles(board: Rect2, sx: float, sy: float, board_scale: float) -> void:
 	for sector_id: String in _sorted_sector_ids():
 		if not _draw_tile_for_sector(sector_id):
 			continue
@@ -296,7 +296,7 @@ func _draw_tiles(board: Rect2, sx: float, sy: float, scale: float) -> void:
 		var tex: AtlasTexture = BoardAtlas.tile_texture(sector_id)
 		if tex == null or tex.atlas == null:
 			continue
-		var design := BoardAtlas.tile_design_size(sector_id) * scale
+		var design := BoardAtlas.tile_design_size(sector_id) * board_scale
 		var rect := Rect2(
 			Vector2(cx - design.x * 0.5, cy - design.y * 0.5),
 			design
@@ -334,12 +334,12 @@ func _draw_dashed_rect(rect: Rect2, color: Color, dash: float) -> void:
 
 func _draw_dashed_line(from: Vector2, to: Vector2, color: Color, dash: float) -> void:
 	var dir := to - from
-	var len := dir.length()
-	if len < 1.0:
+	var seg_len := dir.length()
+	if seg_len < 1.0:
 		return
-	dir /= len
+	dir /= seg_len
 	var t := 0.0
-	while t < len:
-		var t2 := minf(t + dash, len)
+	while t < seg_len:
+		var t2 := minf(t + dash, seg_len)
 		draw_line(from + dir * t, from + dir * t2, color, 2.0)
 		t += dash * 2.0

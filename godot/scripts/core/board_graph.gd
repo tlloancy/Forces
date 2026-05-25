@@ -126,7 +126,7 @@ func air_destinations(from_sector: String) -> PackedStringArray:
 	return _string_array(_air[from_sector])
 
 
-func piece_destinations(piece_type: GameConstants.PieceType, from_sector: String, max_move: int) -> PackedStringArray:
+func piece_destinations(piece_type: GameConstants.PieceType, from_sector: String, _max_move: int) -> PackedStringArray:
 	match GameConstants.piece_movement_domain(piece_type):
 		GameConstants.MovementDomain.LAND:
 			return land_destinations(from_sector, GameConstants.unity_land_nbmove(piece_type))

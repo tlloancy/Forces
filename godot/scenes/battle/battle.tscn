@@ -46,26 +46,25 @@ theme_override_constants/separation = 4
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "◎"
-
-[node name="CaseHq" type="Label" parent="Sidebar/CasePanel/VBox"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-theme_override_colors/font_color = Color(0.95, 0.25, 0.25, 1)
-text = "⚑"
-
-[node name="CaseStats" type="Label" parent="Sidebar/CasePanel/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.9, 0.92, 1)
+text = "—"
 
 [node name="CaseUnitsRow" type="HBoxContainer" parent="Sidebar/CasePanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="CasePiece" type="Label" parent="Sidebar/CasePanel/VBox"]
+[node name="CasePieceRow" type="HBoxContainer" parent="Sidebar/CasePanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="CasePieceIcon" type="TextureRect" parent="Sidebar/CasePanel/VBox/CasePieceRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(22, 22)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CasePieceMeta" type="Label" parent="Sidebar/CasePanel/VBox/CasePieceRow"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.82, 0.95, 1)
@@ -78,21 +77,11 @@ layout_mode = 2
 [node name="VBox" type="VBoxContainer" parent="Sidebar/ReservePanel"]
 layout_mode = 2
 
-[node name="ReserveTitle" type="Label" parent="Sidebar/ReservePanel/VBox"]
-layout_mode = 2
-text = "Reserve"
-
 [node name="ReservePower" type="Label" parent="Sidebar/ReservePanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.82, 0.35, 1)
-text = "F 0"
-
-[node name="ReserveCounts" type="Label" parent="Sidebar/ReservePanel/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.95, 0.35, 0.35, 1)
-text = "● 0 ■ 0 ▲ 0 ◆ 0"
+text = "P0"
 
 [node name="ReserveActions" type="HBoxContainer" parent="Sidebar/ReservePanel/VBox"]
 layout_mode = 2
@@ -100,22 +89,22 @@ layout_mode = 2
 [node name="BuySoldierButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "●2"
+text = "2"
 
 [node name="BuyRaiderButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "■3"
+text = "3"
 
 [node name="BuyHunterButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "▲5"
+text = "5"
 
 [node name="BuyCruiserButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "◆10"
+text = "10"
 
 [node name="DeployButton" type="Button" parent="Sidebar/ReservePanel/VBox"]
 unique_name_in_owner = true
@@ -133,22 +122,22 @@ layout_mode = 2
 [node name="ExchangeCommandoButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "3●→◎"
+text = ""
 
 [node name="ExchangeBomberButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "3■→□"
+text = ""
 
 [node name="ExchangeFighterButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "3▲→△"
+text = ""
 
 [node name="ExchangeDestroyerButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "3◆→◇"
+text = ""
 
 [node name="OrdersPanel" type="PanelContainer" parent="Sidebar"]
 layout_mode = 2

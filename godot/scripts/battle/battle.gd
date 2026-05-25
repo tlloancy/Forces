@@ -1,7 +1,5 @@
 extends Control
 
-const AiPlanner = preload("res://scripts/ai/ai_planner.gd")
-
 @onready var _status: Label = %StatusLabel
 @onready var _sector_list: ItemList = %SectorList
 @onready var _dest_list: ItemList = %DestList

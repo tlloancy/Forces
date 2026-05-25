@@ -2,9 +2,6 @@ class_name GameRegression
 extends RefCounted
 ## Tests logiques headless — non-régression minimale (mouvements, ordres, Power, IA).
 
-const AiPlanner = preload("res://scripts/ai/ai_planner.gd")
-
-
 static func run_all() -> PackedStringArray:
 	var failures: PackedStringArray = PackedStringArray()
 	failures.append_array(_test_graphs())

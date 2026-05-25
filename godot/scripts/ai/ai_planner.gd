@@ -113,10 +113,8 @@ static func _pick_destination(
 	aggression: float,
 	rng: RandomNumberGenerator
 ) -> String:
-	var stats_variant: Variant = GameConstants.PIECE_STATS.get(piece.type, null)
-	if stats_variant == null or typeof(stats_variant) != TYPE_DICTIONARY:
+	if not GameConstants.PIECE_STATS.has(piece.type):
 		return ""
-	var stats: Dictionary = stats_variant as Dictionary
 	var dests: PackedStringArray = state.destinations_for(piece)
 	if dests.is_empty():
 		return ""

@@ -1,5 +1,5 @@
 extends Node
-## Constantes globales — valeurs alignées sur ScriptIA_* / allInfo (Unity).
+## Constantes globales — autoload singleton (évite STATIC_CALLED_ON_INSTANCE).
 
 enum Camp { GREEN, BLUE, RED, YELLOW }
 
@@ -49,11 +49,11 @@ const CAMP_COLORS: Dictionary = {
 const CAMP_NAMES: PackedStringArray = ["Vert", "Bleu", "Rouge", "Jaune"]
 
 
-static func camp_to_string(camp: Camp) -> String:
+func camp_to_string(camp: Camp) -> String:
 	return CAMP_NAMES[camp]
 
 
-static func piece_type_label(piece: PieceType) -> String:
+func piece_type_label(piece: PieceType) -> String:
 	match piece:
 		PieceType.SOLDIER: return "Soldat"
 		PieceType.RAIDER: return "Tank"
@@ -68,7 +68,7 @@ static func piece_type_label(piece: PieceType) -> String:
 
 
 ## Paramètre `nbmove` passé à `Dep_terre.deplacement_terrestre` (Unity infoButtons).
-static func unity_land_nbmove(piece_type: PieceType) -> int:
+func unity_land_nbmove(piece_type: PieceType) -> int:
 	match piece_type:
 		PieceType.SOLDIER, PieceType.COMMANDO:
 			return 2
@@ -78,7 +78,7 @@ static func unity_land_nbmove(piece_type: PieceType) -> int:
 			return 1
 
 
-static func piece_movement_domain(piece: PieceType) -> MovementDomain:
+func piece_movement_domain(piece: PieceType) -> MovementDomain:
 	match piece:
 		PieceType.SOLDIER, PieceType.RAIDER, PieceType.COMMANDO:
 			return MovementDomain.LAND
@@ -90,7 +90,7 @@ static func piece_movement_domain(piece: PieceType) -> MovementDomain:
 			return MovementDomain.NONE
 
 
-static func movement_domain_label(domain: MovementDomain) -> String:
+func movement_domain_label(domain: MovementDomain) -> String:
 	match domain:
 		MovementDomain.LAND:
 			return "terre"
@@ -102,11 +102,11 @@ static func movement_domain_label(domain: MovementDomain) -> String:
 			return "—"
 
 
-static func is_basic_buy(piece: PieceType) -> bool:
+func is_basic_buy(piece: PieceType) -> bool:
 	return piece in [PieceType.SOLDIER, PieceType.RAIDER, PieceType.HUNTER, PieceType.CRUISER]
 
 
-static func reserve_force_value(piece_type: PieceType) -> int:
+func reserve_force_value(piece_type: PieceType) -> int:
 	match piece_type:
 		PieceType.SOLDIER:
 			return 2
@@ -128,7 +128,7 @@ static func reserve_force_value(piece_type: PieceType) -> int:
 			return 0
 
 
-static func exchange_recipe(result: PieceType) -> Dictionary:
+func exchange_recipe(result: PieceType) -> Dictionary:
 	match result:
 		PieceType.COMMANDO:
 			return {"from": PieceType.SOLDIER, "count": 3}

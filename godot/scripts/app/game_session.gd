@@ -42,11 +42,11 @@ func set_slot(camp: GameConstants.Camp, kind: SlotKind, difficulty: Difficulty =
 
 
 func slot_kind(camp: GameConstants.Camp) -> SlotKind:
-	return int(slots.get(camp, _slot(SlotKind.AI, Difficulty.NORMAL))["kind"])
+	return int(slots.get(camp, _slot(SlotKind.AI, Difficulty.NORMAL))["kind"]) as SlotKind
 
 
 func slot_difficulty(camp: GameConstants.Camp) -> Difficulty:
-	return int(slots.get(camp, _slot(SlotKind.AI, Difficulty.NORMAL))["difficulty"])
+	return int(slots.get(camp, _slot(SlotKind.AI, Difficulty.NORMAL))["difficulty"]) as Difficulty
 
 
 func is_ai(camp: GameConstants.Camp) -> bool:

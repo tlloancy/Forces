@@ -8,6 +8,40 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ---
 
+## 2026-05-25 — UI atlas, sidebar épurée, losange mécanique, warnings GDScript
+
+**Commit** : _(après `git commit`)_
+
+### Réalisé
+
+- **`scripts/ui/ui_piece_icons.gd`** — boutons achat / échange / unités Case Info avec **textures FORCE-AD** (`circle_filled`, `square_filled`, etc.) ; plus de `● ■ ▲ ◆` Unicode en dur
+- **`battle_sidebar.gd`** — doublons retirés : plus de `CaseHq`, `CaseStats`, `ReserveCounts`, `ReserveTitle` ; une ligne `CasePieceIcon` + chiffre portée ; échanges = 3 icônes + icône résultat
+- **`battle.tscn`** — structure allégée (`CasePieceRow`, boutons achat = coût seul `2`/`3`/…)
+- **`logo_rotating_o.gd`** — losange **`diamond_filled`** atlas ; rotation **par cran** 45° / 0,13 s + léger wobble (effet mécanique)
+- **`game_constants.gd`** — autoload conservé ; méthodes utilitaires **sans `static`** → fin des `STATIC_CALLED_ON_INSTANCE`
+- **Warnings** — retrait `const AiPlanner` / `const BoardAtlas` shadowing ; `board_scale` au lieu de `scale` ; `game_session` cast enum ; `board_graph` `_max_move` ; `ai_planner` variable `stats` inutile
+- **Mer** — surbrillance `Space_*` alignée sur tuile (plus cercles 2,2× qui se superposaient)
+
+### Fichiers
+
+- `scripts/ui/ui_piece_icons.gd` (nouveau)
+- `scripts/battle/battle_sidebar.gd`, `scenes/battle/battle.tscn`
+- `scripts/menu/logo_rotating_o.gd`, `scenes/menu/main_menu.tscn`
+- `scripts/core/game_constants.gd`, `project.godot`
+- `scripts/battle/battle.gd`, `board_map.gd`, `ai/ai_planner.gd`, `app/game_session.gd`, `core/board_graph.gd`, `tests/game_regression.gd`
+
+### Tests
+
+- `run_headless.ps1 -Mode smoke` → OK
+- `run_headless.ps1 -Mode compile` → OK
+
+### À faire
+
+- [ ] Pads ordres / journal résolution en symboles
+- [ ] Affiner layout `Space_*` si couloirs encore trop superposés au centre
+
+---
+
 ## 2026-05-25 04:10:46 — Couloirs mer visibles, UI épurée, menu nettoyé
 
 **Commit** : `7607e7e` — `Afficher couloirs mer, symboles echanges, menu et surbrillances epures.`
