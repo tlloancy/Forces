@@ -75,9 +75,16 @@ function Invoke-Godot {
 
 switch ($Mode) {
     "smoke" {
+        python (Join-Path $PSScriptRoot "verify_atlas_shapes.py")
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        python (Join-Path $PSScriptRoot "parse_atlas_meta.py") | Out-Null
+        python (Join-Path $PSScriptRoot "extract_layout_from_board_atlas.py") | Out-Null
+        python (Join-Path $PSScriptRoot "compose_board_from_tiles.py") | Out-Null
         $code = Invoke-Godot @("--headless", "--path", $ProjectRoot, "res://scenes/headless_test.tscn")
     }
     "regression" {
+        python (Join-Path $PSScriptRoot "verify_atlas_shapes.py")
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         $code = Invoke-Godot @("--headless", "--path", $ProjectRoot, "res://scenes/headless_test.tscn")
     }
     "compile" {

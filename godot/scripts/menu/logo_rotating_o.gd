@@ -1,40 +1,37 @@
 extends Control
-## « O » menu — losange atlas (outline), rotation par crans.
+## « O » du titre FORCES — losange atlas (Unity General_Menu/O + O_Animate).
 
-@export var step_degrees: float = 45.0
-@export var step_interval: float = 0.13
+@export var rotate_speed: float = 120.0
+@export var snap_interval_sec: float = 1.0
 @export var icon_size: float = 44.0
-@export var wobble_degrees: float = 3.0
 
 var _angle: float = 0.0
-var _step: int = 0
-var _wobble: float = 0.0
+var _tex: AtlasTexture
 
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(icon_size, icon_size)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var timer := Timer.new()
-	timer.name = "StepTimer"
-	timer.wait_time = step_interval
-	timer.autostart = true
-	timer.timeout.connect(_on_step)
-	add_child(timer)
+	# Losange réel = _16/_21 — pas _18 (lettre F du titre).
+	_tex = BoardAtlas.icon_texture("diamond_filled")
+	if _tex == null or _tex.atlas == null:
+		_tex = BoardAtlas.icon_texture("diamond_outline")
 
 
-func _on_step() -> void:
-	_step += 1
-	_angle = deg_to_rad(_step * step_degrees)
-	_wobble = deg_to_rad(randf_range(-wobble_degrees, wobble_degrees))
+func _process(delta: float) -> void:
+	var direction: float = -1.0
+	_angle += deg_to_rad(rotate_speed * direction) * delta
+	var tick: int = int(Time.get_ticks_msec() / 1000.0 / snap_interval_sec)
+	if tick % 2 > 0:
+		_angle = 0.0
 	queue_redraw()
 
 
 func _draw() -> void:
-	var tex: AtlasTexture = BoardAtlas.icon_texture("diamond_outline")
-	if tex == null or tex.atlas == null:
+	if _tex == null or _tex.atlas == null:
 		return
 	var center := size * 0.5
-	draw_set_transform(center, _angle + _wobble, Vector2.ONE)
-	var sz := Vector2(icon_size, icon_size)
-	draw_texture_rect(tex, Rect2(-sz * 0.5, sz), false, Color(0.95, 0.96, 1.0, 0.98))
+	draw_set_transform(center, _angle, Vector2.ONE)
+	var sz := Vector2(icon_size * 1.12, icon_size * 1.12)
+	draw_texture_rect(_tex, Rect2(-sz * 0.5, sz), false, Color(0.95, 0.96, 1.0, 0.98))
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)

@@ -190,7 +190,7 @@ func _highlight_color_for_piece(piece: PieceInstance) -> Color:
 		return Color(1.0, 0.35, 0.35, 0.75)
 	match GameConstants.piece_movement_domain(piece.type):
 		GameConstants.MovementDomain.SEA:
-			return Color(0.45, 0.75, 0.95, 0.65)
+			return Color(0.72, 0.76, 0.82, 0.9)
 		GameConstants.MovementDomain.AIR:
 			return Color(0.85, 0.9, 0.45, 0.65)
 		_:

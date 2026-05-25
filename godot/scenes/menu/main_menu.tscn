@@ -70,8 +70,8 @@ custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
 script = ExtResource("2_logo_o")
 icon_size = 44.0
-step_degrees = 45.0
-step_interval = 0.13
+rotate_speed = 120.0
+snap_interval_sec = 1.0
 
 [node name="LogoRest" type="Label" parent="Center/Panel/VBox/LogoRow"]
 unique_name_in_owner = true

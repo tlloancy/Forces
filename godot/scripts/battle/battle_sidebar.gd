@@ -23,6 +23,7 @@ signal unit_pressed(piece_type: GameConstants.PieceType)
 @onready var _ex_dst: Button = %ExchangeDestroyerButton
 @onready var _orders_timer: Label = %OrdersTimer
 @onready var _orders_queue: RichTextLabel = %OrdersQueue
+@onready var _exchange_row: HBoxContainer = $ReservePanel/VBox/ExchangeRow
 
 var _unit_buttons: Array[Button] = []
 var _icons_ready: bool = false
@@ -44,12 +45,11 @@ func _wire_static_icons() -> void:
 	UiPieceIcons.setup_exchange_button(_ex_bmb, GameConstants.PieceType.RAIDER, GameConstants.PieceType.BOMBER)
 	UiPieceIcons.setup_exchange_button(_ex_ftr, GameConstants.PieceType.HUNTER, GameConstants.PieceType.FIGHTER)
 	UiPieceIcons.setup_exchange_button(_ex_dst, GameConstants.PieceType.CRUISER, GameConstants.PieceType.DESTROYER)
-	var hb_tex: Texture2D = UiPieceIcons.texture_hbomb()
-	if hb_tex != null:
-		_hbomb.icon = hb_tex
-		_hbomb.expand_icon = true
-	_hbomb.text = "100"
+	UiPieceIcons.setup_hbomb_button(_hbomb)
+	_hbomb.visible = false
 	_deploy.text = "↓"
+	if _exchange_row:
+		_exchange_row.visible = false
 
 
 func refresh(
@@ -100,8 +100,34 @@ func refresh(
 				_:
 					_case_piece_meta.text = ""
 
-	var fusion_f: int = state.hbomb_fusion_force_available(human_camp, selected_sector)
-	_reserve_power.text = "P%d ☢%d" % [state.camp_power(human_camp), fusion_f]
+	_reserve_power.text = "P%d" % state.camp_power(human_camp)
+	var fusion_on_sector: int = state.camp_power(human_camp)
+	var has_piece_on_board: bool = false
+	if not selected_sector.is_empty():
+		for p: PieceInstance in state.pieces_on_sector(selected_sector):
+			if p.camp == human_camp and not p.in_reserve and p.type != GameConstants.PieceType.HBOMB:
+				has_piece_on_board = true
+				fusion_on_sector += GameConstants.reserve_force_value(p.type)
+	var fusion_ok: bool = (
+		has_piece_on_board
+		and state.hbomb_on_board(human_camp) == null
+		and fusion_on_sector >= GameConstants.HBOMB_FUSION_FORCE
+	)
+	_hbomb.visible = fusion_ok
+	if fusion_ok:
+		UiPieceIcons.setup_hbomb_button(_hbomb)
+	var any_exchange: bool = false
+	for result: GameConstants.PieceType in [
+		GameConstants.PieceType.COMMANDO,
+		GameConstants.PieceType.BOMBER,
+		GameConstants.PieceType.FIGHTER,
+		GameConstants.PieceType.DESTROYER,
+	]:
+		if _can_exchange(state, human_camp, result):
+			any_exchange = true
+			break
+	if _exchange_row:
+		_exchange_row.visible = any_exchange
 
 	_orders_timer.text = "R%d %s" % [state.round_number, _format_timer(planning_elapsed)]
 	_orders_queue.text = _format_orders_queue(state, human_camp)
@@ -141,6 +167,19 @@ static func _format_orders_queue(state: GameState, human_camp: GameConstants.Cam
 		lines.append("[color=#888]—[/color]")
 	lines.append("[color=#aaa](%d/%d)[/color]" % [used, max_o])
 	return "\n".join(lines)
+
+
+static func _can_exchange(state: GameState, camp: GameConstants.Camp, result: GameConstants.PieceType) -> bool:
+	var recipe: Dictionary = GameConstants.exchange_recipe(result)
+	if recipe.is_empty():
+		return false
+	var from_type: GameConstants.PieceType = recipe["from"]
+	var need: int = int(recipe["count"])
+	var n: int = 0
+	for p: PieceInstance in state.reserve_pieces(camp):
+		if p.type == from_type:
+			n += 1
+	return n >= need
 
 
 static func _format_timer(elapsed: int) -> String:

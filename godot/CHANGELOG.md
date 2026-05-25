@@ -8,6 +8,90 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ---
 
+## 2026-05-25 (soir) — Carte Unity complète : îles, couloirs bordure, croix centrale
+
+**Référence** : captures `Screenshot_20260525-000216_Forc2.jpg` / `000226` ; structure `Dep_mer.js` + `filtre_case_name.js`.
+
+### Structure plateau (correction majeure)
+
+| Élément | Placement |
+|---------|-----------|
+| **4 HQs** | coins `(23,23)` … `(257,257)` |
+| **4 îles** 3×3 | quadrants entre HQ et centre (tuiles octogonales NW…SE teintées) |
+| **4 Moons** | **milieu de chaque bordure extérieure** `(140,23)`, `(140,257)`, `(23,140)`, `(257,140)` — plus autour du Sun |
+| **Sun** | centre `(140,140)` |
+| **Space_1–4** | autour du Sun (croix intérieure) |
+| **Space_5–12** | 2 par HQ sur les bordures (ex. `Space_5`/`12` gauche, `Space_6`/`7` haut) |
+
+### Rendu
+
+- **`board_composed.png`** — généré par `compose_board_from_tiles.py` (bandes grises bordures + croix + îles + mer)
+- **`board_map.gd`** — affiche `board_composed.png` ; clics via `sector_layout.json`
+- **`board_atlas.gd`** — îles = sprites `NW/N/NE/…` (plus un seul `CE` carré)
+- **`extract_layout_from_board_atlas.py`** — layout + preview `board_reference.png`
+- **`sea_corridor_test.gd`** — vérifie Moons sur bordures et Space près des HQs
+
+### Pipeline
+
+```powershell
+cd Forces/godot
+python tools/extract_layout_from_board_atlas.py
+python tools/compose_board_from_tiles.py
+.\tools\run_headless.ps1 -Mode smoke
+```
+
+---
+
+## 2026-05-25 (suite) — Fix atlas : F/H inversés avec losange/carré
+
+**Cause** : les noms dans `FORCE-AD-13a.png.meta` ne correspondent pas aux formes dans le PNG.
+
+| Sprite | Contenu réel | Ancienne erreur |
+|--------|----------------|-----------------|
+| `_16` | losange contour | « carré » |
+| `_18` | lettre **F** | `diamond_outline` → menu **FFRCES** |
+| `_21` | losange plein | `square_filled` |
+| `_23` | lettre **H** | `diamond_filled` → **H** sur croiseur / échanges |
+| `_15` | carré contour | — |
+
+**Corrections** : `parse_atlas_meta.py`, `verify_atlas_shapes.py`, `ui_atlas_test.gd`, `ui_piece_icons.gd` (boutons achat en HBox icône+coût), menu `diamond_filled`, suppression traits bleus `_draw_sea_bridges`, bouton `▶` unique.
+
+---
+
+## 2026-05-25 — Conformité Unity `Forces/Assets` (atlas, menu, couloirs mer)
+
+**Source de vérité** : `Forces/Assets/` (`FORCE-AD-13a.png.meta`, `Dep_mer.js`, `filtre_case_name.js`, `GeneralMenu.js`).
+
+### Menu F ◆ RCES
+
+- **`logo_rotating_o.gd`** — même logique que `O_Animate` : rotation continue + rappel `rotation.z = 0` chaque seconde impaire ; **plus** de `PI/4` ni de crans 45° (évitaient un « H » / carré)
+- Sprite : `diamond_outline` (`FORCE-AD-13a_18`), repli `diamond_filled` (`_23`)
+
+### Atlas / UI (formes ≠ H)
+
+- **`parse_atlas_meta.py`** régénère `atlas_sprites.json` depuis `Assets/Textures/FORCE-AD-13a.png.meta`
+- Formes réserve (Unity `ContainsPlace`) : cercle `_14/_19`, carré `_16/_21`, triangle `_17/_22`, losange `_18/_23`, Power **F** `_15`, bombe **H** `_20` (`hbomb_h` / `hbomb`)
+- Portraits plateau : `hunter` → `_27` ; `hbomb` plateau → `_20` (plus de doublon hunter/hbomb sur `_27`)
+
+### Couloirs d’eau (capture 216)
+
+- **`board_atlas.gd`** — `Space_5/8/10/12` → barres horizontales `_105`/`_108` ; `Space_6/7/9/11` → barres verticales `_83` (Unity `Sp*` ≠ losanges 70×70 `_106`)
+- Teinte grise type `color_grey` ; tailles connecteurs 72×58 px
+- **`sector_layout.json`** — positions centre depuis `calibrate_sector_layout.py` / `generate_sector_layout.py`
+
+### Tests
+
+- **`headless_test.gd`** — `AiStrengthTest` **désactivé** jusqu’à reprise étape IA
+- Smoke : `SeaCorridorTest` + `GameRegression` + `FullMatchTest` → OK
+
+```powershell
+python tools\parse_atlas_meta.py
+python tools\generate_sector_layout.py
+.\tools\run_headless.ps1 -Mode smoke
+```
+
+---
+
 ## 2026-05-25 — Partie complète headless, fixes H / carte / play
 
 **Commit** : `4c3694b` — `Fix H atlas, carte mer laterale, tests partie complete, timeout.`

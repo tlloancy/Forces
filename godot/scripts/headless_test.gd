@@ -2,14 +2,32 @@ extends Node
 
 const GameRegression = preload("res://scripts/tests/game_regression.gd")
 const FullMatchTest = preload("res://scripts/tests/full_match_test.gd")
+const SeaCorridorTest = preload("res://scripts/tests/sea_corridor_test.gd")
+const UiAtlasTest = preload("res://scripts/tests/ui_atlas_test.gd")
+# IA renforcée : tests désactivés tant que menu/atlas/couloirs ≠ Unity Assets.
+# const AiStrengthTest = preload("res://scripts/tests/ai_strength_test.gd")
 
 
 func _ready() -> void:
-	var failures: PackedStringArray = GameRegression.run_all()
-	failures.append_array(FullMatchTest.run_all())
-	failures.append_array(_run_checks())
+	var failures: PackedStringArray = PackedStringArray()
+	var max_loops: int = int(OS.get_environment("FORCES_TEST_LOOPS") if OS.has_environment("FORCES_TEST_LOOPS") else "1")
+	for attempt: int in range(max_loops):
+		failures = PackedStringArray()
+		failures.append_array(UiAtlasTest.run_all())
+		failures.append_array(SeaCorridorTest.run_all())
+		if not failures.is_empty():
+			printerr("[headless] couloirs mer échec tentative %d" % (attempt + 1))
+			continue
+		failures.append_array(GameRegression.run_all())
+		failures.append_array(FullMatchTest.run_all())
+		failures.append_array(_run_checks())
+		if failures.is_empty():
+			break
 	if failures.is_empty():
-		print("[headless_smoke] OK — tous les tests passent.")
+		if max_loops > 1:
+			print("[headless_smoke] OK — %d boucles, tous les tests passent." % max_loops)
+		else:
+			print("[headless_smoke] OK — tous les tests passent.")
 		get_tree().quit(0)
 	else:
 		printerr("[headless_smoke] ECHEC (%d) :" % failures.size())

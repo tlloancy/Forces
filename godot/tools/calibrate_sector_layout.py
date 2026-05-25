@@ -123,10 +123,28 @@ def main() -> None:
         "Space_11": (106, 170),
         "Space_12": (96, 170),
     }
-    for sid, seed in center_seeds.items():
-        x, y = _refine_peak(img, seed[0], seed[1], 10)
-        r = 12 if sid == "Sun" else (10 if sid.startswith("Moon") else 8)
-        layout[sid] = {"x": round(x, 1), "y": round(y, 1), "r": r}
+    # Positions mer fixes (diagramme Unity) — ne pas affiner sur board synthétique.
+    sea_fixed = {
+        "Sun": (140, 140, 18),
+        "Moon_N": (140, 106, 11),
+        "Moon_S": (140, 174, 11),
+        "Moon_W": (106, 140, 11),
+        "Moon_E": (174, 140, 11),
+        "Space_1": (126, 122, 8),
+        "Space_2": (154, 122, 8),
+        "Space_3": (154, 158, 8),
+        "Space_4": (126, 158, 8),
+        "Space_5": (96, 140, 8),
+        "Space_6": (106, 110, 8),
+        "Space_7": (174, 110, 8),
+        "Space_8": (194, 140, 8),
+        "Space_9": (174, 170, 8),
+        "Space_10": (194, 170, 8),
+        "Space_11": (106, 170, 8),
+        "Space_12": (96, 170, 8),
+    }
+    for sid, (x, y, r) in sea_fixed.items():
+        layout[sid] = {"x": float(x), "y": float(y), "r": r}
 
     layout["_meta"] = {
         "design_width": W,

@@ -115,14 +115,17 @@ static func tile_sprite_id(sector_id: String) -> String:
 		var sp_key := "Sp" + sector_id.trim_prefix("Space_")
 		if shapes.has(sp_key):
 			return str(shapes[sp_key])
-		if sector_id in ["Space_5", "Space_8", "Space_12", "Space_10"]:
-			return str(defaults.get("connector_h", "FORCE-AD-13a_105"))
-		if sector_id in ["Space_6", "Space_7", "Space_11", "Space_9"]:
-			return str(defaults.get("connector_v", "FORCE-AD-13a_83"))
-		return str(defaults.get("connector_h", "FORCE-AD-13a_105"))
-	if sector_id == "Sun" or sector_id.begins_with("Moon_"):
+		return str(defaults.get("sea", defaults.get("neutral", "FORCE-AD-13a_106")))
+	if sector_id == "Sun":
 		return str(shapes.get("CE", defaults.get("neutral", "FORCE-AD-13a_77")))
-	# Octogone générique pour toutes les cases terrain (évite le chaos des connecteurs à petite échelle).
+	if sector_id.begins_with("Moon_"):
+		return str(shapes.get("CE", defaults.get("neutral", "FORCE-AD-13a_77")))
+	# Îles 3×3 : forme octogonale par suffixe (Unity filtre_sprite NW/N/…/SE).
+	for prefix: String in ["Plains", "Ice", "Jungle", "Desert"]:
+		if sector_id.begins_with(prefix + "_"):
+			var suffix: String = sector_id.trim_prefix(prefix + "_")
+			if shapes.has(suffix):
+				return str(shapes[suffix])
 	return str(shapes.get("CE", defaults.get("land", "FORCE-AD-13a_77")))
 
 
@@ -132,7 +135,9 @@ static func sector_tint(sector_id: String) -> Color:
 
 static func sector_tile_modulate(sector_id: String) -> Color:
 	if sector_id.begins_with("Space_"):
-		return Color(0.5, 0.7, 0.92, 1.0)
+		return Color(0.55, 0.58, 0.62, 1.0)
+	if sector_id == "Sun" or sector_id.begins_with("Moon_"):
+		return Color(0.92, 0.93, 0.96, 1.0)
 	if BoardCatalog.is_neutral(sector_id):
 		return Color(0.92, 0.93, 0.96, 1.0)
 	var tint := _camp_multiply_color(BoardCatalog.camp_for_sector(sector_id))
@@ -164,22 +169,23 @@ static func tile_design_size(sector_id: String) -> Vector2:
 	if sector_id.begins_with("HQ_"):
 		return Vector2(34.0, 34.0)
 	if sector_id == "Sun":
-		return Vector2(36.0, 36.0)
+		return Vector2(32.0, 32.0)
 	if sector_id.begins_with("Moon_"):
-		return Vector2(22.0, 22.0)
-	return Vector2(LAND_STEP, LAND_STEP)
+		return Vector2(26.0, 26.0)
+	return Vector2(31.0, 31.0)
 
 
 static func _sea_connector_design_size(sector_id: String) -> Vector2:
 	var native := tile_native_size(sector_id)
-	var long_side := 62.0
-	if native.x > native.y * 1.25:
-		var h := long_side * (native.y / native.x)
-		return Vector2(long_side, h)
-	if native.y > native.x * 1.25:
-		var w := long_side * (native.x / native.y)
-		return Vector2(w, long_side)
-	return Vector2(20.0, 20.0)
+	if native.x < 1.0 or native.y < 1.0:
+		return Vector2(24.0, 24.0)
+	if native.x > native.y * 1.35:
+		var w := 46.0
+		return Vector2(w, maxf(10.0, w * native.y / native.x))
+	if native.y > native.x * 1.35:
+		var h := 46.0
+		return Vector2(maxf(10.0, h * native.x / native.y), h)
+	return Vector2(24.0, 24.0)
 
 
 static func _camp_multiply_color(camp: GameConstants.Camp) -> Color:
