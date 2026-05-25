@@ -2,7 +2,74 @@
 
 Journal des évolutions du dossier `godot/` (hors dépôt Unity legacy).
 
-Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale).
+Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git si présent).
+
+**Règle** : chaque commit Git sur `godot4-port` ajoute ou complète une section datée ici (réalisé, fichiers touchés, tests, commits `hash`).
+
+---
+
+## 2026-05-25 04:01:45 — UI bataille symboles + tests non-régression headless
+
+**Commit** : `25322fb` — `UI bataille en symboles et tests de non-régression headless.`
+
+### Réalisé
+
+- **Panneau Case Info** — titre `◎ {secteur}` ; QG `⚑` ; boutons unités `● 2` / `■ 1` (sans libellés Sold./Tank…) ; pièce active `● ▣2` / `◆` / `▲` selon domaine ; réserve `↓ ●`
+- **Réserve** — en-tête `R` ; Power `P {n}  ☢{fusion}` ; déployer `↓` ; fusion H `☢100` ; achats `●2` `■3` `▲5` `◆10` ; échanges `3●→Cmd` etc. conservés
+- **Ordres** — timer `R{n} ⏱{mm:ss}` ; file vide `—` ; hint long supprimé (`OrdersHint`) ; lecture `▶▶` (doublon MenuRow conservé)
+- **Game over** — `★` + boutons `↻` `☰` ; texte explicatif retiré
+- **`scripts/tests/game_regression.gd`** — graphes land/sea/air ; mouvement différé (secteur inchangé avant `apply_planning_orders`) ; max 5 ordres (6ᵉ refusé) ; double déplacement même pièce refusé ; portées tank > soldat, mer sans `Plains_NE`, air chasseur ; Power +1 sur territoire ennemi (`Ice_NW`) ; échange 3●→Cmd ; IA bleue ≥1 ordre
+- **`scripts/headless_test.gd`** — appelle `GameRegression.run_all()` avant les checks existants (hbomb, scènes, etc.)
+
+### Fichiers
+
+- `scenes/battle/battle.tscn`
+- `scripts/battle/battle_sidebar.gd`
+- `scripts/tests/game_regression.gd` (nouveau)
+- `scripts/headless_test.gd`
+
+### Tests
+
+- `.\tools\run_headless.ps1 -Mode smoke` → OK (2026-05-25 ~04:02)
+
+### À faire
+
+- [ ] Symboliser les échanges (`3●→Cmd` → symboles purs)
+- [ ] Réduire texte dans `%OrdersLog` / résolution (pads encore en français)
+
+---
+
+## 2026-05-25 04:01:44 — Menu : logo F◆RCES rotatif, fond sans atlas parasite
+
+**Commit** : `5bde35d` — `Menu: logo F◆RCES avec losange rotatif, fond épuré.`
+
+### Réalisé
+
+- **Titre FORCES** — `HBox` **F** (doré `#d2ad38`) + **losange** (`logo_rotating_o.gd`, atlas `diamond_outline`, 44 px, ~0,55 rad/s) + **RCES** (violet `#b885f2`) ; police menu 48 px inchangée
+- **Arrière-plan** — `SplashTexture` (`FORCE-AD-13a` plein écran, opacité 0,18) **désactivé** : fin du texte parasite NW / Sp1 / HQ / Res visible derrière le panneau
+- **`BackdropDiamond`** — losange géant (220 px, rotation 0,22 rad/s, modulate ~0,14) centré écran, `mouse_filter` ignore
+- **Sous-titre** — `④` à la place de « Conquête stratégique — 4 camps »
+- **Boutons menu** — Jouer / Partie rapide / Tutoriel / Options / Quitter : texte français conservé (choix volontaire menu)
+
+### Fichiers
+
+- `scenes/menu/main_menu.tscn`
+- `scripts/menu/main_menu.gd`
+- `scripts/menu/logo_rotating_o.gd` (nouveau)
+
+### Tests
+
+- Compilation scène : `run_headless.ps1 -Mode compile` (non relancé ; smoke inclut `main_menu.tscn`)
+
+---
+
+## 2026-05-25 03:45:56 — Surbrillances mer alignées couloirs Space
+
+**Commit** : `0e584b3` — `Corriger surbrillances mer (losanges) alignees sur les couloirs Space.`
+
+### Réalisé
+
+- Rectangles surbrillance mer recalés sur `sector_layout.json` / couloirs `Space_*` (plus de losanges décalés sur la carte)
 
 ---
 
