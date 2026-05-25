@@ -41,6 +41,10 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 **Commit** : `60d0422` — `Design plateau: fond #2b2d4a, iles teintees Unity, surbrillances propres.`
 
+### Fix grille mosaïque
+
+- `_draw_grid` limitée aux **zones île** (bounding box 3×3) — plus de grille globale 23 px sur tout le plateau qui créait un effet de répétition ×8 après upscale Godot.
+
 ---
 
 ## 2026-05-25 (nuit) — Surbrillances déplacements alignées sur les tuiles

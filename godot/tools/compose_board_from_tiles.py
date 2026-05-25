@@ -93,11 +93,28 @@ def _draw_central_cross(draw: ImageDraw.ImageDraw) -> None:
     draw.rectangle((140 - c, 23, 140 + c, 257), fill=COULOIR_GREY)
 
 
+ISLAND_BOXES = {
+    "Plains":  (46, 46, 124, 124),
+    "Ice":     (156, 46, 234, 124),
+    "Jungle":  (46, 156, 124, 234),
+    "Desert":  (156, 156, 234, 234),
+}
+TILE_STEP = 26
+
+
 def _draw_grid(draw: ImageDraw.ImageDraw) -> None:
-    """Grille fine pour rappeler la structure Unity."""
-    for i in range(0, W + 1, 23):
-        draw.line((i, 0, i, H), fill=GRID_LINE, width=1)
-        draw.line((0, i, W, i), fill=GRID_LINE, width=1)
+    """Grille 3×3 uniquement à l'intérieur de chaque île (comme Unity)."""
+    for x0, y0, x1, y1 in ISLAND_BOXES.values():
+        cx = (x0 + x1) // 2
+        cy = (y0 + y1) // 2
+        for col in range(-1, 2):
+            lx = cx + col * TILE_STEP
+            if x0 <= lx <= x1:
+                draw.line((lx, y0, lx, y1), fill=GRID_LINE, width=1)
+        for row in range(-1, 2):
+            ly = cy + row * TILE_STEP
+            if y0 <= ly <= y1:
+                draw.line((x0, ly, x1, ly), fill=GRID_LINE, width=1)
 
 
 def main() -> None:
