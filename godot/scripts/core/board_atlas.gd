@@ -163,29 +163,21 @@ static func tile_native_size(sector_id: String) -> Vector2:
 	return Vector2(float(sz.x), float(sz.y))
 
 
-static func tile_design_size(sector_id: String) -> Vector2:
+## Tailles des tuiles sur board_composed.png (compose_board_from_tiles.py).
+static func highlight_design_size(sector_id: String) -> Vector2:
 	if sector_id.begins_with("Space_"):
-		return _sea_connector_design_size(sector_id)
+		return Vector2(14.0, 14.0)
 	if sector_id.begins_with("HQ_"):
-		return Vector2(34.0, 34.0)
+		return Vector2(28.0, 28.0)
 	if sector_id == "Sun":
-		return Vector2(32.0, 32.0)
-	if sector_id.begins_with("Moon_"):
-		return Vector2(26.0, 26.0)
-	return Vector2(31.0, 31.0)
-
-
-static func _sea_connector_design_size(sector_id: String) -> Vector2:
-	var native := tile_native_size(sector_id)
-	if native.x < 1.0 or native.y < 1.0:
 		return Vector2(24.0, 24.0)
-	if native.x > native.y * 1.35:
-		var w := 46.0
-		return Vector2(w, maxf(10.0, w * native.y / native.x))
-	if native.y > native.x * 1.35:
-		var h := 46.0
-		return Vector2(maxf(10.0, h * native.x / native.y), h)
-	return Vector2(24.0, 24.0)
+	if sector_id.begins_with("Moon_"):
+		return Vector2(22.0, 22.0)
+	return Vector2(27.0, 27.0)
+
+
+static func tile_design_size(sector_id: String) -> Vector2:
+	return highlight_design_size(sector_id)
 
 
 static func _camp_multiply_color(camp: GameConstants.Camp) -> Color:

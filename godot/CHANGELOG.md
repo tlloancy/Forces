@@ -8,6 +8,18 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ---
 
+## 2026-05-25 (nuit) — Surbrillances déplacements alignées sur les tuiles
+
+**Problème** : rectangles de surbrillance / sélection trop grands (31×31 îles, connecteurs mer jusqu’à 46 px) → chevauchements en « pâtés » sur la grille.
+
+**Correction** :
+- **`highlight_design_size()`** dans `board_atlas.gd` — mêmes tailles que `compose_board_from_tiles.py` (îles 27, HQ 28, Moons 22, Sun 24, Space 14)
+- **`board_map.gd`** — `_hit_rect` utilise uniquement ces dimensions (suppression des `r × 2` / `r × 3.5`)
+
+**Tests** : `.\tools\run_headless.ps1 -Mode smoke` — OK.
+
+---
+
 ## 2026-05-25 (soir) — Carte Unity complète : îles, couloirs bordure, croix centrale
 
 **Référence** : captures `Screenshot_20260525-000216_Forc2.jpg` / `000226` ; structure `Dep_mer.js` + `filtre_case_name.js`.

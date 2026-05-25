@@ -154,21 +154,11 @@ func _sector_center(board: Rect2, sx: float, sy: float, sector_id: String) -> Ve
 	)
 
 
-func _hit_rect(board: Rect2, sx: float, sy: float, sc: float, sector_id: String) -> Rect2:
+func _hit_rect(board: Rect2, sx: float, sy: float, _sc: float, sector_id: String) -> Rect2:
 	var center := _sector_center(board, sx, sy, sector_id)
-	var d: Dictionary = _layout[sector_id] as Dictionary
-	var design := BoardAtlas.tile_design_size(sector_id)
-	var w: float = design.x * sc
-	var h: float = design.y * sc
-	if sector_id.begins_with("HQ_"):
-		w = maxf(w, float(d.get("r", 13)) * sc * 2.2)
-		h = w
-	elif sector_id.begins_with("Space_") or BoardCatalog.is_neutral(sector_id):
-		w = maxf(w, float(d.get("r", 8)) * sc * 3.5)
-		h = maxf(h, float(d.get("r", 8)) * sc * 3.5)
-	else:
-		w = maxf(w, float(d.get("r", 11)) * sc * 2.0)
-		h = maxf(h, float(d.get("r", 11)) * sc * 2.0)
+	var design := BoardAtlas.highlight_design_size(sector_id)
+	var w: float = design.x * sx
+	var h: float = design.y * sy
 	return Rect2(center - Vector2(w, h) * 0.5, Vector2(w, h))
 
 
