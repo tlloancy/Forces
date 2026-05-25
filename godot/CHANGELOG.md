@@ -18,6 +18,8 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 **Tests** : `.\tools\run_headless.ps1 -Mode smoke` — OK.
 
+**Commit** : `5d9a565` — `Fix surbrillances deplacement alignees sur tuiles composees.`
+
 ---
 
 ## 2026-05-25 (soir) — Carte Unity complète : îles, couloirs bordure, croix centrale
