@@ -8,9 +8,9 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ---
 
-## 2026-05-25 — Couloirs mer visibles, UI épurée, menu nettoyé
+## 2026-05-25 04:10:46 — Couloirs mer visibles, UI épurée, menu nettoyé
 
-**Commit** : _(à renseigner après `git commit`)_
+**Commit** : `7607e7e` — `Afficher couloirs mer, symboles echanges, menu et surbrillances epures.`
 
 ### Problème utilisateur
 
