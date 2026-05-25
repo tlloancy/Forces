@@ -72,7 +72,6 @@ func _begin_match() -> void:
 	_planning_elapsed = 1
 	_timer_accum = 0.0
 	_log.clear()
-	_log.append_text("[i]Planifiez vos ordres[/i] — touchez une case, puis une destination.\n")
 
 
 func _populate_sector_list() -> void:
@@ -122,10 +121,7 @@ func _update_move_highlights() -> void:
 
 
 func _log_last_order() -> void:
-	var orders: Array[GameOrder] = _state.orders_for_camp(_state.human_camp)
-	if orders.is_empty():
-		return
-	_log.append_text("[color=#e05555]%s[/color]\n" % orders.back().pad_label())
+	pass
 
 
 func _phase_name(phase: GameConstants.GamePhase) -> String:

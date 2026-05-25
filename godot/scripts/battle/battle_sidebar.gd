@@ -9,6 +9,7 @@ extends Control
 @onready var _reserve_outline: Label = %ReserveOutline
 @onready var _reserve_counts: Label = %ReserveCounts
 @onready var _orders_timer: Label = %OrdersTimer
+@onready var _orders_queue: RichTextLabel = %OrdersQueue
 @onready var _orders_log: RichTextLabel = %OrdersLog
 
 
@@ -44,6 +45,19 @@ func refresh(
 	_reserve_counts.text = _shape_row(["●", "■", "▲", "◆"], res, false)
 
 	_orders_timer.text = "Orders / timer : %s" % _format_timer(planning_elapsed)
+	_orders_queue.text = _format_orders_queue(state, human_camp)
+
+
+static func _format_orders_queue(state: GameState, human_camp: GameConstants.Camp) -> String:
+	var used: int = state.camp_orders_used(human_camp)
+	var max_o: int = GameConstants.MAX_ORDERS_PER_ROUND
+	var lines: PackedStringArray = PackedStringArray()
+	for order: GameOrder in state.orders_for_camp(human_camp):
+		lines.append("[color=#e8a060]%s[/color]" % order.pad_label())
+	if lines.is_empty():
+		lines.append("[color=#888]— aucun ordre —[/color]")
+	lines.append("[color=#aaa](%d/%d)[/color]" % [used, max_o])
+	return "\n".join(lines)
 
 
 static func _format_timer(elapsed: int) -> String:

@@ -23,9 +23,13 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale).
 
 - **Connecteurs mer** — `Space_*` rendus (Sp + `connector_h`/`connector_v`), tailles selon aspect atlas, positions couloirs entre quadrants
 
+### Réalisé (suite)
+
+- **File d’ordres** — `%OrdersQueue` dans la sidebar (pad `O : HQ > CE`, compteur 0/5), journal `%OrdersLog` pour événements de manche
+
 ### À faire (prochaine étape critique)
 
-- [ ] Synchroniser journal d’ordres sidebar ↔ `%OrdersLog` bataille
+- [ ] Déplacements mer/air depuis la carte (pas seulement terre)
 - [ ] Tuiles directionnelles emboîtées (échelle Unity) si souhaité
 - [ ] `Battleground.unity` pour calibration pixel-perfect
 - [ ] Bombes H, combats détaillés, animations
