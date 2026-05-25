@@ -1,10 +1,12 @@
 extends Node
 
 const GameRegression = preload("res://scripts/tests/game_regression.gd")
+const FullMatchTest = preload("res://scripts/tests/full_match_test.gd")
 
 
 func _ready() -> void:
 	var failures: PackedStringArray = GameRegression.run_all()
+	failures.append_array(FullMatchTest.run_all())
 	failures.append_array(_run_checks())
 	if failures.is_empty():
 		print("[headless_smoke] OK — tous les tests passent.")

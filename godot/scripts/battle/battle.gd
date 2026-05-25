@@ -14,7 +14,6 @@ extends Control
 @onready var _buy_cruiser_btn: Button = %BuyCruiserButton
 @onready var _deploy_btn: Button = %DeployButton
 @onready var _hbomb_fuse_btn: Button = %HbombFuseButton
-@onready var _play_round_btn: Button = %PlayRoundButton
 @onready var _game_over_layer: CanvasLayer = $GameOverLayer
 @onready var _game_over_label: Label = %GameOverLabel
 
@@ -57,7 +56,15 @@ func _process(delta: float) -> void:
 	_timer_accum += delta
 	if _timer_accum >= 1.0:
 		_timer_accum -= 1.0
-		_planning_elapsed = mini(_planning_elapsed + 1, GameConstants.PLANNING_TIMER_SECONDS)
+		_planning_elapsed = mini(_planning_elapsed + 1, _state.planning_time_limit())
+		if _planning_elapsed >= _state.planning_time_limit():
+			var timeout_logs: Array[String] = []
+			_state.apply_planning_timeout(timeout_logs)
+			for line: String in timeout_logs:
+				_log.append_text("[color=#ff8888]%s[/color]\n" % line)
+			_check_game_over()
+			_refresh_ui()
+			return
 		if _sidebar.has_method("refresh"):
 			_sidebar.call(
 				"refresh",
@@ -96,8 +103,6 @@ func _refresh_ui() -> void:
 	var planning: bool = _state.phase == GameConstants.GamePhase.PLANNING
 	var game_over: bool = _state.phase == GameConstants.GamePhase.GAME_OVER
 	_end_round_btn.disabled = not planning
-	if _play_round_btn:
-		_play_round_btn.disabled = not planning
 	if _game_over_layer:
 		_game_over_layer.visible = game_over
 	_buy_soldier_btn.disabled = not planning

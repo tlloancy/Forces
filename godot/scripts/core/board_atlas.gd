@@ -115,7 +115,9 @@ static func tile_sprite_id(sector_id: String) -> String:
 		var sp_key := "Sp" + sector_id.trim_prefix("Space_")
 		if shapes.has(sp_key):
 			return str(shapes[sp_key])
-		if sector_id in ["Space_5", "Space_8", "Space_12", "Space_11"]:
+		if sector_id in ["Space_5", "Space_8", "Space_12", "Space_10"]:
+			return str(defaults.get("connector_h", "FORCE-AD-13a_105"))
+		if sector_id in ["Space_6", "Space_7", "Space_11", "Space_9"]:
 			return str(defaults.get("connector_v", "FORCE-AD-13a_83"))
 		return str(defaults.get("connector_h", "FORCE-AD-13a_105"))
 	if sector_id == "Sun" or sector_id.begins_with("Moon_"):
@@ -170,7 +172,7 @@ static func tile_design_size(sector_id: String) -> Vector2:
 
 static func _sea_connector_design_size(sector_id: String) -> Vector2:
 	var native := tile_native_size(sector_id)
-	var long_side := 52.0
+	var long_side := 62.0
 	if native.x > native.y * 1.25:
 		var h := long_side * (native.y / native.x)
 		return Vector2(long_side, h)

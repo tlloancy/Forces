@@ -37,25 +37,25 @@ QUAD_LAND = {
     "Desert": {"hq": "HQ_Yellow", "corner": "SE", "toward": (-1.0, -1.0)},
 }
 
-# Centre : Sun + 4 Moons (cases jouables). Space_* = couloirs mer (zones cliquables, pas de tuile dessinée).
+# Centre : Sun + Moons + couloirs mer (Space_*). Bras en croix + couloirs latéraux visibles.
 CENTER = {
     "Sun": (140.0, 140.0),
-    "Moon_N": (140.0, 108.0),
-    "Moon_S": (140.0, 172.0),
-    "Moon_W": (108.0, 140.0),
-    "Moon_E": (172.0, 140.0),
-    "Space_5": (96.0, 140.0),
-    "Space_8": (184.0, 140.0),
-    "Space_6": (120.0, 120.0),
-    "Space_7": (160.0, 120.0),
-    "Space_11": (120.0, 160.0),
-    "Space_9": (160.0, 160.0),
-    "Space_1": (128.0, 128.0),
-    "Space_2": (152.0, 128.0),
-    "Space_4": (128.0, 152.0),
-    "Space_3": (152.0, 152.0),
-    "Space_10": (184.0, 168.0),
-    "Space_12": (96.0, 168.0),
+    "Moon_N": (140.0, 100.0),
+    "Moon_S": (140.0, 180.0),
+    "Moon_W": (100.0, 140.0),
+    "Moon_E": (180.0, 140.0),
+    "Space_5": (74.0, 140.0),
+    "Space_8": (206.0, 140.0),
+    "Space_12": (74.0, 198.0),
+    "Space_10": (206.0, 198.0),
+    "Space_6": (108.0, 116.0),
+    "Space_7": (172.0, 116.0),
+    "Space_11": (108.0, 164.0),
+    "Space_9": (172.0, 164.0),
+    "Space_1": (140.0, 122.0),
+    "Space_2": (158.0, 140.0),
+    "Space_4": (140.0, 158.0),
+    "Space_3": (122.0, 140.0),
 }
 
 layout: dict = {}

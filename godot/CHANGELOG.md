@@ -8,6 +8,37 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ---
 
+## 2026-05-25 — Partie complète headless, fixes H / carte / play
+
+**Commits** : _(voir `git log -3`)_
+
+### Bugs corrigés
+
+- **« H » partout** — `atlas_sprites.json` : `hunter` → `_22` (triangle), `hbomb` → `_20` (plus `_27` partagé avec portrait chasseur) ; `ui_piece_icons.gd` n’utilise que les clés `circle_filled` / `square_filled` / `triangle_filled` / `diamond_filled` / `hbomb_h`
+- **Menu « FHRCES »** — losange `diamond_outline` atlas (rotation par crans), plus le losange vectoriel / filled en H
+- **Double ▶▶** — `PlayRoundButton` supprimé ; un seul `EndRoundButton`
+- **Centre carte « éclaté »** — `generate_sector_layout.py` : croix `Space_1–4` autour du Sun, couloirs **latéraux** `Space_5/8` à x=74/206, `Space_12/10` en bas ; Moons écartées
+- **Couloirs mer** — connecteurs H/V selon Space ; taille mer 62px ; `sector_layout.json` régénéré
+
+### Gameplay
+
+- **`GameState.apply_planning_timeout()`** — temps écoulé → tous camps éliminés, `GAME_OVER` ; `match_timer_seconds` pour tests
+- **`battle.gd`** — vérifie `planning_time_limit()` chaque seconde de planification
+
+### Tests
+
+- **`scripts/tests/full_match_test.gd`** — invalides, achat/déploiement, combat égalité/capture, mer latérale, Power/échange, bombe H, capture QG, victoire, timeout, IA easy/normal/hard, simulation 12 manches
+- **`headless_test.gd`** — `GameRegression` + `FullMatchTest`
+- **`run_headless.ps1`** — mode `regression` (= smoke complet)
+
+### Commande
+
+```powershell
+.\tools\run_headless.ps1 -Mode smoke
+```
+
+---
+
 ## 2026-05-25 04:35:57 — UI atlas, sidebar épurée, losange mécanique, warnings GDScript
 
 **Commit** : `ae45e26` — `UI icônes atlas, sidebar sans doublons, losange mécanique, fix warnings.`

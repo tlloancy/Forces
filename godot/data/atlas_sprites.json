@@ -586,13 +586,13 @@
     "hbomb_h": "FORCE-AD-13a_20",
     "soldier": "FORCE-AD-13a_11",
     "raider": "FORCE-AD-13a_12",
-    "hunter": "FORCE-AD-13a_27",
+    "hunter": "FORCE-AD-13a_22",
     "cruiser": "FORCE-AD-13a_24",
     "commando": "FORCE-AD-13a_25",
     "bomber": "FORCE-AD-13a_24",
     "fighter": "FORCE-AD-13a_25",
     "destroyer": "FORCE-AD-13a_24",
-    "hbomb": "FORCE-AD-13a_27",
+    "hbomb": "FORCE-AD-13a_20",
     "hq": "FORCE-AD-13a_67",
     "flag": "FORCE-AD-13a_30"
   }

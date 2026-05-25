@@ -27,6 +27,14 @@ var pending_orders: Array[GameOrder] = []
 var orders_by_camp: Dictionary = {}
 var pieces_moved_this_round: Array[int] = []
 var _next_piece_id: int = 1
+## 0 = utilise GameConstants.PLANNING_TIMER_SECONDS (tests peuvent réduire).
+var match_timer_seconds: int = 0
+
+
+func planning_time_limit() -> int:
+	if match_timer_seconds > 0:
+		return match_timer_seconds
+	return GameConstants.PLANNING_TIMER_SECONDS
 
 
 func reset_match() -> void:
@@ -78,6 +86,21 @@ func reserve_pieces(camp: GameConstants.Camp) -> Array[PieceInstance]:
 
 func is_alive(camp: GameConstants.Camp) -> bool:
 	return bool(alive.get(camp, false))
+
+
+func survivors_count() -> int:
+	var n: int = 0
+	for camp: GameConstants.Camp in alive:
+		if is_alive(camp):
+			n += 1
+	return n
+
+
+func apply_planning_timeout(logs: Array[String]) -> void:
+	for camp: GameConstants.Camp in alive:
+		alive[camp] = false
+	logs.append("Temps écoulé — tous les camps sont éliminés.")
+	set_phase(GameConstants.GamePhase.GAME_OVER)
 
 
 func set_phase(new_phase: GameConstants.GamePhase) -> void:

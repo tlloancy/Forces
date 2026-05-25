@@ -1,10 +1,10 @@
 extends Control
-## « O » de FORCES — losange atlas, rotation mécanique (pas lisse).
+## « O » menu — losange atlas (outline), rotation par crans.
 
 @export var step_degrees: float = 45.0
 @export var step_interval: float = 0.13
 @export var icon_size: float = 44.0
-@export var wobble_degrees: float = 4.0
+@export var wobble_degrees: float = 3.0
 
 var _angle: float = 0.0
 var _step: int = 0
@@ -30,9 +30,7 @@ func _on_step() -> void:
 
 
 func _draw() -> void:
-	var tex: AtlasTexture = BoardAtlas.icon_texture("diamond_filled")
-	if tex == null or tex.atlas == null:
-		tex = BoardAtlas.icon_texture("diamond_outline")
+	var tex: AtlasTexture = BoardAtlas.icon_texture("diamond_outline")
 	if tex == null or tex.atlas == null:
 		return
 	var center := size * 0.5

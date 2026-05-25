@@ -2,7 +2,7 @@
 # Définir GODOT_BIN si besoin, ex.:
 #   $env:GODOT_BIN = "C:\Users\tom\Downloads\Godot_v4.6.3-stable_win64.exe"
 param(
-    [ValidateSet("smoke", "compile", "import")]
+    [ValidateSet("smoke", "regression", "compile", "import")]
     [string]$Mode = "smoke"
 )
 
@@ -75,6 +75,9 @@ function Invoke-Godot {
 
 switch ($Mode) {
     "smoke" {
+        $code = Invoke-Godot @("--headless", "--path", $ProjectRoot, "res://scenes/headless_test.tscn")
+    }
+    "regression" {
         $code = Invoke-Godot @("--headless", "--path", $ProjectRoot, "res://scenes/headless_test.tscn")
     }
     "compile" {

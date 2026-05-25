@@ -1,6 +1,6 @@
 class_name UiPieceIcons
 extends RefCounted
-## Boutons / labels UI avec textures atlas (plus de ● ■ ▲ ◆ en dur).
+## Icônes UI — formes atlas (jamais les portraits unité type « H » bombe).
 
 const BASIC_TYPES: Array[GameConstants.PieceType] = [
 	GameConstants.PieceType.SOLDIER,
@@ -9,24 +9,29 @@ const BASIC_TYPES: Array[GameConstants.PieceType] = [
 	GameConstants.PieceType.CRUISER,
 ]
 
-const EXCHANGE_RESULTS: Array[GameConstants.PieceType] = [
-	GameConstants.PieceType.COMMANDO,
-	GameConstants.PieceType.BOMBER,
-	GameConstants.PieceType.FIGHTER,
-	GameConstants.PieceType.DESTROYER,
-]
+
+static func texture_shape(shape_key: String) -> Texture2D:
+	return BoardAtlas.icon_texture(shape_key)
 
 
 static func texture_for_piece(piece_type: GameConstants.PieceType, filled: bool = true) -> Texture2D:
-	var key: String = BoardAtlas.piece_shape_key(piece_type, filled)
-	var atlas_tex: AtlasTexture = BoardAtlas.icon_texture(key)
-	if atlas_tex != null:
-		return atlas_tex
-	return null
+	match piece_type:
+		GameConstants.PieceType.SOLDIER, GameConstants.PieceType.COMMANDO:
+			return texture_shape("circle_filled" if filled else "circle_outline")
+		GameConstants.PieceType.RAIDER, GameConstants.PieceType.BOMBER:
+			return texture_shape("square_filled" if filled else "square_outline")
+		GameConstants.PieceType.HUNTER, GameConstants.PieceType.FIGHTER:
+			return texture_shape("triangle_filled" if filled else "triangle_outline")
+		GameConstants.PieceType.CRUISER, GameConstants.PieceType.DESTROYER:
+			return texture_shape("diamond_filled" if filled else "diamond_outline")
+		GameConstants.PieceType.HBOMB:
+			return texture_shape("hbomb_h")
+		_:
+			return texture_shape("circle_filled")
 
 
 static func texture_hbomb() -> Texture2D:
-	return BoardAtlas.icon_texture("hbomb")
+	return texture_shape("hbomb_h")
 
 
 static func apply_button_icon(btn: Button, tex: Texture2D, caption: String = "") -> void:
@@ -50,14 +55,18 @@ static func setup_exchange_button(
 	for child: Node in btn.get_children():
 		child.queue_free()
 	btn.text = ""
-	btn.custom_minimum_size = Vector2(40, 32)
+	btn.custom_minimum_size = Vector2(44, 32)
 	var row := HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_theme_constant_override("separation", 2)
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	for _i in 3:
-		row.add_child(_make_icon_rect(texture_for_piece(from_type, true), 14))
-	row.add_child(_make_icon_rect(texture_for_piece(to_type, true), 16))
+		row.add_child(_make_icon_rect(texture_for_piece(from_type, true), 12))
+	var arrow := Label.new()
+	arrow.text = "›"
+	arrow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(arrow)
+	row.add_child(_make_icon_rect(texture_for_piece(to_type, true), 14))
 	btn.add_child(row)
 
 
