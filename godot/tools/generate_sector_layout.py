@@ -37,24 +37,25 @@ QUAD_LAND = {
     "Desert": {"hq": "HQ_Yellow", "corner": "SE", "toward": (-1.0, -1.0)},
 }
 
+# Centre : Sun + 4 Moons (cases jouables). Space_* = couloirs mer (zones cliquables, pas de tuile dessinée).
 CENTER = {
     "Sun": (140.0, 140.0),
-    "Moon_N": (140.0, 100.0),
-    "Moon_S": (140.0, 180.0),
-    "Moon_W": (100.0, 140.0),
-    "Moon_E": (180.0, 140.0),
-    "Space_1": (118.0, 118.0),
-    "Space_2": (162.0, 118.0),
-    "Space_3": (162.0, 162.0),
-    "Space_4": (118.0, 162.0),
-    "Space_5": (92.0, 140.0),
-    "Space_6": (110.0, 110.0),
-    "Space_7": (170.0, 110.0),
-    "Space_8": (188.0, 140.0),
-    "Space_9": (170.0, 170.0),
-    "Space_10": (188.0, 170.0),
-    "Space_11": (110.0, 170.0),
-    "Space_12": (92.0, 170.0),
+    "Moon_N": (140.0, 108.0),
+    "Moon_S": (140.0, 172.0),
+    "Moon_W": (108.0, 140.0),
+    "Moon_E": (172.0, 140.0),
+    "Space_5": (96.0, 140.0),
+    "Space_8": (184.0, 140.0),
+    "Space_6": (120.0, 120.0),
+    "Space_7": (160.0, 120.0),
+    "Space_11": (120.0, 160.0),
+    "Space_9": (160.0, 160.0),
+    "Space_1": (128.0, 128.0),
+    "Space_2": (152.0, 128.0),
+    "Space_4": (128.0, 152.0),
+    "Space_3": (152.0, 152.0),
+    "Space_10": (184.0, 168.0),
+    "Space_12": (96.0, 168.0),
 }
 
 layout: dict = {}
@@ -79,11 +80,11 @@ for prefix, cfg in QUAD_LAND.items():
 
 for sid, (x, y) in CENTER.items():
     if sid == "Sun":
-        r = 22
+        r = 18
     elif sid.startswith("Moon"):
-        r = 12
+        r = 11
     else:
-        r = 10
+        r = 8
     layout[sid] = {"x": x, "y": y, "r": r}
 
 layout["_meta"] = {

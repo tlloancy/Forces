@@ -5,6 +5,7 @@ enum Kind { MOVE, BUY, EXCHANGE, DEPLOY_FROM_RESERVE, HBOMB_PLACE, HBOMB_STRIKE 
 
 var kind: Kind = Kind.MOVE
 var camp: GameConstants.Camp
+var piece_id: int = -1
 var piece_type: GameConstants.PieceType
 var from_sector: String = ""
 var to_sector: String = ""

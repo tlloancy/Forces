@@ -16,6 +16,7 @@ const AiPlanner = preload("res://scripts/ai/ai_planner.gd")
 @onready var _buy_cruiser_btn: Button = %BuyCruiserButton
 @onready var _deploy_btn: Button = %DeployButton
 @onready var _hbomb_fuse_btn: Button = %HbombFuseButton
+@onready var _play_round_btn: Button = %PlayRoundButton
 @onready var _game_over_layer: CanvasLayer = $GameOverLayer
 @onready var _game_over_label: Label = %GameOverLabel
 
@@ -35,6 +36,8 @@ func _ready() -> void:
 	_state.piece_moved.connect(_on_piece_moved)
 	_state.power_changed.connect(_on_power_changed)
 	_board_map.sector_pressed.connect(_on_map_sector_pressed)
+	if _sidebar.has_signal("unit_pressed"):
+		_sidebar.unit_pressed.connect(_on_sidebar_unit_pressed)
 	_style_sidebar()
 	if _game_over_layer:
 		_game_over_layer.visible = false
@@ -95,6 +98,8 @@ func _refresh_ui() -> void:
 	var planning: bool = _state.phase == GameConstants.GamePhase.PLANNING
 	var game_over: bool = _state.phase == GameConstants.GamePhase.GAME_OVER
 	_end_round_btn.disabled = not planning
+	if _play_round_btn:
+		_play_round_btn.disabled = not planning
 	if _game_over_layer:
 		_game_over_layer.visible = game_over
 	_buy_soldier_btn.disabled = not planning
@@ -219,12 +224,9 @@ func _select_sector(sector_id: String) -> void:
 				_try_move_to(sector_id)
 				return
 
-	if sector_id == _selected_sector:
-		_cycle_movable_piece(sector_id)
-	else:
-		_selected_sector = sector_id
-		_sector_pick_index = 0
-		_select_movable_piece_by_index(sector_id, 0)
+	_selected_sector = sector_id
+	_sector_pick_index = 0
+	_selected_piece_id = -1
 
 	if _board_map.has_method("set_selected"):
 		_board_map.call("set_selected", sector_id)
@@ -468,7 +470,29 @@ func _on_round_advanced(round_number: int) -> void:
 	_timer_accum = 0.0
 
 
+func _on_sidebar_unit_pressed(piece_type: GameConstants.PieceType) -> void:
+	if _state.phase != GameConstants.GamePhase.PLANNING or _selected_sector.is_empty():
+		return
+	_select_piece_type_on_sector(_selected_sector, piece_type)
+	_refresh_ui()
+
+
+func _select_piece_type_on_sector(sector_id: String, piece_type: GameConstants.PieceType) -> void:
+	for p: PieceInstance in _state.human_pieces_on_sector(sector_id):
+		if p.type == piece_type and not _state.has_piece_moved(p.id):
+			_selected_piece_id = p.id
+			return
+	var hq: String = BoardCatalog.hq_for_camp(_state.human_camp)
+	if sector_id == hq:
+		for p: PieceInstance in _state.reserve_pieces(_state.human_camp):
+			if p.type == piece_type and not _state.has_piece_moved(p.id):
+				_selected_piece_id = p.id
+				return
+	_selected_piece_id = -1
+
+
 func _on_piece_moved(_piece_id: int, _from_sector: String, _to_sector: String) -> void:
+	_selected_piece_id = -1
 	_refresh_ui()
 
 

@@ -95,7 +95,7 @@ func land_distance(from_sector: String, to_sector: String) -> int:
 	return 999
 
 
-func land_destinations(from_sector: String, max_move: int) -> PackedStringArray:
+func land_destinations(from_sector: String, nbmove: int) -> PackedStringArray:
 	_load()
 	var entry: Variant = _land.get(from_sector, null)
 	if entry == null or typeof(entry) != TYPE_DICTIONARY:
@@ -105,7 +105,7 @@ func land_destinations(from_sector: String, max_move: int) -> PackedStringArray:
 	for n in data.get("move_1", [] as Array):
 		if n is String and n not in result:
 			result.append(n)
-	if max_move >= 3:
+	if nbmove >= 3:
 		for n in data.get("move_3", [] as Array):
 			if n is String and n not in result:
 				result.append(n)
@@ -129,7 +129,7 @@ func air_destinations(from_sector: String) -> PackedStringArray:
 func piece_destinations(piece_type: GameConstants.PieceType, from_sector: String, max_move: int) -> PackedStringArray:
 	match GameConstants.piece_movement_domain(piece_type):
 		GameConstants.MovementDomain.LAND:
-			return land_destinations(from_sector, max_move)
+			return land_destinations(from_sector, GameConstants.unity_land_nbmove(piece_type))
 		GameConstants.MovementDomain.SEA:
 			return sea_destinations(from_sector)
 		GameConstants.MovementDomain.AIR:

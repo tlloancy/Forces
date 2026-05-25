@@ -6,6 +6,24 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale).
 
 ---
 
+## 2026-05-25 22:00:00 — Ordres secrets, centre plateau, UI Case Info (réf. captures 216/221/231)
+
+### Réalisé
+
+- **Centre « éclaté » corrigé** — couloirs `Space_*` sans tuile dessinée (zones cliquables conservées) ; Sun + 4 Moons repositionnés ; `sector_layout.json` régénéré
+- **Ordres simultanés** — déplacements / déploiements / bombe H appliqués à la **lecture** (`▶▶` / Lecture), pas pendant la planification ; fantômes verts = destinations prévues
+- **Surbrillance sol** — rectangles sur les cases (plus les grands cercles jaunes)
+- **Case Info** — boutons ● ■ ▲ ◆ par type (comme capture 221) ; clic unité → portée affichée
+- **Portées terre Unity** — `unity_land_nbmove` (soldat/commando 2, tank/bombardier 3) via `Dep_terre`
+- **Power territoire** — +1 Power si présence sur grille ennemie en fin de manche (sans combat bloquant)
+
+### À faire
+
+- [ ] Connecteurs mer visibles entre quadrants (style 216)
+- [ ] Animations déplacement à la révélation
+
+---
+
 ## 2026-05-25 18:00:00 — Port solo v1 (jouable de bout en bout)
 
 ### Réalisé

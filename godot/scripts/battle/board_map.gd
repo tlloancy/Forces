@@ -172,11 +172,18 @@ func _draw() -> void:
 	for sector_id: String in _move_highlights:
 		if not _layout.has(sector_id):
 			continue
-		var hd: Dictionary = _layout[sector_id] as Dictionary
-		var hr: float = float(hd.get("r", 10)) * scale * 1.25
-		var hcx := board.position.x + float(hd["x"]) * sx
-		var hcy := board.position.y + float(hd["y"]) * sy
-		draw_arc(Vector2(hcx, hcy), hr, 0.0, TAU, 32, _highlight_color, 2.0)
+		var tile_rect := _sector_tile_rect(board, sx, sy, scale, sector_id)
+		draw_rect(tile_rect.grow(2.0), Color(_highlight_color.r, _highlight_color.g, _highlight_color.b, 0.42))
+		draw_rect(tile_rect.grow(2.0), _highlight_color, false, 2.0)
+
+	if _state != null:
+		var pending: Dictionary = _state.human_pending_move_targets()
+		for sector_id: String in pending:
+			if not _layout.has(sector_id):
+				continue
+			var ghost_rect := _sector_tile_rect(board, sx, sy, scale, sector_id)
+			draw_rect(ghost_rect, Color(0.35, 0.85, 0.45, 0.35))
+			draw_rect(ghost_rect, Color(0.5, 1.0, 0.55, 0.85), false, 1.5)
 
 	if _selected != "" and _layout.has(_selected):
 		var d: Dictionary = _layout[_selected] as Dictionary
@@ -219,7 +226,7 @@ func _sorted_sector_ids() -> Array:
 
 func _draw_layer(sector_id: String) -> int:
 	if sector_id.begins_with("Space_"):
-		return 0
+		return -1
 	if sector_id.begins_with("Moon_") or sector_id == "Sun":
 		return 2
 	if sector_id.begins_with("HQ_"):
@@ -227,8 +234,24 @@ func _draw_layer(sector_id: String) -> int:
 	return 1
 
 
+func _draw_tile_for_sector(sector_id: String) -> bool:
+	if sector_id.begins_with("Space_"):
+		return false
+	return true
+
+
+func _sector_tile_rect(board: Rect2, sx: float, sy: float, scale: float, sector_id: String) -> Rect2:
+	var d: Dictionary = _layout[sector_id] as Dictionary
+	var cx := board.position.x + float(d["x"]) * sx
+	var cy := board.position.y + float(d["y"]) * sy
+	var design := BoardAtlas.tile_design_size(sector_id) * scale
+	return Rect2(Vector2(cx - design.x * 0.5, cy - design.y * 0.5), design)
+
+
 func _draw_tiles(board: Rect2, sx: float, sy: float, scale: float) -> void:
 	for sector_id: String in _sorted_sector_ids():
+		if not _draw_tile_for_sector(sector_id):
+			continue
 		var d: Dictionary = _layout[sector_id] as Dictionary
 		var cx := board.position.x + float(d["x"]) * sx
 		var cy := board.position.y + float(d["y"]) * sy

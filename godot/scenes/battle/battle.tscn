@@ -60,6 +60,11 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.9, 0.92, 1)
 
+[node name="CaseUnitsRow" type="HBoxContainer" parent="Sidebar/CasePanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
 [node name="CasePiece" type="Label" parent="Sidebar/CasePanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -169,7 +174,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.75, 0.78, 0.85, 1)
 theme_override_font_sizes/font_size = 11
 autowrap_mode = 2
-text = "Planifiez vos ordres — touchez une case, puis une destination."
+text = "Case Info : touchez une unité. Puis une case verte = destination. Max 5 ordres."
 
 [node name="OrdersQueue" type="RichTextLabel" parent="Sidebar/OrdersPanel/VBox"]
 unique_name_in_owner = true
@@ -193,11 +198,16 @@ layout_mode = 2
 layout_mode = 2
 text = "⚙"
 
+[node name="PlayRoundButton" type="Button" parent="Sidebar/MenuRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "▶▶"
+
 [node name="EndRoundButton" type="Button" parent="Sidebar/MenuRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Fin manche"
+text = "Lecture"
 
 [node name="GameOverLayer" type="CanvasLayer" parent="."]
 layer = 10
@@ -316,6 +326,7 @@ offset_bottom = 300.0
 [connection signal="pressed" from="GameOverLayer/Center/Panel/VBox/Buttons/ReplayButton" to="." method="_on_replay_pressed"]
 [connection signal="pressed" from="GameOverLayer/Center/Panel/VBox/Buttons/MenuButtonGO" to="." method="_on_menu_pressed"]
 [connection signal="pressed" from="Sidebar/MenuRow/MenuButton" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="Sidebar/MenuRow/PlayRoundButton" to="." method="_on_end_round_pressed"]
 [connection signal="pressed" from="Sidebar/MenuRow/EndRoundButton" to="." method="_on_end_round_pressed"]
 [connection signal="pressed" from="Sidebar/ReservePanel/VBox/ReserveActions/BuySoldierButton" to="." method="_on_buy_soldier_pressed"]
 [connection signal="pressed" from="Sidebar/ReservePanel/VBox/ReserveActions/BuyRaiderButton" to="." method="_on_buy_raider_pressed"]

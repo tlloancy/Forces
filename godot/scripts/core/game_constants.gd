@@ -67,6 +67,17 @@ static func piece_type_label(piece: PieceType) -> String:
 		_: return "?"
 
 
+## Paramètre `nbmove` passé à `Dep_terre.deplacement_terrestre` (Unity infoButtons).
+static func unity_land_nbmove(piece_type: PieceType) -> int:
+	match piece_type:
+		PieceType.SOLDIER, PieceType.COMMANDO:
+			return 2
+		PieceType.RAIDER, PieceType.BOMBER:
+			return 3
+		_:
+			return 1
+
+
 static func piece_movement_domain(piece: PieceType) -> MovementDomain:
 	match piece:
 		PieceType.SOLDIER, PieceType.RAIDER, PieceType.COMMANDO:
