@@ -45,3 +45,24 @@ func describe() -> String:
 			return "%s: bombe H → %s" % [GameConstants.camp_to_string(camp), to_sector]
 		_:
 			return "Ordre inconnu"
+
+
+## Format pad Android : « O : HQ > CE ».
+func pad_label() -> String:
+	match kind:
+		Kind.MOVE:
+			return "O : %s > %s" % [
+				BoardCatalog.sector_short_label(from_sector),
+				BoardCatalog.sector_short_label(to_sector),
+			]
+		Kind.DEPLOY_FROM_RESERVE:
+			return "O : réserve > %s" % BoardCatalog.sector_short_label(to_sector)
+		Kind.BUY:
+			return "O : achat %s" % GameConstants.piece_type_label(piece_type)
+		Kind.EXCHANGE:
+			return "O : fusion %s" % GameConstants.piece_type_label(exchange_result)
+		Kind.HBOMB:
+			return "O : H → %s" % BoardCatalog.sector_short_label(to_sector)
+		_:
+			return "O : ?"
+

@@ -30,7 +30,7 @@ case "$MODE" in
     "$GODOT" --headless --path "$ROOT" "res://scenes/headless_test.tscn"
     ;;
   compile)
-    "$GODOT" --headless --path "$ROOT" "res://scenes/main.tscn" --quit-after 2
+    "$GODOT" --headless --path "$ROOT" "res://scenes/menu/main_menu.tscn" --quit-after 2
     ;;
   import)
     "$GODOT" --headless --path "$ROOT" --import --quit

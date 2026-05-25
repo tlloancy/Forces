@@ -6,6 +6,47 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale).
 
 ---
 
+## 2026-05-25 12:00:00 — Plateau tuiles atlas, grilles ancrées QG, sidebar
+
+### Réalisé
+
+- **`board_map.gd`** — rendu **tuile par tuile** depuis l’atlas (plus de PNG composé au runtime) ; couches mer → terrain → centre → QG ; teintes camps renforcées ; badge pièces sur QG
+- **`board_atlas.gd`** — `tile_shapes` (NW…SE, Sp1–Sp12, HQ, CE), `sector_tile_modulate()`, octogone CE pour tout le terrain
+- **`sector_layout.json`** — grille 280×280 ; QG aux coins symétriques **(18,18) / (262,18) / (18,262) / (262,262)** ; grilles 3×3 **ancrées sur le QG** de chaque quadrant (NW/NE/SW/SE)
+- **`generate_sector_layout.py`** — régénération géométrique (remplace calibration peaks sur PNG noir)
+- **`parse_atlas_meta.py`** — mapping `tile_shapes` ContainsPlace Unity
+- **`battle_sidebar.gd`** + **`battle.tscn`** — Case Info / Reserve / Orders+timer ; sélection QG au démarrage
+- **`export_board_image.py`**, **`calibrate_sector_layout.py`** — outils référence (PNG composé optionnel)
+- **`assets/textures/board_reference.png`** — preview export 4 quadrants
+
+### À faire (prochaine étape critique)
+
+- [ ] **Connecteurs mer** (`Space_*`) — sprites Sp1–Sp12 visibles entre quadrants
+- [ ] Tuiles directionnelles emboîtées (échelle Unity) si souhaité
+- [ ] `Battleground.unity` pour calibration pixel-perfect
+- [ ] Bombes H, combats détaillés, animations
+
+---
+
+## 2026-05-25 00:15:00 — Bataille fidèle : calibration, sprites, timer, ordres
+
+### Réalisé
+
+- **`calibrate_sector_layout.py`** — positions secteurs extraites du diagramme `FORCE-AD-13a_13` (57 cases)
+- **`board_atlas.gd`** — icônes pièces/UI depuis atlas (`piece_icons` dans `atlas_sprites.json`)
+- **`board_map.gd`** — pièces en sprites atlas teintés camp, surbrillance destinations, sélection pointillée
+- **`battle_sidebar.gd`** — timer 59:59 (logique Unity), pad ordres `O : HQ > CE`
+- **`board_catalog.gd`** — libellés courts secteurs (HQ, CE, NW, Sp3…)
+- **`battle.gd`** — timer planification, file d'ordres, clic case → destination
+
+### À faire
+
+- [ ] Récupérer `Battleground.unity` pour calibration pixel-perfect finale
+- [ ] Sprites connecteurs mer entre cases
+- [ ] Animations fin de manche / combat
+
+---
+
 ## 2026-05-24 23:48:00 — Plateau graphique fidèle (atlas FORCE-AD-13a)
 
 ### Réalisé

@@ -22,6 +22,7 @@ enum GamePhase { MENU, PLANNING, RESOLUTION, GAME_OVER }
 enum MovementDomain { LAND, SEA, AIR, NONE }
 
 const MAX_ORDERS_PER_ROUND: int = 5
+const PLANNING_TIMER_SECONDS: int = 3600
 const STARTING_POWER: int = 12
 const POWER_PER_ROUND: int = 3
 

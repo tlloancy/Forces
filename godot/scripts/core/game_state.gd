@@ -91,6 +91,14 @@ func camp_orders_used(camp: GameConstants.Camp) -> int:
 	return int(orders_by_camp.get(camp, 0))
 
 
+func orders_for_camp(camp: GameConstants.Camp) -> Array[GameOrder]:
+	var result: Array[GameOrder] = []
+	for order: GameOrder in pending_orders:
+		if order.camp == camp:
+			result.append(order)
+	return result
+
+
 func has_piece_moved(piece_id: int) -> bool:
 	return piece_id in pieces_moved_this_round
 

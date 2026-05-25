@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://forces_battle"]
+[gd_scene load_steps=4 format=3 uid="uid://forces_battle"]
 
 [ext_resource type="Script" path="res://scripts/battle/battle.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/battle/board_map.gd" id="2_map"]
+[ext_resource type="Script" path="res://scripts/battle/battle_sidebar.gd" id="3_sidebar"]
 
 [node name="Battle" type="Control"]
 layout_mode = 3
@@ -12,197 +13,236 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_battle")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="BoardMap" type="Control" parent="."]
+unique_name_in_owner = true
+z_index = 0
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.102, 0.133, 0.165, 1)
+script = ExtResource("2_map")
 
-[node name="Margin" type="MarginContainer" parent="."]
+[node name="Sidebar" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+z_index = 2
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
-
-[node name="VBoxRoot" type="VBoxContainer" parent="Margin"]
-layout_mode = 2
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 200.0
+offset_bottom = 460.0
 theme_override_constants/separation = 6
+script = ExtResource("3_sidebar")
 
-[node name="Header" type="HBoxContainer" parent="Margin/VBoxRoot"]
+[node name="CasePanel" type="PanelContainer" parent="Sidebar"]
 layout_mode = 2
 
-[node name="TitleLabel" type="Label" parent="Margin/VBoxRoot/Header"]
+[node name="VBox" type="VBoxContainer" parent="Sidebar/CasePanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="CaseTitle" type="Label" parent="Sidebar/CasePanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 24
-text = "Forces"
+theme_override_font_sizes/font_size = 16
+text = "Case Info"
 
-[node name="PowerLabel" type="Label" parent="Margin/VBoxRoot/Header"]
+[node name="CaseHq" type="Label" parent="Sidebar/CasePanel/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.25, 0.25, 1)
+text = "HQ"
+
+[node name="CaseStats" type="Label" parent="Sidebar/CasePanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.92, 1)
+
+[node name="ReservePanel" type="PanelContainer" parent="Sidebar"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Sidebar/ReservePanel"]
+layout_mode = 2
+
+[node name="ReserveTitle" type="Label" parent="Sidebar/ReservePanel/VBox"]
+layout_mode = 2
+text = "Reserve"
+
+[node name="ReservePower" type="Label" parent="Sidebar/ReservePanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.82, 0.35, 1)
-text = "Power : 0"
+text = "F 0"
 
-[node name="MenuButton" type="Button" parent="Margin/VBoxRoot/Header"]
-layout_mode = 2
-text = "Menu"
-
-[node name="EndRoundButton" type="Button" parent="Margin/VBoxRoot/Header"]
+[node name="ReserveOutline" type="Label" parent="Sidebar/ReservePanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Fin de manche"
+theme_override_colors/font_color = Color(0.95, 0.35, 0.35, 0.85)
+text = "● 0 ■ 0 ▲ 0 ◆ 0"
 
-[node name="StatusLabel" type="Label" parent="Margin/VBoxRoot"]
+[node name="ReserveCounts" type="Label" parent="Sidebar/ReservePanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.75, 0.8, 0.85, 1)
-text = "Phase: Planification"
+theme_override_colors/font_color = Color(0.95, 0.35, 0.35, 1)
+text = "● 0 ■ 0 ▲ 0 ◆ 0"
 
-[node name="BuyBar" type="HBoxContainer" parent="Margin/VBoxRoot"]
+[node name="ReserveActions" type="HBoxContainer" parent="Sidebar/ReservePanel/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 6
 
-[node name="BuySoldierButton" type="Button" parent="Margin/VBoxRoot/BuyBar"]
+[node name="BuySoldierButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Recruter Soldat (2P)"
+text = "●2"
 
-[node name="BuyRaiderButton" type="Button" parent="Margin/VBoxRoot/BuyBar"]
+[node name="BuyRaiderButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Recruter Tank (3P)"
+text = "■3"
 
-[node name="BuyHunterButton" type="Button" parent="Margin/VBoxRoot/BuyBar"]
+[node name="BuyHunterButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Recruter Chasseur (5P)"
+text = "▲5"
 
-[node name="BuyCruiserButton" type="Button" parent="Margin/VBoxRoot/BuyBar"]
+[node name="BuyCruiserButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Recruter Croiseur (10P)"
+text = "◆10"
 
-[node name="ExchangeBar" type="HBoxContainer" parent="Margin/VBoxRoot"]
-layout_mode = 2
-theme_override_constants/separation = 6
-
-[node name="ExchangeCommandoButton" type="Button" parent="Margin/VBoxRoot/ExchangeBar"]
-layout_mode = 2
-text = "3 Soldats → Régiment"
-
-[node name="ExchangeBomberButton" type="Button" parent="Margin/VBoxRoot/ExchangeBar"]
-layout_mode = 2
-text = "3 Tanks → Bombardier"
-
-[node name="ExchangeFighterButton" type="Button" parent="Margin/VBoxRoot/ExchangeBar"]
-layout_mode = 2
-text = "3 Chasseurs → Ch. lourd"
-
-[node name="ExchangeDestroyerButton" type="Button" parent="Margin/VBoxRoot/ExchangeBar"]
-layout_mode = 2
-text = "3 Croiseurs → Destroyer"
-
-[node name="DeployButton" type="Button" parent="Margin/VBoxRoot/BuyBar"]
+[node name="DeployButton" type="Button" parent="Sidebar/ReservePanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Déployer réserve"
+text = "Déployer"
 
-[node name="HBox" type="HBoxContainer" parent="Margin/VBoxRoot"]
+[node name="ExchangeRow" type="HBoxContainer" parent="Sidebar/ReservePanel/VBox"]
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 8
 
-[node name="Left" type="VBoxContainer" parent="Margin/VBoxRoot/HBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.18
-theme_override_constants/separation = 4
-
-[node name="LabelSectors" type="Label" parent="Margin/VBoxRoot/HBox/Left"]
-layout_mode = 2
-text = "Secteurs"
-
-[node name="SectorList" type="ItemList" parent="Margin/VBoxRoot/HBox/Left"]
+[node name="ExchangeCommandoButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
 unique_name_in_owner = true
+layout_mode = 2
+text = "3●→Cmd"
+
+[node name="ExchangeBomberButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "3■→Bmb"
+
+[node name="ExchangeFighterButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "3▲→Ch"
+
+[node name="ExchangeDestroyerButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "3◆→Dst"
+
+[node name="OrdersPanel" type="PanelContainer" parent="Sidebar"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="MapPanel" type="PanelContainer" parent="Margin/VBoxRoot/HBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.44
-
-[node name="BoardMap" type="Control" parent="Margin/VBoxRoot/HBox/MapPanel"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(520, 380)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-script = ExtResource("2_map")
-
-[node name="Mid" type="VBoxContainer" parent="Margin/VBoxRoot/HBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.18
-theme_override_constants/separation = 4
-
-[node name="PiecesLabel" type="Label" parent="Margin/VBoxRoot/HBox/Mid"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Vos pièces"
-
-[node name="PieceList" type="ItemList" parent="Margin/VBoxRoot/HBox/Mid"]
-unique_name_in_owner = true
+[node name="VBox" type="VBoxContainer" parent="Sidebar/OrdersPanel"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="LabelDest" type="Label" parent="Margin/VBoxRoot/HBox/Mid"]
-layout_mode = 2
-text = "Destinations"
-
-[node name="DestList" type="ItemList" parent="Margin/VBoxRoot/HBox/Mid"]
+[node name="OrdersTimer" type="Label" parent="Sidebar/OrdersPanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_vertical = 3
+text = "Orders / timer"
 
-[node name="Right" type="VBoxContainer" parent="Margin/VBoxRoot/HBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.2
-
-[node name="LabelLog" type="Label" parent="Margin/VBoxRoot/HBox/Right"]
-layout_mode = 2
-text = "Journal"
-
-[node name="LogLabel" type="RichTextLabel" parent="Margin/VBoxRoot/HBox/Right"]
+[node name="OrdersLog" type="RichTextLabel" parent="Sidebar/OrdersPanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
-scroll_following = true
+fit_content = true
 text = ""
 
-[connection signal="pressed" from="Margin/VBoxRoot/Header/MenuButton" to="." method="_on_menu_pressed"]
-[connection signal="pressed" from="Margin/VBoxRoot/Header/EndRoundButton" to="." method="_on_end_round_pressed"]
-[connection signal="pressed" from="Margin/VBoxRoot/BuyBar/BuySoldierButton" to="." method="_on_buy_soldier_pressed"]
-[connection signal="pressed" from="Margin/VBoxRoot/BuyBar/BuyRaiderButton" to="." method="_on_buy_raider_pressed"]
-[connection signal="pressed" from="Margin/VBoxRoot/BuyBar/BuyHunterButton" to="." method="_on_buy_hunter_pressed"]
-[connection signal="pressed" from="Margin/VBoxRoot/BuyBar/BuyCruiserButton" to="." method="_on_buy_cruiser_pressed"]
-[connection signal="pressed" from="Margin/VBoxRoot/ExchangeBar/ExchangeCommandoButton" to="." method="_on_exchange_commando_pressed"]
-[connection signal="pressed" from="Margin/VBoxRoot/ExchangeBar/ExchangeBomberButton" to="." method="_on_exchange_bomber_pressed"]
-[connection signal="pressed" from="Margin/VBoxRoot/ExchangeBar/ExchangeFighterButton" to="." method="_on_exchange_fighter_pressed"]
-[connection signal="pressed" from="Margin/VBoxRoot/ExchangeBar/ExchangeDestroyerButton" to="." method="_on_exchange_destroyer_pressed"]
-[connection signal="pressed" from="Margin/VBoxRoot/BuyBar/DeployButton" to="." method="_on_deploy_pressed"]
-[connection signal="item_selected" from="Margin/VBoxRoot/HBox/Left/SectorList" to="." method="_on_sector_selected"]
-[connection signal="item_selected" from="Margin/VBoxRoot/HBox/Mid/PieceList" to="." method="_on_piece_selected"]
-[connection signal="item_selected" from="Margin/VBoxRoot/HBox/Mid/DestList" to="." method="_on_dest_selected"]
+[node name="MenuRow" type="HBoxContainer" parent="Sidebar"]
+layout_mode = 2
+
+[node name="MenuButton" type="Button" parent="Sidebar/MenuRow"]
+layout_mode = 2
+text = "⚙"
+
+[node name="EndRoundButton" type="Button" parent="Sidebar/MenuRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Fin manche"
+
+[node name="DebugLayer" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TitleLabel" type="Label" parent="DebugLayer"]
+unique_name_in_owner = true
+layout_mode = 0
+text = "Forces"
+
+[node name="StatusLabel" type="Label" parent="DebugLayer"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 24.0
+text = "Status"
+
+[node name="PowerLabel" type="Label" parent="DebugLayer"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 48.0
+
+[node name="PiecesLabel" type="Label" parent="DebugLayer"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 72.0
+
+[node name="SectorList" type="ItemList" parent="DebugLayer"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 0.0
+offset_top = 96.0
+offset_right = 120.0
+offset_bottom = 200.0
+
+[node name="PieceList" type="ItemList" parent="DebugLayer"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 128.0
+offset_top = 96.0
+offset_right = 248.0
+offset_bottom = 200.0
+
+[node name="DestList" type="ItemList" parent="DebugLayer"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 256.0
+offset_top = 96.0
+offset_right = 376.0
+offset_bottom = 200.0
+
+[node name="LogLabel" type="RichTextLabel" parent="DebugLayer"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 208.0
+offset_right = 400.0
+offset_bottom = 300.0
+
+[connection signal="pressed" from="Sidebar/MenuRow/MenuButton" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="Sidebar/MenuRow/EndRoundButton" to="." method="_on_end_round_pressed"]
+[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ReserveActions/BuySoldierButton" to="." method="_on_buy_soldier_pressed"]
+[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ReserveActions/BuyRaiderButton" to="." method="_on_buy_raider_pressed"]
+[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ReserveActions/BuyHunterButton" to="." method="_on_buy_hunter_pressed"]
+[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ReserveActions/BuyCruiserButton" to="." method="_on_buy_cruiser_pressed"]
+[connection signal="pressed" from="Sidebar/ReservePanel/VBox/DeployButton" to="." method="_on_deploy_pressed"]
+[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ExchangeRow/ExchangeCommandoButton" to="." method="_on_exchange_commando_pressed"]
+[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ExchangeRow/ExchangeBomberButton" to="." method="_on_exchange_bomber_pressed"]
+[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ExchangeRow/ExchangeFighterButton" to="." method="_on_exchange_fighter_pressed"]
+[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ExchangeRow/ExchangeDestroyerButton" to="." method="_on_exchange_destroyer_pressed"]
+[connection signal="item_selected" from="DebugLayer/SectorList" to="." method="_on_sector_selected"]
+[connection signal="item_selected" from="DebugLayer/PieceList" to="." method="_on_piece_selected"]
+[connection signal="item_selected" from="DebugLayer/DestList" to="." method="_on_dest_selected"]

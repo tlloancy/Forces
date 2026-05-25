@@ -103,3 +103,19 @@ func turn_order(camp: GameConstants.Camp) -> PackedStringArray:
 		return TURN_ORDER_BY_CAMP[GameConstants.Camp.BLUE]
 	var order: Variant = TURN_ORDER_BY_CAMP.get(camp, SECTOR_IDS)
 	return order as PackedStringArray
+
+
+## Libellé court affiché sur le pad d'ordres (HQ, CE, NW, Sp3…).
+func sector_short_label(sector_id: String) -> String:
+	if sector_id.begins_with("HQ_"):
+		return "HQ"
+	if sector_id == "Sun":
+		return "CE"
+	if sector_id.begins_with("Space_"):
+		return "Sp%s" % sector_id.get_slice("_", 1)
+	if sector_id.begins_with("Moon_"):
+		return sector_id.get_slice("_", 1)
+	var idx: int = sector_id.rfind("_")
+	if idx >= 0:
+		return sector_id.substr(idx + 1)
+	return sector_id
