@@ -35,6 +35,8 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 - `scripts/tests/full_match_test.gd`, `scripts/ui/ui_piece_icons.gd`
 - `tools/compose_board_from_tiles.py`, `assets/textures/board_composed.png`
 
+**Commit** : `ade0043` (`godot4-port`, dépôt `tlloancy/Forces`)
+
 ---
 
 ## 2026-05-26 (nuit 4d) — Portraits d'unités, carré plein corrigé, power 0 au départ
