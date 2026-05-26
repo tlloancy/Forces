@@ -1,5 +1,7 @@
 class_name FullMatchTest
 extends RefCounted
+
+const RoundResolverScript = preload("res://scripts/core/round_resolver.gd")
 ## Partie complète headless — règles, combats, IA, bombe H, victoire, timeout.
 
 
@@ -41,6 +43,8 @@ static func _test_invalid_actions() -> PackedStringArray:
 		failures.append("double mouvement autorisé")
 	state.reset_match()
 	green_soldier = _piece(state, GameConstants.Camp.GREEN, GameConstants.PieceType.SOLDIER)
+	# Inject power for the order-limit test (STARTING_POWER may be 0)
+	state.power_tokens[GameConstants.Camp.GREEN] = 100
 	for _i in range(GameConstants.MAX_ORDERS_PER_ROUND + 1):
 		state.try_buy_human(GameConstants.PieceType.SOLDIER)
 	if state.camp_orders_used(GameConstants.Camp.GREEN) > GameConstants.MAX_ORDERS_PER_ROUND:
@@ -54,6 +58,8 @@ static func _test_invalid_actions() -> PackedStringArray:
 static func _test_buy_deploy_move_round() -> PackedStringArray:
 	var failures: PackedStringArray = PackedStringArray()
 	var state := _fresh_state()
+	# Inject power (STARTING_POWER may be 0 — buying unlocks only after rounds)
+	state.power_tokens[GameConstants.Camp.GREEN] = 20
 	var start_p: int = state.camp_power(GameConstants.Camp.GREEN)
 	var buy_err: String = state.try_buy_human(GameConstants.PieceType.SOLDIER)
 	if not buy_err.is_empty():
@@ -95,12 +101,20 @@ static func _test_combat_rebound_and_capture() -> PackedStringArray:
 	var msg_win: String = BattleResolver.resolve_sector(state, sector)
 	if msg_win.is_empty():
 		failures.append("combat vainqueur sans message")
-	var green_owns: bool = false
-	for p: PieceInstance in state.pieces_on_sector(sector):
-		if p.camp == GameConstants.Camp.GREEN:
-			green_owns = true
-	if not green_owns:
-		failures.append("capture après combat fort échouée")
+	var blue_on_sector: bool = false
+	var blue_in_reserve: bool = false
+	var hq_blue: String = BoardCatalog.hq_for_camp(GameConstants.Camp.BLUE)
+	for p: PieceInstance in state.pieces:
+		if p.camp != GameConstants.Camp.BLUE or p.type != GameConstants.PieceType.SOLDIER:
+			continue
+		if p.sector_id == sector and not p.in_reserve:
+			blue_on_sector = true
+		if p.in_reserve and p.sector_id == hq_blue:
+			blue_in_reserve = true
+	if blue_on_sector:
+		failures.append("perdant encore sur la case après combat")
+	if not blue_in_reserve:
+		failures.append("perdant pas renvoyé en réserve HQ")
 	return failures
 
 
@@ -131,11 +145,19 @@ static func _test_sea_lateral_corridors() -> PackedStringArray:
 static func _test_power_territory_and_exchange() -> PackedStringArray:
 	var failures: PackedStringArray = PackedStringArray()
 	var state := _fresh_state()
-	var p0: int = state.camp_power(GameConstants.Camp.GREEN)
-	state._add_piece(GameConstants.Camp.GREEN, GameConstants.PieceType.SOLDIER, "Ice_NW", false)
-	state.end_planning_round()
-	if state.camp_power(GameConstants.Camp.GREEN) <= p0:
-		failures.append("Power territoire non crédité")
+	state.power_tokens[GameConstants.Camp.GREEN] = 0
+	var logs: Array[String] = []
+	state._add_piece(GameConstants.Camp.GREEN, GameConstants.PieceType.HUNTER, "Ice_NW", false)
+	state._add_piece(GameConstants.Camp.GREEN, GameConstants.PieceType.HUNTER, "Ice_NE", false)
+	state._add_piece(GameConstants.Camp.GREEN, GameConstants.PieceType.HUNTER, "Jungle_NE", false)
+	RoundResolverScript.apply_power_harvest(state, logs)
+	if state.camp_power(GameConstants.Camp.GREEN) != 2:
+		failures.append("récolte: 2 îles ennemies = +2 Force (got %d)" % state.camp_power(GameConstants.Camp.GREEN))
+	var islands: Array[GameConstants.Camp] = RoundResolverScript.occupied_enemy_islands(
+		state, GameConstants.Camp.GREEN
+	)
+	if islands.size() != 2:
+		failures.append("récolte: attendu 2 îles (Ice+Jungle), got %d" % islands.size())
 	var ex := _fresh_state()
 	var hq: String = BoardCatalog.hq_for_camp(GameConstants.Camp.GREEN)
 	for _i in 3:

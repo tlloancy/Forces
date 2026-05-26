@@ -81,7 +81,7 @@ piece_icons = {
     "triangle_outline": "FORCE-AD-13a_17",
     "diamond_outline": "FORCE-AD-13a_16",
     "circle_filled": "FORCE-AD-13a_19",
-    "square_filled": "FORCE-AD-13a_15",
+    "square_filled": "FORCE-AD-13a_20",   # _20 = carré plein (rangée filled, même colonne que _15 outline)
     "triangle_filled": "FORCE-AD-13a_22",
     "diamond_filled": "FORCE-AD-13a_21",
     "power_f": "FORCE-AD-13a_18",

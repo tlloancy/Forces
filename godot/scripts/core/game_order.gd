@@ -72,6 +72,31 @@ func pad_label() -> String:
 			return "O : ?"
 
 
+## Ligne terminal lisible (flux Matrix).
+func feed_line(human_camp: GameConstants.Camp, slot: int, max_orders: int) -> String:
+	var sym: String = _piece_sym(piece_type)
+	var dest: String = BoardCatalog.sector_short_label(to_sector)
+	var origin: String = BoardCatalog.sector_short_label(from_sector)
+	var vous: bool = camp == human_camp
+	var who: String = "Vous" if vous else GameConstants.camp_to_string(camp)
+	match kind:
+		Kind.MOVE:
+			return "%s — ordre %d/%d : %s %s → %s" % [who, slot, max_orders, sym, origin, dest]
+		Kind.DEPLOY_FROM_RESERVE:
+			return "%s — ordre %d/%d : déployer %s sur %s" % [who, slot, max_orders, sym, dest]
+		Kind.BUY:
+			var cost: int = int(GameConstants.PIECE_STATS.get(piece_type, {}).get("power_cost", 0))
+			return "%s — ordre %d/%d : recruter %s (coût P%d, en réserve)" % [who, slot, max_orders, sym, cost]
+		Kind.EXCHANGE:
+			return "%s — ordre %d/%d : fusion → %s" % [who, slot, max_orders, _piece_sym(exchange_result)]
+		Kind.HBOMB_PLACE:
+			return "%s — ordre %d/%d : bombe H sur %s" % [who, slot, max_orders, dest]
+		Kind.HBOMB_STRIKE:
+			return "%s — ordre %d/%d : frappe H sur %s" % [who, slot, max_orders, dest]
+		_:
+			return "%s — ordre enregistré" % who
+
+
 ## Format BBCode : icônes pièce + couleur camp, sans texte.
 func bbcode_label() -> String:
 	var cc: String = _camp_hex(camp)
@@ -121,8 +146,8 @@ static func _piece_sym(pt: GameConstants.PieceType) -> String:
 
 
 static func _sector_bbcode(sector_id: String) -> String:
-	var camp: GameConstants.Camp = BoardCatalog.camp_for_sector(sector_id)
-	var cc: String = _camp_hex(camp)
+	var sector_camp: GameConstants.Camp = BoardCatalog.camp_for_sector(sector_id)
+	var cc: String = _camp_hex(sector_camp)
 	var short: String = BoardCatalog.sector_short_label(sector_id)
 	if sector_id.begins_with("HQ_"):
 		return "[color=%s]⚑[/color]" % cc

@@ -86,23 +86,13 @@ static func piece_shape_key(piece_type: GameConstants.PieceType, filled: bool) -
 
 
 static func piece_board_texture(piece_type: GameConstants.PieceType) -> AtlasTexture:
-	var dedicated_key := ""
-	match piece_type:
-		GameConstants.PieceType.SOLDIER, GameConstants.PieceType.COMMANDO:
-			dedicated_key = "soldier"
-		GameConstants.PieceType.RAIDER, GameConstants.PieceType.BOMBER:
-			dedicated_key = "raider"
-		GameConstants.PieceType.HUNTER, GameConstants.PieceType.FIGHTER:
-			dedicated_key = "hunter"
-		GameConstants.PieceType.CRUISER, GameConstants.PieceType.DESTROYER:
-			dedicated_key = "cruiser"
-		GameConstants.PieceType.HBOMB:
-			dedicated_key = "hbomb"
-	_load()
-	var icons: Dictionary = _data.get("piece_icons", {}) as Dictionary
-	if not dedicated_key.is_empty() and icons.has(dedicated_key):
-		return make_atlas(str(icons[dedicated_key]))
-	return icon_texture(piece_shape_key(piece_type, true))
+	var filled: bool = piece_type not in [
+		GameConstants.PieceType.SOLDIER,
+		GameConstants.PieceType.RAIDER,
+		GameConstants.PieceType.HUNTER,
+		GameConstants.PieceType.CRUISER,
+	]
+	return icon_texture(piece_shape_key(piece_type, filled))
 
 
 static func tile_sprite_id(sector_id: String) -> String:

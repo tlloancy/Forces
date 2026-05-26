@@ -4,7 +4,7 @@ extends Control
 signal sector_pressed(sector_id: String)
 
 const DESIGN := Vector2(280.0, 280.0)
-const SIDEBAR_MARGIN := 218.0
+const SIDEBAR_MARGIN := 296.0
 const BOARD_TEXTURE := "res://assets/textures/board_composed.png"
 
 var _layout: Dictionary = {}
@@ -245,12 +245,12 @@ func _draw_dashed_rect(rect: Rect2, color: Color, dash: float) -> void:
 
 func _draw_dashed_line(from: Vector2, to: Vector2, color: Color, dash: float) -> void:
 	var dir := to - from
-	var len := dir.length()
-	if len < 1.0:
+	var seg_len := dir.length()
+	if seg_len < 1.0:
 		return
-	dir /= len
+	dir /= seg_len
 	var t := 0.0
-	while t < len:
-		var t2 := minf(t + dash, len)
+	while t < seg_len:
+		var t2 := minf(t + dash, seg_len)
 		draw_line(from + dir * t, from + dir * t2, color, 2.0)
 		t += dash * 2.0

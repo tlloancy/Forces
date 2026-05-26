@@ -14,6 +14,23 @@ static func texture_shape(shape_key: String) -> Texture2D:
 	return BoardAtlas.icon_texture(shape_key)
 
 
+## Portrait de l'unité (illustration réelle dans l'atlas) — utilisé dans les boutons achat/count.
+static func texture_portrait(piece_type: GameConstants.PieceType) -> Texture2D:
+	match piece_type:
+		GameConstants.PieceType.SOLDIER, GameConstants.PieceType.COMMANDO:
+			return BoardAtlas.icon_texture("soldier")
+		GameConstants.PieceType.RAIDER, GameConstants.PieceType.BOMBER:
+			return BoardAtlas.icon_texture("raider")
+		GameConstants.PieceType.HUNTER, GameConstants.PieceType.FIGHTER:
+			return BoardAtlas.icon_texture("hunter")
+		GameConstants.PieceType.CRUISER, GameConstants.PieceType.DESTROYER:
+			return BoardAtlas.icon_texture("cruiser")
+		GameConstants.PieceType.HBOMB:
+			return BoardAtlas.icon_texture("hbomb")
+		_:
+			return BoardAtlas.icon_texture("soldier")
+
+
 static func texture_for_piece(piece_type: GameConstants.PieceType, filled: bool = true) -> Texture2D:
 	match piece_type:
 		GameConstants.PieceType.SOLDIER, GameConstants.PieceType.COMMANDO:
@@ -53,27 +70,30 @@ static func setup_hbomb_button(btn: Button) -> void:
 	btn.add_child(row)
 
 
-static func apply_button_icon(btn: Button, tex: Texture2D, caption: String = "") -> void:
+static func apply_button_icon(btn: Button, _tex: Texture2D, caption: String = "") -> void:
 	btn.icon = null
 	btn.text = caption
 
 
+## Bouton achat : forme outline + coût "P2" doré.
 static func setup_buy_button(btn: Button, piece_type: GameConstants.PieceType, power_cost: int) -> void:
 	for child: Node in btn.get_children():
 		child.queue_free()
 	btn.text = ""
-	btn.custom_minimum_size = Vector2(40, 36)
-	var row := HBoxContainer.new()
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", 2)
-	row.add_child(_make_icon_rect(texture_for_piece(piece_type, true), 18))
+	btn.custom_minimum_size = Vector2(44, 36)
+	var col := VBoxContainer.new()
+	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	col.add_theme_constant_override("separation", 1)
+	col.add_child(_make_icon_rect(texture_for_piece(piece_type, false), 18))
 	var cost := Label.new()
-	cost.text = str(power_cost)
+	cost.text = "P%d" % power_cost
 	cost.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	cost.add_theme_font_size_override("font_size", 13)
-	row.add_child(cost)
-	btn.add_child(row)
+	cost.add_theme_font_size_override("font_size", 10)
+	cost.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	cost.add_theme_color_override("font_color", Color(0.95, 0.82, 0.38))
+	col.add_child(cost)
+	btn.add_child(col)
 
 
 static func setup_exchange_button(
@@ -100,18 +120,40 @@ static func setup_exchange_button(
 
 
 static func _make_icon_rect(tex: Texture2D, size_px: float) -> TextureRect:
-	var tr := TextureRect.new()
-	tr.custom_minimum_size = Vector2(size_px, size_px)
-	tr.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-	tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var icon_rect := TextureRect.new()
+	icon_rect.custom_minimum_size = Vector2(size_px, size_px)
+	icon_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if tex != null:
-		tr.texture = tex
-	return tr
+		icon_rect.texture = tex
+	return icon_rect
 
 
-static func make_unit_button(piece_type: GameConstants.PieceType, count: int) -> Button:
+## Bouton unité sur la case : outline basique / filled élite, teinté par camp.
+static func make_unit_button(
+	piece_type: GameConstants.PieceType,
+	count: int,
+	camp_color: Color = Color.WHITE,
+) -> Button:
+	var filled: bool = piece_type not in BASIC_TYPES
 	var btn := Button.new()
 	btn.focus_mode = Control.FOCUS_NONE
-	setup_buy_button(btn, piece_type, count)
+	btn.text = ""
+	btn.custom_minimum_size = Vector2(36, 36)
+	var col := VBoxContainer.new()
+	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	col.add_theme_constant_override("separation", 1)
+	var icon_rect := _make_icon_rect(texture_for_piece(piece_type, filled), 18)
+	icon_rect.modulate = camp_color
+	col.add_child(icon_rect)
+	var lbl := Label.new()
+	lbl.text = "×%d" % count
+	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lbl.add_theme_font_size_override("font_size", 10)
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.add_theme_color_override("font_color", camp_color)
+	col.add_child(lbl)
+	btn.add_child(col)
 	return btn

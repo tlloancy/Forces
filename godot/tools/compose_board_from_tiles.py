@@ -33,10 +33,10 @@ SEA_OCTAGON = (100, 105, 120, 255)
 MOON_GREY = (120, 126, 142, 255)
 SUN_GREY = (100, 105, 120, 255)
 CAMP_TINT = {
-    "Plains": (232, 72, 98),        # → bordeaux Unity #8b3040 (compensé multiply)
-    "Ice": (118, 82, 245),          # → violet Unity #4a3578 (compensé multiply)
-    "Jungle": (60, 165, 158),       # → teal Unity #2a6e6a (compensé multiply)
-    "Desert": (230, 170, 62),       # → doré Unity #8a6a30 (compensé multiply)
+    "Plains": (139, 48, 64),        # #8b3040 bordeaux Unity exact
+    "Ice":    (74, 53, 120),        # #4a3578 violet Unity exact
+    "Jungle": (42, 110, 106),       # #2a6e6a teal Unity exact
+    "Desert": (138, 106, 48),       # #8a6a30 doré Unity exact
 }
 
 # Bandes couloir (zones grises sur les bords extérieurs entre HQs).
@@ -111,19 +111,43 @@ ISLAND_BOXES = {
 TILE_STEP = 26
 
 
-def _draw_grid(draw: ImageDraw.ImageDraw) -> None:
-    """Grille 3×3 uniquement à l'intérieur de chaque île (comme Unity)."""
-    for x0, y0, x1, y1 in ISLAND_BOXES.values():
-        cx = (x0 + x1) // 2
-        cy = (y0 + y1) // 2
-        for col in range(-1, 2):
-            lx = cx + col * TILE_STEP
-            if x0 <= lx <= x1:
-                draw.line((lx, y0, lx, y1), fill=GRID_LINE, width=1)
-        for row in range(-1, 2):
-            ly = cy + row * TILE_STEP
-            if y0 <= ly <= y1:
-                draw.line((x0, ly, x1, ly), fill=GRID_LINE, width=1)
+def _octagon_pts(x0: float, y0: float, x1: float, y1: float, cut_frac: float = 0.28) -> list:
+    """8 sommets d'un octogone taillé dans le rectangle (x0,y0)-(x1,y1)."""
+    cx = (x0 + x1) / 2
+    H = (x1 - x0) / 2
+    cut = H * cut_frac
+    return [
+        (x0 + cut, y0), (x1 - cut, y0),
+        (x1, y0 + cut), (x1, y1 - cut),
+        (x1 - cut, y1), (x0 + cut, y1),
+        (x0, y1 - cut), (x0, y0 + cut),
+    ]
+
+
+def _draw_island_flat(
+    draw: ImageDraw.ImageDraw,
+    prefix: str,
+    tint_rgb: tuple,
+) -> None:
+    """Île comme un octogone plein avec grille 3×3 claire (style Unity)."""
+    x0, y0, x1, y1 = ISLAND_BOXES[prefix]
+    cx = (x0 + x1) / 2
+    cy = (y0 + y1) / 2
+
+    # Octogone rempli avec la couleur de camp
+    pts = _octagon_pts(x0, y0, x1, y1)
+    draw.polygon(pts, fill=tint_rgb + (255,))
+
+    # Grille 3×3 intérieure claire (teinte island + blanc 30%)
+    gl = tuple(min(255, int(c * 1.35)) for c in tint_rgb)
+    for col in range(-1, 2):
+        lx = cx + col * TILE_STEP
+        if x0 < lx < x1:
+            draw.line((lx, y0, lx, y1), fill=gl + (200,), width=1)
+    for row in range(-1, 2):
+        ly = cy + row * TILE_STEP
+        if y0 < ly < y1:
+            draw.line((x0, ly, x1, ly), fill=gl + (200,), width=1)
 
 
 def main() -> None:
@@ -138,68 +162,52 @@ def main() -> None:
     board = Image.new("RGBA", (W, H), BG_DARK)
     draw = ImageDraw.Draw(board)
 
-    # 1. Grille de fond.
-    _draw_grid(draw)
-
-    # 2. Couloirs gris (bandes extérieures + croix centrale).
+    # 1. Couloirs gris (bandes extérieures + croix centrale).
     _draw_edge_couloirs(draw)
     _draw_central_cross(draw)
 
-    # 3. Îles 3×3 (tuiles octogonales teintées).
+    # 2. Îles — octogones plats solides avec grille 3×3 claire (style Unity flat).
     for prefix, tint in CAMP_TINT.items():
-        for suffix in ["NW", "N", "NE", "W", "C", "E", "SW", "S", "SE"]:
-            sid = f"{prefix}_{suffix}"
-            if sid not in layout:
-                continue
-            sprite_id = shapes.get(suffix, defaults["land"])
-            tile = _sprite(atlas, sprites, sprite_id)
-            if tile is None:
-                continue
-            tile = _tint(tile, tint)
-            pos = layout[sid]
-            _paste_at(board, tile, pos["x"], pos["y"], 33, 33)
+        _draw_island_flat(draw, prefix, tint)
 
-    # 4. HQ tiles aux 4 coins (teintés par camp adverse au CE des îles).
-    hq_tints = {
+    # 3. HQ corners — petit carré foncé teinté camp (comme Unity).
+    hq_camp_tints = {
         "HQ_Green": CAMP_TINT["Plains"],
-        "HQ_Blue": CAMP_TINT["Ice"],
-        "HQ_Red": CAMP_TINT["Jungle"],
+        "HQ_Blue":  CAMP_TINT["Ice"],
+        "HQ_Red":   CAMP_TINT["Jungle"],
         "HQ_Yellow": CAMP_TINT["Desert"],
     }
-    hq_sprite_id = shapes.get("HQ", defaults["hq"])
-    hq_tile = _sprite(atlas, sprites, hq_sprite_id)
-    if hq_tile is not None:
-        for sid, tint in hq_tints.items():
-            if sid not in layout:
-                continue
-            pos = layout[sid]
-            tinted = _tint(hq_tile, tint)
-            # Assombrir le HQ (drapeau coloré dans fond plus sombre).
-            dark_overlay = Image.new("RGBA", tinted.size, (50, 50, 60, 255))
-            tinted = ImageChops.multiply(tinted, dark_overlay)
-            _paste_at(board, tinted, pos["x"], pos["y"], 32, 32)
+    for hq_sid, tint in hq_camp_tints.items():
+        if hq_sid not in layout:
+            continue
+        pos = layout[hq_sid]
+        dark = tuple(int(c * 0.55) for c in tint)
+        cx_h, cy_h = int(round(pos["x"])), int(round(pos["y"]))
+        r = 14
+        pts = _octagon_pts(cx_h - r, cy_h - r, cx_h + r, cy_h + r, 0.25)
+        draw.polygon(pts, fill=dark + (255,))
 
-    # 5. Moons + Sun + Space connectors (octogones gris).
-    moon_sprite_id = shapes.get("CE", defaults["neutral"])
-    moon_tile = _sprite(atlas, sprites, moon_sprite_id)
-    if moon_tile is not None:
-        for sid in ["Moon_N", "Moon_S", "Moon_W", "Moon_E"]:
-            if sid not in layout:
-                continue
-            pos = layout[sid]
-            tinted = _tint(moon_tile, MOON_GREY[:3])
-            _paste_at(board, tinted, pos["x"], pos["y"], 26, 26)
-        if "Sun" in layout:
-            pos = layout["Sun"]
-            tinted = _tint(moon_tile, SUN_GREY[:3])
-            _paste_at(board, tinted, pos["x"], pos["y"], 28, 28)
-        for n in range(1, 13):
-            sid = f"Space_{n}"
-            if sid not in layout:
-                continue
-            pos = layout[sid]
-            tinted = _tint(moon_tile, SEA_OCTAGON[:3])
-            _paste_at(board, tinted, pos["x"], pos["y"], 16, 16)
+    # 4. Connecteurs — petits octogones plats (pas de sprites atlas superposés).
+    for sid in ["Moon_N", "Moon_S", "Moon_W", "Moon_E"]:
+        if sid not in layout:
+            continue
+        pos = layout[sid]
+        cx_m, cy_m = int(round(pos["x"])), int(round(pos["y"]))
+        pts = _octagon_pts(cx_m - 13, cy_m - 13, cx_m + 13, cy_m + 13, 0.25)
+        draw.polygon(pts, fill=MOON_GREY)
+    if "Sun" in layout:
+        pos = layout["Sun"]
+        cx_s, cy_s = int(round(pos["x"])), int(round(pos["y"]))
+        pts = _octagon_pts(cx_s - 14, cy_s - 14, cx_s + 14, cy_s + 14, 0.25)
+        draw.polygon(pts, fill=SUN_GREY)
+    for n in range(1, 13):
+        sid = f"Space_{n}"
+        if sid not in layout:
+            continue
+        pos = layout[sid]
+        cx_sp, cy_sp = int(round(pos["x"])), int(round(pos["y"]))
+        pts = _octagon_pts(cx_sp - 8, cy_sp - 8, cx_sp + 8, cy_sp + 8, 0.25)
+        draw.polygon(pts, fill=SEA_OCTAGON)
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     board.convert("RGB").save(OUT)

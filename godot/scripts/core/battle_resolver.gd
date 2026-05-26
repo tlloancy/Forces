@@ -32,17 +32,20 @@ static func resolve_sector(state: GameState, sector_id: String) -> String:
 			second_force,
 		]
 	var winner: GameConstants.Camp = best["camp"] as GameConstants.Camp
-	var captured: int = 0
+	var retreated: int = 0
 	for p in stack:
-		if p.camp != winner and p.type != GameConstants.PieceType.HBOMB:
-			p.camp = winner
-			captured += 1
-	return "Combat %s : %s gagne (F%d vs F%d), %d capturée(s)." % [
+		if p.camp == winner or p.type == GameConstants.PieceType.HBOMB:
+			continue
+		var loser_camp: GameConstants.Camp = p.camp
+		p.in_reserve = true
+		p.sector_id = BoardCatalog.hq_for_camp(loser_camp)
+		retreated += 1
+	return "Combat %s : %s gagne (F%d vs F%d), %d en réserve." % [
 		sector_id,
 		GameConstants.camp_to_string(winner),
 		int(best["force"]),
 		second_force,
-		captured,
+		retreated,
 	]
 
 
@@ -59,6 +62,24 @@ static func resolve_hbomb_strike(state: GameState, target_sector: String, attack
 		removed,
 		BoardCatalog.sector_short_label(target_sector),
 	]
+
+
+## Secteurs où au moins deux camps ont des pièces (après application des ordres).
+static func conflict_sectors(state: GameState) -> PackedStringArray:
+	var result: PackedStringArray = PackedStringArray()
+	var seen: Dictionary = {}
+	for p: PieceInstance in state.pieces:
+		if p.in_reserve or seen.has(p.sector_id):
+			continue
+		var camps: Dictionary = {}
+		for s: PieceInstance in state.pieces_on_sector(p.sector_id):
+			if s.type == GameConstants.PieceType.HBOMB:
+				continue
+			camps[s.camp] = true
+		if camps.size() > 1:
+			result.append(p.sector_id)
+		seen[p.sector_id] = true
+	return result
 
 
 static func resolve_all_conflicts(state: GameState) -> Array[String]:

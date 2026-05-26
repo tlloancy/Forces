@@ -48,6 +48,8 @@ static func _test_orders_and_deferred_moves() -> PackedStringArray:
 	var limit_state := GameState.new()
 	limit_state.human_camp = GameConstants.Camp.GREEN
 	limit_state.reset_match()
+	# Inject power (STARTING_POWER may be 0)
+	limit_state.power_tokens[GameConstants.Camp.GREEN] = 100
 	for _i in range(GameConstants.MAX_ORDERS_PER_ROUND):
 		var buy_err: String = limit_state.try_buy_human(GameConstants.PieceType.SOLDIER)
 		if not buy_err.is_empty():

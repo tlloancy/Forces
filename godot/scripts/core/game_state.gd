@@ -1,6 +1,8 @@
 class_name GameState
 extends RefCounted
 
+const RoundResolverScript = preload("res://scripts/core/round_resolver.gd")
+
 signal phase_changed(phase: GameConstants.GamePhase)
 signal round_advanced(round_number: int)
 signal piece_moved(piece_id: int, from_sector: String, to_sector: String)
@@ -562,53 +564,45 @@ func apply_planning_orders(logs: Array[String]) -> void:
 				)
 
 
-func _apply_territory_power(logs: Array[String]) -> void:
-	var prefixes: Dictionary = {
-		GameConstants.Camp.GREEN: "Plains_",
-		GameConstants.Camp.BLUE: "Ice_",
-		GameConstants.Camp.RED: "Jungle_",
-		GameConstants.Camp.YELLOW: "Desert_",
-	}
-	for camp: GameConstants.Camp in [
-		GameConstants.Camp.GREEN,
-		GameConstants.Camp.BLUE,
-		GameConstants.Camp.RED,
-		GameConstants.Camp.YELLOW,
-	]:
-		if not is_alive(camp):
-			continue
-		for other: GameConstants.Camp in prefixes:
-			if other == camp or not is_alive(other):
-				continue
-			var prefix: String = str(prefixes[other])
-			var occupied: bool = false
-			for p: PieceInstance in pieces:
-				if p.in_reserve or p.camp != camp:
-					continue
-				if p.sector_id.begins_with(prefix):
-					occupied = true
-					break
-			if occupied:
-				power_tokens[camp] = camp_power(camp) + 1
-				power_changed.emit(camp, camp_power(camp))
-				logs.append(
-					"  · %s +1 Power (présence sur territoire %s)" % [
-						GameConstants.camp_to_string(camp),
-						GameConstants.camp_to_string(other),
-					]
-				)
+func apply_territory_power(logs: Array[String]) -> Dictionary:
+	return RoundResolverScript.apply_power_harvest(self, logs)
 
 
 func end_planning_round() -> Array[String]:
 	var logs: Array[String] = []
-	logs.append("[b]Résolution — révélation des ordres[/b]")
+	resolve_round_moves(logs)
+	resolve_round_combats(logs)
+	resolve_round_flags(logs)
+	resolve_round_harvest(logs)
+	finish_round_after_resolution()
+	return logs
+
+
+func resolve_round_moves(logs: Array[String]) -> void:
+	logs.append("[color=#888aa0]▸ %s[/color]" % RoundResolverScript.PHASE_LABELS[RoundResolverScript.Phase.MOVES])
 	apply_planning_orders(logs)
-	logs.append_array(BattleResolver.resolve_all_conflicts(self))
+
+
+func resolve_round_combats(logs: Array[String]) -> void:
+	logs.append("[color=#888aa0]▸ %s[/color]" % RoundResolverScript.PHASE_LABELS[RoundResolverScript.Phase.COMBATS])
+	var combat_logs: Array = BattleResolver.resolve_all_conflicts(self)
+	for line: Variant in combat_logs:
+		logs.append(str(line))
+
+
+func resolve_round_flags(logs: Array[String]) -> void:
+	logs.append("[color=#888aa0]▸ %s[/color]" % RoundResolverScript.PHASE_LABELS[RoundResolverScript.Phase.FLAG_CHECK])
 	_check_flag_captures(logs)
-	_apply_territory_power(logs)
+
+
+func resolve_round_harvest(logs: Array[String]) -> Dictionary:
+	logs.append("[color=#888aa0]▸ %s[/color]" % RoundResolverScript.PHASE_LABELS[RoundResolverScript.Phase.POWER_HARVEST])
+	return apply_territory_power(logs)
+
+
+func finish_round_after_resolution() -> void:
 	advance_round()
 	set_phase(GameConstants.GamePhase.PLANNING)
-	return logs
 
 
 func _check_flag_captures(logs: Array[String]) -> void:

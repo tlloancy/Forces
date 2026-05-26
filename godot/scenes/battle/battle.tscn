@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/battle/battle.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/battle/board_map.gd" id="2_map"]
 [ext_resource type="Script" path="res://scripts/battle/battle_sidebar.gd" id="3_sidebar"]
+[ext_resource type="Script" path="res://scripts/battle/battle_feed.gd" id="4_feed"]
 
 [node name="Battle" type="Control"]
 layout_mode = 3
@@ -30,7 +31,7 @@ z_index = 2
 layout_mode = 1
 offset_left = 4.0
 offset_top = 4.0
-offset_right = 200.0
+offset_right = 288.0
 offset_bottom = 460.0
 theme_override_constants/separation = 6
 script = ExtResource("3_sidebar")
@@ -100,13 +101,31 @@ theme_override_constants/separation = 4
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.62, 0.65, 0.75, 1)
-text = "Reserve"
+text = "Forces"
 
 [node name="ReservePower" type="Label" parent="Sidebar/ReservePanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.95, 0.82, 0.35, 1)
 text = "P0"
+
+[node name="ReserveStockLabel" type="Label" parent="Sidebar/ReservePanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.62, 0.65, 0.75, 1)
+text = "Réserve"
+
+[node name="ReserveUnitsRow" type="HBoxContainer" parent="Sidebar/ReservePanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="RecruitLabel" type="Label" parent="Sidebar/ReservePanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.62, 0.65, 0.75, 1)
+text = "Recruter"
 
 [node name="ReserveActions" type="HBoxContainer" parent="Sidebar/ReservePanel/VBox"]
 layout_mode = 2
@@ -114,22 +133,18 @@ layout_mode = 2
 [node name="BuySoldierButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "2"
 
 [node name="BuyRaiderButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "3"
 
 [node name="BuyHunterButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "5"
 
 [node name="BuyCruiserButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "10"
 
 [node name="DeployButton" type="Button" parent="Sidebar/ReservePanel/VBox"]
 unique_name_in_owner = true
@@ -164,38 +179,37 @@ unique_name_in_owner = true
 layout_mode = 2
 text = ""
 
-[node name="OrdersPanel" type="PanelContainer" parent="Sidebar"]
+[node name="FeedPanel" type="PanelContainer" parent="Sidebar"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("4_feed")
 
-[node name="VBox" type="VBoxContainer" parent="Sidebar/OrdersPanel"]
+[node name="VBox" type="VBoxContainer" parent="Sidebar/FeedPanel"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 4
+theme_override_constants/separation = 3
 
-[node name="OrdersSectionLabel" type="Label" parent="Sidebar/OrdersPanel/VBox"]
+[node name="FeedTitle" type="Label" parent="Sidebar/FeedPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.35, 0.95, 0.45, 1)
+text = "> FORCES // TACTICAL LINK"
+
+[node name="FeedStatus" type="Label" parent="Sidebar/FeedPanel/VBox"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.62, 0.65, 0.75, 1)
-text = "Orders"
+theme_override_colors/font_color = Color(0.55, 0.85, 0.62, 1)
+text = "59:00  MANCHE 1  P0  [0/5]"
 
-[node name="OrdersTimer" type="Label" parent="Sidebar/OrdersPanel/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "⏱"
-
-[node name="OrdersQueue" type="RichTextLabel" parent="Sidebar/OrdersPanel/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-bbcode_enabled = true
-fit_content = false
-custom_minimum_size = Vector2(0, 56)
-text = ""
-
-[node name="OrdersLog" type="RichTextLabel" parent="Sidebar/OrdersPanel/VBox"]
+[node name="FeedOutput" type="RichTextLabel" parent="Sidebar/FeedPanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 140)
+theme_override_colors/default_color = Color(0.48, 0.92, 0.58, 1)
+theme_override_font_sizes/normal_font_size = 11
 bbcode_enabled = true
 fit_content = false
 scroll_following = true

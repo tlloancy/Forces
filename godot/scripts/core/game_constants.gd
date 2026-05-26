@@ -23,7 +23,7 @@ enum MovementDomain { LAND, SEA, AIR, NONE }
 
 const MAX_ORDERS_PER_ROUND: int = 5
 const PLANNING_TIMER_SECONDS: int = 3600
-const STARTING_POWER: int = 12
+const STARTING_POWER: int = 0
 const POWER_PER_ROUND: int = 3
 const HBOMB_FUSION_FORCE: int = 100
 

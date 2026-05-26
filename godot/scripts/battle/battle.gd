@@ -1,10 +1,12 @@
 extends Control
 
+const RoundResolverScript = preload("res://scripts/core/round_resolver.gd")
+
 @onready var _status: Label = %StatusLabel
 @onready var _sector_list: ItemList = %SectorList
 @onready var _dest_list: ItemList = %DestList
 @onready var _piece_list: ItemList = %PieceList
-@onready var _log: RichTextLabel = %OrdersLog
+@onready var _feed: PanelContainer = %FeedPanel
 @onready var _end_round_btn: Button = %EndRoundButton
 @onready var _board_map: Control = %BoardMap
 @onready var _sidebar: Control = %Sidebar
@@ -23,8 +25,6 @@ var _selected_piece_id: int = -1
 var _sector_pick_index: int = 0
 var _planning_elapsed: int = 1
 var _timer_accum: float = 0.0
-
-
 func _ready() -> void:
 	_state = GameState.new()
 	_state.human_camp = GameSession.human_camp
@@ -35,6 +35,8 @@ func _ready() -> void:
 	_board_map.sector_pressed.connect(_on_map_sector_pressed)
 	if _sidebar.has_signal("unit_pressed"):
 		_sidebar.unit_pressed.connect(_on_sidebar_unit_pressed)
+	if _sidebar.has_signal("reserve_unit_pressed"):
+		_sidebar.reserve_unit_pressed.connect(_on_reserve_unit_pressed)
 	_style_sidebar()
 	if _game_over_layer:
 		_game_over_layer.visible = false
@@ -61,7 +63,8 @@ func _process(delta: float) -> void:
 			var timeout_logs: Array[String] = []
 			_state.apply_planning_timeout(timeout_logs)
 			for line: String in timeout_logs:
-				_log.append_text("[color=#ff8888]%s[/color]\n" % line)
+				if _feed:
+					_feed.push_error(line)
 			_check_game_over()
 			_refresh_ui()
 			return
@@ -77,7 +80,7 @@ func _process(delta: float) -> void:
 
 
 func _style_sidebar() -> void:
-	for panel_name: String in ["CasePanel", "ReservePanel", "OrdersPanel"]:
+	for panel_name: String in ["CasePanel", "ReservePanel"]:
 		var panel: PanelContainer = _sidebar.get_node(panel_name) as PanelContainer
 		if panel:
 			MenuTheme.style_panel(panel)
@@ -86,11 +89,16 @@ func _style_sidebar() -> void:
 
 func _begin_match() -> void:
 	_state.reset_match()
-	_selected_sector = BoardCatalog.hq_for_camp(_state.human_camp)
+	_selected_sector = ""   # aucun secteur présélectionné au démarrage
 	_selected_piece_id = -1
 	_planning_elapsed = 1
 	_timer_accum = 0.0
-	_log.clear()
+	if _feed:
+		_feed.clear()
+		_feed.push_system(
+			"MANCHE 1 — Cliquez une case, choisissez une unité, puis la destination. Max %d ordres." % GameConstants.MAX_ORDERS_PER_ROUND,
+			true,
+		)
 
 
 func _populate_sector_list() -> void:
@@ -135,6 +143,9 @@ func _refresh_ui() -> void:
 			_planning_elapsed,
 			_selected_piece(),
 		)
+	_update_feed_hud()
+	if _status and planning:
+		_status.modulate = Color.WHITE
 	if _status:
 		_status.text = "%s | %s | ordres %d/%d" % [
 			GameConstants.camp_to_string(_state.human_camp),
@@ -197,12 +208,38 @@ func _highlight_color_for_piece(piece: PieceInstance) -> Color:
 			return Color(0.95, 0.85, 0.35, 0.55)
 
 
-func _log_last_order() -> void:
+func _update_feed_hud() -> void:
+	if _feed == null:
+		return
+	_feed.set_hud(
+		BattleSidebar._format_timer(_planning_elapsed),
+		_state.round_number,
+		_state.camp_power(_state.human_camp),
+		_state.camp_orders_used(_state.human_camp),
+		GameConstants.MAX_ORDERS_PER_ROUND,
+	)
+
+
+func _notify_human_order() -> void:
+	if _feed == null:
+		return
 	var orders: Array[GameOrder] = _state.orders_for_camp(_state.human_camp)
 	if orders.is_empty():
 		return
-	var last: GameOrder = orders[orders.size() - 1]
-	_log.append_text(last.bbcode_label() + "\n")
+	_feed.push_order_planned(
+		orders[orders.size() - 1],
+		_state.human_camp,
+		orders.size(),
+		GameConstants.MAX_ORDERS_PER_ROUND,
+	)
+
+
+func _show_planning_error(msg: String) -> void:
+	if _feed:
+		_feed.push_error(msg)
+	if _status:
+		_status.text = msg
+		_status.modulate = Color(1.0, 0.55, 0.35)
 
 
 func _phase_name(phase: GameConstants.GamePhase) -> String:
@@ -260,12 +297,12 @@ func _try_move_to(to_sector: String) -> void:
 		return
 	var err: String = _state.try_move_human_piece(piece, to_sector)
 	if err.is_empty():
-		_log_last_order()
 		_selected_sector = to_sector
 		_selected_piece_id = -1
 		_update_sector_panel()
+		_notify_human_order()
 	else:
-		_log.append_text("[color=orange]%s[/color]\n" % err)
+		_show_planning_error(err)
 	_refresh_ui()
 
 
@@ -322,9 +359,9 @@ func _on_dest_selected(index: int) -> void:
 func _on_buy_pressed(piece_type: GameConstants.PieceType) -> void:
 	var err: String = _state.try_buy_human(piece_type)
 	if err.is_empty():
-		_log_last_order()
+		_notify_human_order()
 	else:
-		_log.append_text("[color=orange]%s[/color]\n" % err)
+		_show_planning_error(err)
 	_refresh_ui()
 
 
@@ -347,9 +384,9 @@ func _on_buy_cruiser_pressed() -> void:
 func _on_exchange_pressed(result_type: GameConstants.PieceType) -> void:
 	var err: String = _state.try_exchange_human(result_type)
 	if err.is_empty():
-		_log_last_order()
+		_notify_human_order()
 	else:
-		_log.append_text("[color=orange]%s[/color]\n" % err)
+		_show_planning_error(err)
 	_refresh_ui()
 
 
@@ -374,10 +411,10 @@ func _on_hbomb_fuse_pressed() -> void:
 		return
 	var err: String = _state.try_place_hbomb_human(_selected_sector)
 	if err.is_empty():
-		_log.append_text("[color=#ff6666]Bombe H posée sur %s[/color]\n" % _selected_sector)
+		_notify_human_order()
 		_select_movable_piece_by_index(_selected_sector, 0)
 	else:
-		_log.append_text("[color=orange]%s[/color]\n" % err)
+		_show_planning_error(err)
 	_refresh_ui()
 
 
@@ -390,54 +427,105 @@ func _on_deploy_pressed() -> void:
 	var hq: String = BoardCatalog.hq_for_camp(_state.human_camp)
 	var err: String = _state.try_deploy_human(piece, hq)
 	if err.is_empty():
-		_log_last_order()
 		_selected_sector = hq
 		_selected_piece_id = -1
 		_update_sector_panel()
+		_notify_human_order()
 	else:
-		_log.append_text("[color=orange]%s[/color]\n" % err)
+		_show_planning_error(err)
 	_refresh_ui()
 
 
 func _on_end_round_pressed() -> void:
 	if _state.phase != GameConstants.GamePhase.PLANNING:
 		return
-	_log.append_text("[color=#555577]── R%d ──[/color]\n" % _state.round_number)
-	for line: String in AiPlanner.run_all_ai(_state):
-		_log.append_text(line + "\n")
-	var conflict_sectors := _conflict_sectors()
+	_play_round_resolution()
+
+
+func _play_round_resolution() -> void:
+	if _feed:
+		_feed.push_system("══ RÉSOLUTION MANCHE %d ══" % _state.round_number, true)
+		_feed.push_ai_block(AiPlanner.run_all_ai(_state), _state.human_camp)
+		await _await_feed_typing()
+
 	_state.set_phase(GameConstants.GamePhase.RESOLUTION)
+	_end_round_btn.disabled = true
+	var phase_logs: Array[String] = []
+
+	_state.resolve_round_moves(phase_logs)
+	await _feed_lines(phase_logs)
 	_refresh_ui()
-	if _board_map.has_method("flash_sectors") and not conflict_sectors.is_empty():
+	await get_tree().create_timer(0.25).timeout
+
+	phase_logs.clear()
+	var conflicts: PackedStringArray = BattleResolver.conflict_sectors(_state)
+	if _board_map.has_method("flash_sectors") and not conflicts.is_empty():
 		_board_map.call(
 			"flash_sectors",
-			PackedStringArray(conflict_sectors),
-			Color(1.0, 0.55, 0.35, 0.8),
-			0.9,
+			conflicts,
+			Color(1.0, 0.55, 0.35, 0.85),
+			1.0,
 		)
-	for line: String in _state.end_planning_round():
-		_log.append_text(line + "\n")
+		await get_tree().create_timer(0.55).timeout
+	_state.resolve_round_combats(phase_logs)
+	await _feed_lines(phase_logs)
+	_refresh_ui()
+	await get_tree().create_timer(0.2).timeout
+
+	phase_logs.clear()
+	_state.resolve_round_flags(phase_logs)
+	await _feed_lines(phase_logs)
+
+	phase_logs.clear()
+	var harvest: Dictionary = _state.resolve_round_harvest(phase_logs)
+	await _feed_lines(phase_logs)
+	var human_sectors: Variant = harvest.get(_state.human_camp, PackedStringArray())
+	if (
+		_board_map.has_method("flash_sectors")
+		and human_sectors is PackedStringArray
+		and not (human_sectors as PackedStringArray).is_empty()
+	):
+		_board_map.call(
+			"flash_sectors",
+			human_sectors,
+			Color(0.45, 0.92, 0.55, 0.8),
+			0.75,
+		)
+	_refresh_ui()
+	await get_tree().create_timer(0.2).timeout
+
+	_state.finish_round_after_resolution()
+	if _feed:
+		_feed.push_engine_line(
+			"▸ %s +%d/manche" % [
+				RoundResolverScript.PHASE_LABELS[RoundResolverScript.Phase.ROUND_INCOME],
+				GameConstants.POWER_PER_ROUND,
+			],
+			_state.human_camp,
+		)
+		await _await_feed_typing()
 	_check_game_over()
 	_planning_elapsed = 1
 	_timer_accum = 0.0
+	if _feed and _state.phase == GameConstants.GamePhase.PLANNING:
+		_feed.push_system("Planification — vos ordres (max %d)." % GameConstants.MAX_ORDERS_PER_ROUND, false)
 	_refresh_ui()
 
 
-func _conflict_sectors() -> Array[String]:
-	var result: Array[String] = []
-	var seen: Dictionary = {}
-	for p: PieceInstance in _state.pieces:
-		if p.in_reserve or seen.has(p.sector_id):
-			continue
-		var camps: Dictionary = {}
-		for s: PieceInstance in _state.pieces_on_sector(p.sector_id):
-			if s.type == GameConstants.PieceType.HBOMB:
-				continue
-			camps[s.camp] = true
-		if camps.size() > 1:
-			result.append(p.sector_id)
-		seen[p.sector_id] = true
-	return result
+func _feed_lines(lines: Array[String]) -> void:
+	if _feed == null:
+		return
+	for line: String in lines:
+		_feed.push_engine_line(line, _state.human_camp)
+		await _await_feed_typing()
+
+
+func _await_feed_typing() -> void:
+	if _feed == null:
+		return
+	while _feed.is_typing():
+		await get_tree().process_frame
+	await get_tree().create_timer(0.06).timeout
 
 
 func _check_game_over() -> void:
@@ -450,7 +538,8 @@ func _check_game_over() -> void:
 	if alive <= 1 and _state.round_number > 1:
 		_state.set_phase(GameConstants.GamePhase.GAME_OVER)
 		var msg: String = "Victoire : %s" % GameConstants.camp_to_string(winner)
-		_log.append_text("\n[color=yellow]%s[/color]\n" % msg)
+		if _feed:
+			_feed.push_engine_line(msg, _state.human_camp)
 		if _game_over_label:
 			_game_over_label.text = msg
 
@@ -468,7 +557,8 @@ func _on_phase_changed(_phase: GameConstants.GamePhase) -> void:
 
 
 func _on_round_advanced(round_number: int) -> void:
-	_log.append_text("—— Manche %d ——\n" % round_number)
+	if _feed:
+		_feed.push_system("—— MANCHE %d ——" % round_number, true)
 	_planning_elapsed = 1
 	_timer_accum = 0.0
 
@@ -477,6 +567,21 @@ func _on_sidebar_unit_pressed(piece_type: GameConstants.PieceType) -> void:
 	if _state.phase != GameConstants.GamePhase.PLANNING or _selected_sector.is_empty():
 		return
 	_select_piece_type_on_sector(_selected_sector, piece_type)
+	_refresh_ui()
+
+
+func _on_reserve_unit_pressed(piece_type: GameConstants.PieceType) -> void:
+	if _state.phase != GameConstants.GamePhase.PLANNING:
+		return
+	var hq: String = BoardCatalog.hq_for_camp(_state.human_camp)
+	_selected_sector = hq
+	if _board_map.has_method("set_selected"):
+		_board_map.call("set_selected", hq)
+	for p: PieceInstance in _state.reserve_pieces(_state.human_camp):
+		if p.type == piece_type and not _state.has_piece_moved(p.id):
+			_selected_piece_id = p.id
+			break
+	_update_sector_panel()
 	_refresh_ui()
 
 
@@ -499,5 +604,12 @@ func _on_piece_moved(_piece_id: int, _from_sector: String, _to_sector: String) -
 	_refresh_ui()
 
 
-func _on_power_changed(_camp: GameConstants.Camp, _amount: int) -> void:
+func _on_power_changed(camp: GameConstants.Camp, amount: int) -> void:
+	if camp == _state.human_camp and _sidebar.has_method("refresh"):
+		var power_lbl: Label = _sidebar.get_node_or_null("%ReservePower") as Label
+		if power_lbl:
+			power_lbl.text = "P%d" % amount
+			power_lbl.modulate = Color(1.4, 1.35, 0.7)
+			await get_tree().create_timer(0.6).timeout
+			power_lbl.modulate = Color.WHITE
 	_refresh_ui()

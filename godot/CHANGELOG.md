@@ -8,6 +8,84 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ---
 
+## 2026-05-26 (nuit 4e) — Terminal Matrix : flux tactique lisible
+
+### UX — plus de double journal confus
+- **`battle_feed.gd`** (`BattleFeed`) : panneau gauche style Matrix (fond vert sombre, texte défilant, frappe caractère par caractère).
+- Remplace **`OrdersQueue`** + **`OrdersLog`** par **`FeedPanel`** : titre `> FORCES // TACTICAL LINK`, barre HUD (`timer · manche · P · [ordres]`), flux `%FeedOutput`.
+- Couleurs par type : ordres joueur (vert clair), phases (bleu), combats (orange), récolte (jaune), IA (violet), erreurs (rouge), victoire (doré).
+- **`battle.gd`** : chaque action humaine → `push_order_planned` ; résolution manche ligne par ligne avec attente de frappe ; IA via `push_ai_block`.
+- **`game_order.feed_line()`** : texte français lisible (`Vous — ordre 2/5 : ○ CE → NE`, achat, déploiement, fusion H).
+- Sidebar élargie (~288 px) ; **`board_map.SIDEBAR_MARGIN`** = 296.
+
+### Sidebar forces / réserve
+- Panneau **Forces** (P), **Réserve** (ligne d’unités cliquables), **Recruter** (achats) — séparation claire dans `battle.tscn` / `battle_sidebar.gd`.
+
+### Plateau & icônes (suite)
+- Connecteurs Lune/Soleil/Espace : octogones plats PIL (plus de sprites atlas superposés) — `compose_board_from_tiles.py`, `board_composed.png`.
+- Boutons unités : retour **outline/filled** géométriques (pas de portraits) — `ui_piece_icons.gd`.
+
+### Règles & tests
+- **`full_match_test`** : perdant combat → réserve HQ (pas capture) ; récolte +1 Force par **île** ennemie occupée (2 îles = +2).
+
+### Fichiers
+- `scripts/battle/battle_feed.gd`, `battle.gd`, `battle_sidebar.gd`, `board_map.gd`
+- `scripts/core/game_order.gd`
+- `scenes/battle/battle.tscn`
+- `scripts/tests/full_match_test.gd`, `scripts/ui/ui_piece_icons.gd`
+- `tools/compose_board_from_tiles.py`, `assets/textures/board_composed.png`
+
+---
+
+## 2026-05-26 (nuit 4d) — Portraits d'unités, carré plein corrigé, power 0 au départ
+
+### Assets enfin utilisés
+- `UiPieceIcons` : nouveaux portraits d'unités (`soldier`/`raider`/`hunter`/`cruiser` de l'atlas) dans les boutons achat ET les boutons compteur de case
+- Boutons "Recruter" : portrait 26px + coût doré "P2/P3/P5/P10" en colonne verticale
+- Boutons CaseInfo : portrait 22px teinté par camp + "×N" en couleur camp
+
+### Bug carré plein enfin résolu
+- `atlas_sprites.json` : `square_filled` → `FORCE-AD-13a_20` (était erronément `_15` = outline depuis le début)
+- `parse_atlas_meta.py` : source du mapping corrigée → `_20` régénéré à chaque run
+- `verify_atlas_shapes.py` : assertion mise à jour + `_15` ajouté aux sprites interdits pour le carré plein
+- `run_headless.ps1` : `parse_atlas_meta.py` s'exécute maintenant **avant** `verify_atlas_shapes.py`
+
+### Équilibre : pas de recrutement dès le départ
+- `STARTING_POWER = 0` (était 12) — le joueur ne peut pas recruter à la manche 1 ; le power s'accumule à raison de +3 par manche
+- Tests (`game_regression.gd`, `full_match_test.gd`) : injection de power explicite pour les cas qui testent le système d'achat
+
+---
+
+## 2026-05-26 (nuit 4c) — Panneau "Recruter" : distinction visuelle achat vs quantité
+
+- `battle.tscn` : label "Reserve" → "Recruter" (sémantiquement correct — on recrute des unités)
+- `ui_piece_icons.setup_buy_button` : icône outline + coût **P2/P3/P5/P10** en doré — impossible de confondre avec un compteur de pièces (ex. "○2" en blanc)
+- `battle.tscn` : suppression des `text` hardcodés sur les boutons d'achat (remplacés au runtime)
+
+---
+
+## 2026-05-25 (nuit 4b) — Secteur non présélectionné au démarrage
+
+- `battle.gd` : `_selected_sector = ""` au lieu de l'HQ — CaseInfo démarre vide, les 8 pièces initiales sur l'HQ ne s'affichent plus comme une "réserve chargée"
+- `battle_sidebar.gd` : affiche "—" dans le titre de CaseInfo quand aucun secteur n'est sélectionné
+
+---
+
+## 2026-05-25 (nuit 4) — Îles en aplat + icônes unités colorées par camp
+
+### Plateau — îles en octogone plat (style Unity)
+- Abandon des sprites atlas qui produisaient un effet "tartan" : chaque île est maintenant un octogone PIL vectoriel rempli avec la couleur exacte Unity (`#8b3040`, `#4a3578`, `#2a6e6a`, `#8a6a30`)
+- Grille 3×3 intérieure en teinte claircie de l'île (plus de lignes bleu-nuit sombres)
+- HQ corners : petit octogone teinté sombre (couleur camp × 0.55) au lieu d'un sprite atlas écrasé par multiply
+- `CAMP_TINT` : valeurs Unity directes (aplat, plus besoin de compenser le multiply)
+
+### Icônes unités — outline/filled + couleur camp
+- `UiPieceIcons.make_unit_button()` : unités de base → icône outline (○□△◇), fusionnées → filled (●■▲♦)
+- Camp color transmise via `modulate` sur le `TextureRect` de l'icône
+- `battle_sidebar._build_unit_buttons()` : récupère `GameConstants.CAMP_COLORS[human_camp]` et le passe à `make_unit_button`
+
+---
+
 ## 2026-05-25 (nuit 3) — Log icônes, bouton ▶ fixé, couleurs îles rehaussées
 
 ### Bouton ▶ toujours visible

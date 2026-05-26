@@ -9,7 +9,7 @@ static func run_all() -> PackedStringArray:
 		"diamond_outline": "FORCE-AD-13a_16",
 		"diamond_filled": "FORCE-AD-13a_21",
 		"square_outline": "FORCE-AD-13a_15",
-		"square_filled": "FORCE-AD-13a_15",
+		"square_filled": "FORCE-AD-13a_20",
 		"hbomb_h": "FORCE-AD-13a_23",
 		"power_f": "FORCE-AD-13a_18",
 	}
