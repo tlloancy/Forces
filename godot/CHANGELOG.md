@@ -38,7 +38,7 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 ### Tests
 - `.\tools\run_headless.ps1 -Mode smoke` — compile OK ; 1 échec préexistant (`tie: blue must bounce to origin sector`).
 
-**Commit** : _(hash après push)_
+**Commit** : `ed1cafe` (`godot4-port-polish`, dépôt `tlloancy/Forces`)
 
 ---
 
