@@ -8,7 +8,39 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ---
 
-## 2026-05-26 (nuit 4e) — Terminal Matrix : flux tactique lisible
+## 2026-05-29 01:23:02 — Sidebar jouable, règles Unity Power/combat, deploy lisible
+
+### UX sidebar (fin de la galère)
+- **`battle_sidebar.gd`** + **`battle.tscn`** : panneau **RESERVE** épinglé en haut (chips larges, compteur `1× Raider`), **ORDERS** avec lignes BBCode colorées par secteur, **⚡ + chiffre** en HUD (plus d’atlas `power_f` confondu avec F5).
+- Bouton **`⚑ Deploy reserve → HQ`** vert pleine largeur sous les chips (plus l’icône soldier invisible sur barre noire) ; libellé dynamique `Deploy Raider → HQ` quand une unité est sélectionnée.
+- Suppression **`ActiveChipHost`** — fin du rond fantôme au milieu de la sidebar.
+- **`piece_chip.gd`** : chips cliquables camp + surbrillance sélection ; réserve visible même si ordre en file (dimmed).
+
+### Règles alignées Unity
+- **Power** : suppression du faux **`POWER_PER_ROUND +3`** ; le ⚡ vient **uniquement** de la récolte (`apply_power_harvest`, +1 par île ennemie occupée).
+- **Combat** : vainqueur **capture** l’unité ennemie → **réserve du gagnant** (`battle_resolver.gd`, pas HQ du perdant).
+- **`STARTING_POWER = 0`** conservé ; recrutement via shop RESERVE.
+
+### Feedback & résolution
+- **`power_toast.gd`** : toasts gain récolte, achat, capture combat.
+- **`battle.gd`** : animations déplacement/combat, flash secteurs, undo ordre ↩, pause/sauvegarde partie, feed phases sans bonus manche.
+
+### Plateau
+- **`compose_board_from_tiles.py`** + **`board_composed.png`** : teintes îles Unity rehaussées.
+
+### Fichiers
+- `scripts/battle/battle.gd`, `battle_sidebar.gd`, `battle_feed.gd`, `board_map.gd`, `power_toast.gd`
+- `scripts/core/battle_resolver.gd`, `game_state.gd`, `game_constants.gd`, `game_order.gd`, `round_resolver.gd`
+- `scripts/ui/piece_chip.gd`, `ui_piece_icons.gd`, `scripts/menu/menu_theme.gd`
+- `scenes/battle/battle.tscn`, `scripts/tests/full_match_test.gd`
+- `tools/compose_board_from_tiles.py`, `assets/textures/board_composed.png`
+
+### Tests
+- `.\tools\run_headless.ps1 -Mode smoke` — compile OK ; 1 échec préexistant (`tie: blue must bounce to origin sector`).
+
+**Commit** : _(hash après push)_
+
+---
 
 ### UX — plus de double journal confus
 - **`battle_feed.gd`** (`BattleFeed`) : panneau gauche style Matrix (fond vert sombre, texte défilant, frappe caractère par caractère).

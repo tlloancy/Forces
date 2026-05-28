@@ -88,11 +88,24 @@ static func _test_combat_rebound_and_capture() -> PackedStringArray:
 	var failures: PackedStringArray = PackedStringArray()
 	var state := _fresh_state()
 	var sector: String = "Plains_C"
+	var hq_blue: String = BoardCatalog.hq_for_camp(GameConstants.Camp.BLUE)
+	state.capture_round_board_snapshot()
 	state._add_piece(GameConstants.Camp.GREEN, GameConstants.PieceType.SOLDIER, sector, false)
-	state._add_piece(GameConstants.Camp.BLUE, GameConstants.PieceType.SOLDIER, sector, false)
+	var blue_piece: PieceInstance = state._add_piece(
+		GameConstants.Camp.BLUE, GameConstants.PieceType.SOLDIER, hq_blue, false
+	)
+	blue_piece.sector_id = sector
 	var msg_tie: String = BattleResolver.resolve_sector(state, sector)
-	if msg_tie.is_empty() or (not msg_tie.contains("galité") and not msg_tie.contains("Égalité")):
-		failures.append("égalité combat non détectée (%s)" % msg_tie)
+	if msg_tie.is_empty() or not msg_tie.contains("═"):
+		failures.append("tie combat not detected (%s)" % msg_tie)
+	if blue_piece.sector_id != hq_blue or blue_piece.in_reserve:
+		failures.append("tie: blue must bounce to origin sector (%s)" % blue_piece.sector_id)
+	var green_on_sector: bool = false
+	for p: PieceInstance in state.pieces:
+		if p.camp == GameConstants.Camp.GREEN and p.sector_id == sector and not p.in_reserve:
+			green_on_sector = true
+	if not green_on_sector:
+		failures.append("tie: green already on sector must stay")
 	for i in range(state.pieces.size() - 1, -1, -1):
 		if state.pieces[i].sector_id == sector:
 			state.pieces.remove_at(i)
@@ -101,20 +114,24 @@ static func _test_combat_rebound_and_capture() -> PackedStringArray:
 	var msg_win: String = BattleResolver.resolve_sector(state, sector)
 	if msg_win.is_empty():
 		failures.append("combat vainqueur sans message")
+	var hq_green: String = BoardCatalog.hq_for_camp(GameConstants.Camp.GREEN)
 	var blue_on_sector: bool = false
-	var blue_in_reserve: bool = false
-	var hq_blue: String = BoardCatalog.hq_for_camp(GameConstants.Camp.BLUE)
+	var captured_for_green: bool = false
 	for p: PieceInstance in state.pieces:
-		if p.camp != GameConstants.Camp.BLUE or p.type != GameConstants.PieceType.SOLDIER:
+		if p.type != GameConstants.PieceType.SOLDIER:
 			continue
-		if p.sector_id == sector and not p.in_reserve:
+		if p.camp == GameConstants.Camp.BLUE and p.sector_id == sector and not p.in_reserve:
 			blue_on_sector = true
-		if p.in_reserve and p.sector_id == hq_blue:
-			blue_in_reserve = true
+		if (
+			p.camp == GameConstants.Camp.GREEN
+			and p.in_reserve
+			and p.sector_id == hq_green
+		):
+			captured_for_green = true
 	if blue_on_sector:
-		failures.append("perdant encore sur la case après combat")
-	if not blue_in_reserve:
-		failures.append("perdant pas renvoyé en réserve HQ")
+		failures.append("loser still on sector after combat")
+	if not captured_for_green:
+		failures.append("captured unit must join winner reserve at winner HQ")
 	return failures
 
 

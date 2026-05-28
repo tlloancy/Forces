@@ -29,204 +29,334 @@ script = ExtResource("2_map")
 unique_name_in_owner = true
 z_index = 2
 layout_mode = 1
-offset_left = 4.0
-offset_top = 4.0
-offset_right = 288.0
-offset_bottom = 460.0
-theme_override_constants/separation = 6
+anchors_preset = 15
+anchor_right = 0.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = 362.0
+offset_bottom = -6.0
+theme_override_constants/separation = 4
 script = ExtResource("3_sidebar")
 
-[node name="CasePanel" type="PanelContainer" parent="Sidebar"]
+[node name="HudBar" type="PanelContainer" parent="Sidebar"]
 layout_mode = 2
 
-[node name="VBox" type="VBoxContainer" parent="Sidebar/CasePanel"]
+[node name="HudRow" type="HBoxContainer" parent="Sidebar/HudBar"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 8
 
-[node name="CaseHeaderRow" type="HBoxContainer" parent="Sidebar/CasePanel/VBox"]
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="CaseInfoLabel" type="Label" parent="Sidebar/CasePanel/VBox/CaseHeaderRow"]
+[node name="PowerRow" type="HBoxContainer" parent="Sidebar/HudBar/HudRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.62, 0.65, 0.75, 1)
-text = "Case Info"
+theme_override_constants/separation = 8
+alignment = 1
 
-[node name="HQLabel" type="Label" parent="Sidebar/CasePanel/VBox/CaseHeaderRow"]
+[node name="PowerBolt" type="Label" parent="Sidebar/HudBar/HudRow/PowerRow"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.85, 0.28, 0.28, 1)
-text = ""
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(1, 0.92, 0.38, 1)
+text = "⚡"
 
-[node name="CaseTitle" type="Label" parent="Sidebar/CasePanel/VBox"]
+[node name="PowerAmount" type="Label" parent="Sidebar/HudBar/HudRow/PowerRow"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
-text = "—"
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(1, 0.92, 0.38, 1)
+text = "0"
 
-[node name="CaseUnitsRow" type="HBoxContainer" parent="Sidebar/CasePanel/VBox"]
-unique_name_in_owner = true
+[node name="ScrollDock" type="ScrollContainer" parent="Sidebar"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="DockContent" type="VBoxContainer" parent="Sidebar/ScrollDock"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="CasePanel" type="PanelContainer" parent="Sidebar/ScrollDock/DockContent"]
+layout_mode = 2
+
+[node name="CaseVBox" type="VBoxContainer" parent="Sidebar/ScrollDock/DockContent/CasePanel"]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="CasePieceRow" type="HBoxContainer" parent="Sidebar/CasePanel/VBox"]
+[node name="CaseHeaderRow" type="HBoxContainer" parent="Sidebar/ScrollDock/DockContent/CasePanel/CaseVBox"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 6
 
-[node name="CasePieceIcon" type="TextureRect" parent="Sidebar/CasePanel/VBox/CasePieceRow"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(22, 22)
-layout_mode = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="CasePieceMeta" type="Label" parent="Sidebar/CasePanel/VBox/CasePieceRow"]
+[node name="CaseTitle" type="Label" parent="Sidebar/ScrollDock/DockContent/CasePanel/CaseVBox/CaseHeaderRow"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.82, 0.95, 1)
-theme_override_font_sizes/font_size = 11
-text = ""
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.92, 0.94, 0.98, 1)
+text = "—"
 
-[node name="ReservePanel" type="PanelContainer" parent="Sidebar"]
-layout_mode = 2
-
-[node name="VBox" type="VBoxContainer" parent="Sidebar/ReservePanel"]
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="ReserveSectionLabel" type="Label" parent="Sidebar/ReservePanel/VBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.62, 0.65, 0.75, 1)
-text = "Forces"
-
-[node name="ReservePower" type="Label" parent="Sidebar/ReservePanel/VBox"]
+[node name="HQLabel" type="Label" parent="Sidebar/ScrollDock/DockContent/CasePanel/CaseVBox/CaseHeaderRow"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.95, 0.82, 0.35, 1)
-text = "P0"
+theme_override_colors/font_color = Color(0.85, 0.28, 0.28, 1)
+text = ""
 
-[node name="ReserveStockLabel" type="Label" parent="Sidebar/ReservePanel/VBox"]
+[node name="CaseUnitsRow" type="HBoxContainer" parent="Sidebar/ScrollDock/DockContent/CasePanel/CaseVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.62, 0.65, 0.75, 1)
-text = "Réserve"
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
 
-[node name="ReserveUnitsRow" type="HBoxContainer" parent="Sidebar/ReservePanel/VBox"]
+[node name="OrdersPanel" type="PanelContainer" parent="Sidebar/ScrollDock/DockContent"]
+layout_mode = 2
+
+[node name="OrdersVBox" type="VBoxContainer" parent="Sidebar/ScrollDock/DockContent/OrdersPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="OrdersTitle" type="Label" parent="Sidebar/ScrollDock/DockContent/OrdersPanel/OrdersVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.55, 0.85, 0.62, 1)
+text = "ORDERS"
+
+[node name="OrdersList" type="VBoxContainer" parent="Sidebar/ScrollDock/DockContent/OrdersPanel/OrdersVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+custom_minimum_size = Vector2(0, 28)
+
+[node name="ReservePanel" type="PanelContainer" parent="Sidebar/ScrollDock/DockContent"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DockVBox" type="VBoxContainer" parent="Sidebar/ScrollDock/DockContent/ReservePanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ReserveTitle" type="Label" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.92, 0.94, 0.98, 1)
+text = "RESERVE"
+
+[node name="ReserveSummary" type="Label" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.55, 0.85, 0.62, 1)
+text = "Tap a unit, then Deploy → HQ"
+
+[node name="ReserveScroll" type="ScrollContainer" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_scroll_mode = 2
+vertical_scroll_mode = 0
+
+[node name="ReserveUnitsRow" type="HBoxContainer" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ReserveScroll"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 68)
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="DeployButton" type="Button" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Select a reserve unit, then deploy it onto your HQ"
+text = "⚑ Deploy reserve → HQ"
+
+[node name="ShopTitle" type="Label" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.65, 0.68, 0.75, 1)
+text = "RECRUIT — cost deducted from ⚡ above"
+
+[node name="ReserveActions" type="HBoxContainer" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="BuySoldierButton" type="Button" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ReserveActions"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BuyRaiderButton" type="Button" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ReserveActions"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BuyHunterButton" type="Button" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ReserveActions"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BuyCruiserButton" type="Button" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ReserveActions"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HbombFuseButton" type="Button" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ExchangeRow" type="HBoxContainer" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="RecruitLabel" type="Label" parent="Sidebar/ReservePanel/VBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.62, 0.65, 0.75, 1)
-text = "Recruter"
-
-[node name="ReserveActions" type="HBoxContainer" parent="Sidebar/ReservePanel/VBox"]
-layout_mode = 2
-
-[node name="BuySoldierButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
+[node name="ExchangeCommandoButton" type="Button" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ExchangeRow"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="BuyRaiderButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
+[node name="ExchangeBomberButton" type="Button" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ExchangeRow"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="BuyHunterButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
+[node name="ExchangeFighterButton" type="Button" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ExchangeRow"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="BuyCruiserButton" type="Button" parent="Sidebar/ReservePanel/VBox/ReserveActions"]
+[node name="ExchangeDestroyerButton" type="Button" parent="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ExchangeRow"]
 unique_name_in_owner = true
 layout_mode = 2
-
-[node name="DeployButton" type="Button" parent="Sidebar/ReservePanel/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "↓"
-
-[node name="HbombFuseButton" type="Button" parent="Sidebar/ReservePanel/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-text = ""
-
-[node name="ExchangeRow" type="HBoxContainer" parent="Sidebar/ReservePanel/VBox"]
-layout_mode = 2
-
-[node name="ExchangeCommandoButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
-unique_name_in_owner = true
-layout_mode = 2
-text = ""
-
-[node name="ExchangeBomberButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
-unique_name_in_owner = true
-layout_mode = 2
-text = ""
-
-[node name="ExchangeFighterButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
-unique_name_in_owner = true
-layout_mode = 2
-text = ""
-
-[node name="ExchangeDestroyerButton" type="Button" parent="Sidebar/ReservePanel/VBox/ExchangeRow"]
-unique_name_in_owner = true
-layout_mode = 2
-text = ""
-
-[node name="FeedPanel" type="PanelContainer" parent="Sidebar"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 3
-script = ExtResource("4_feed")
-
-[node name="VBox" type="VBoxContainer" parent="Sidebar/FeedPanel"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 3
-
-[node name="FeedTitle" type="Label" parent="Sidebar/FeedPanel/VBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-theme_override_colors/font_color = Color(0.35, 0.95, 0.45, 1)
-text = "> FORCES // TACTICAL LINK"
-
-[node name="FeedStatus" type="Label" parent="Sidebar/FeedPanel/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.55, 0.85, 0.62, 1)
-text = "59:00  MANCHE 1  P0  [0/5]"
-
-[node name="FeedOutput" type="RichTextLabel" parent="Sidebar/FeedPanel/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 3
-custom_minimum_size = Vector2(0, 140)
-theme_override_colors/default_color = Color(0.48, 0.92, 0.58, 1)
-theme_override_font_sizes/normal_font_size = 11
-bbcode_enabled = true
-fit_content = false
-scroll_following = true
-text = ""
 
 [node name="MenuRow" type="HBoxContainer" parent="Sidebar"]
 layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="UndoOrderButton" type="Button" parent="Sidebar/MenuRow"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Undo last order"
+text = "↩"
 
 [node name="MenuButton" type="Button" parent="Sidebar/MenuRow"]
 layout_mode = 2
-text = "⚙"
+text = "☰"
 
 [node name="EndRoundButton" type="Button" parent="Sidebar/MenuRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "▶"
+text = "▶ END"
+
+[node name="FeedRail" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -268.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = -6.0
+theme_override_constants/separation = 4
+
+[node name="FeedPanel" type="PanelContainer" parent="FeedRail"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("4_feed")
+
+[node name="VBox" type="VBoxContainer" parent="FeedRail/FeedPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 3
+
+[node name="FeedTitle" type="Label" parent="FeedRail/FeedPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.35, 0.95, 0.45, 1)
+text = "TACTICAL"
+
+[node name="FeedStatus" type="Label" parent="FeedRail/FeedPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.55, 0.85, 0.62, 1)
+text = "59:00  R1  ⚡0  ○○○○○"
+
+[node name="OrdersTitle" type="Label" parent="FeedRail/FeedPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.35, 0.95, 0.45, 1)
+text = "ORDERS"
+
+[node name="OrdersOutput" type="RichTextLabel" parent="FeedRail/FeedPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 132)
+theme_override_colors/default_color = Color(0.48, 0.92, 0.58, 1)
+theme_override_constants/line_separation = 8
+theme_override_font_sizes/normal_font_size = 15
+theme_override_font_sizes/bold_font_size = 15
+bbcode_enabled = true
+fit_content = false
+scroll_active = false
+autowrap_mode = 0
+text = ""
+
+[node name="FeedOutput" type="RichTextLabel" parent="FeedRail/FeedPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 120)
+theme_override_colors/default_color = Color(0.48, 0.92, 0.58, 1)
+theme_override_font_sizes/normal_font_size = 14
+theme_override_font_sizes/bold_font_size = 14
+bbcode_enabled = true
+fit_content = false
+scroll_active = true
+scroll_following = true
+autowrap_mode = 0
+text = ""
+
+[node name="PauseLayer" type="CanvasLayer" parent="."]
+layer = 9
+visible = false
+
+[node name="Dim" type="ColorRect" parent="PauseLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.02, 0.04, 0.1, 0.65)
+
+[node name="Center" type="CenterContainer" parent="PauseLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="PauseLayer/Center"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="PauseLayer/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PauseTitle" type="Label" parent="PauseLayer/Center/Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "⏸"
+horizontal_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="PauseLayer/Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "▶ Resume"
+
+[node name="MenuButtonPause" type="Button" parent="PauseLayer/Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "☰ Menu"
 
 [node name="GameOverLayer" type="CanvasLayer" parent="."]
 layer = 10
@@ -337,19 +467,21 @@ offset_right = 400.0
 offset_bottom = 300.0
 
 [connection signal="pressed" from="GameOverLayer/Center/Panel/VBox/Buttons/ReplayButton" to="." method="_on_replay_pressed"]
-[connection signal="pressed" from="GameOverLayer/Center/Panel/VBox/Buttons/MenuButtonGO" to="." method="_on_menu_pressed"]
-[connection signal="pressed" from="Sidebar/MenuRow/MenuButton" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="GameOverLayer/Center/Panel/VBox/Buttons/MenuButtonGO" to="." method="_on_save_and_menu"]
+[connection signal="pressed" from="PauseLayer/Center/Panel/VBox/ResumeButton" to="." method="_on_pause_resume_pressed"]
+[connection signal="pressed" from="PauseLayer/Center/Panel/VBox/MenuButtonPause" to="." method="_on_save_and_menu"]
+[connection signal="pressed" from="Sidebar/MenuRow/MenuButton" to="." method="_on_pause_pressed"]
 [connection signal="pressed" from="Sidebar/MenuRow/EndRoundButton" to="." method="_on_end_round_pressed"]
-[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ReserveActions/BuySoldierButton" to="." method="_on_buy_soldier_pressed"]
-[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ReserveActions/BuyRaiderButton" to="." method="_on_buy_raider_pressed"]
-[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ReserveActions/BuyHunterButton" to="." method="_on_buy_hunter_pressed"]
-[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ReserveActions/BuyCruiserButton" to="." method="_on_buy_cruiser_pressed"]
-[connection signal="pressed" from="Sidebar/ReservePanel/VBox/DeployButton" to="." method="_on_deploy_pressed"]
-[connection signal="pressed" from="Sidebar/ReservePanel/VBox/HbombFuseButton" to="." method="_on_hbomb_fuse_pressed"]
-[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ExchangeRow/ExchangeCommandoButton" to="." method="_on_exchange_commando_pressed"]
-[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ExchangeRow/ExchangeBomberButton" to="." method="_on_exchange_bomber_pressed"]
-[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ExchangeRow/ExchangeFighterButton" to="." method="_on_exchange_fighter_pressed"]
-[connection signal="pressed" from="Sidebar/ReservePanel/VBox/ExchangeRow/ExchangeDestroyerButton" to="." method="_on_exchange_destroyer_pressed"]
+[connection signal="pressed" from="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ReserveActions/BuySoldierButton" to="." method="_on_buy_soldier_pressed"]
+[connection signal="pressed" from="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ReserveActions/BuyRaiderButton" to="." method="_on_buy_raider_pressed"]
+[connection signal="pressed" from="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ReserveActions/BuyHunterButton" to="." method="_on_buy_hunter_pressed"]
+[connection signal="pressed" from="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ReserveActions/BuyCruiserButton" to="." method="_on_buy_cruiser_pressed"]
+[connection signal="pressed" from="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/DeployButton" to="." method="_on_deploy_pressed"]
+[connection signal="pressed" from="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/HbombFuseButton" to="." method="_on_hbomb_fuse_pressed"]
+[connection signal="pressed" from="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ExchangeRow/ExchangeCommandoButton" to="." method="_on_exchange_commando_pressed"]
+[connection signal="pressed" from="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ExchangeRow/ExchangeBomberButton" to="." method="_on_exchange_bomber_pressed"]
+[connection signal="pressed" from="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ExchangeRow/ExchangeFighterButton" to="." method="_on_exchange_fighter_pressed"]
+[connection signal="pressed" from="Sidebar/ScrollDock/DockContent/ReservePanel/DockVBox/ExchangeRow/ExchangeDestroyerButton" to="." method="_on_exchange_destroyer_pressed"]
 [connection signal="item_selected" from="DebugLayer/SectorList" to="." method="_on_sector_selected"]
 [connection signal="item_selected" from="DebugLayer/PieceList" to="." method="_on_piece_selected"]
 [connection signal="item_selected" from="DebugLayer/DestList" to="." method="_on_dest_selected"]

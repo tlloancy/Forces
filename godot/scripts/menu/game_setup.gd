@@ -23,15 +23,15 @@ func _ready() -> void:
 
 func _fill_kind_options(ob: OptionButton) -> void:
 	ob.clear()
-	ob.add_item("IA", GameSession.SlotKind.AI)
-	ob.add_item("Joueur (local)", GameSession.SlotKind.HUMAN)
+	ob.add_item("AI", GameSession.SlotKind.AI)
+	ob.add_item("Human (local)", GameSession.SlotKind.HUMAN)
 
 
 func _fill_diff_options(ob: OptionButton) -> void:
 	ob.clear()
-	ob.add_item("Facile", GameSession.Difficulty.EASY)
+	ob.add_item("Easy", GameSession.Difficulty.EASY)
 	ob.add_item("Normal", GameSession.Difficulty.NORMAL)
-	ob.add_item("Difficile", GameSession.Difficulty.HARD)
+	ob.add_item("Hard", GameSession.Difficulty.HARD)
 
 
 func _load_from_session() -> void:
@@ -62,14 +62,14 @@ func _apply_row(camp: GameConstants.Camp, kind_ob: OptionButton, diff_ob: Option
 
 func _refresh_summary() -> void:
 	_summary.clear()
-	_summary.append_text("[b]Vert[/b] : Joueur (vous)\n")
+	_summary.append_text("[b]Green[/b] : Player (you)\n")
 	for line: String in GameSession.setup_summary_lines():
-		if line.begins_with("Vert"):
+		if line.begins_with("Green"):
 			continue
 		_summary.append_text(line + "\n")
 	var humans: int = GameSession.human_player_count()
 	if humans > 1:
-		_summary.append_text("\n[color=orange]Multijoueur local : bientôt. Pour l'instant seul le Vert est jouable.[/color]")
+		_summary.append_text("\n[color=orange]Local multiplayer: coming soon. Only Green is playable for now.[/color]")
 
 
 func _on_slot_changed(_index: int = -1) -> void:
@@ -85,4 +85,5 @@ func _on_back_pressed() -> void:
 
 func _on_start_pressed() -> void:
 	_on_slot_changed()
+	GameSession.clear_saved_battle()
 	get_tree().change_scene_to_file("res://scenes/battle/battle.tscn")

@@ -39,7 +39,7 @@ theme_override_constants/separation = 16
 [node name="Title" type="Label" parent="Margin/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Tutoriel"
+text = "Tutorial"
 
 [node name="PageCounter" type="Label" parent="Margin/VBox"]
 unique_name_in_owner = true
@@ -66,12 +66,12 @@ text = "Menu"
 [node name="PrevButton" type="Button" parent="Margin/VBox/Nav"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Précédent"
+text = "Previous"
 
 [node name="NextButton" type="Button" parent="Margin/VBox/Nav"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Suivant"
+text = "Next"
 
 [connection signal="pressed" from="Margin/VBox/Nav/BackButton" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="Margin/VBox/Nav/PrevButton" to="." method="_on_prev_pressed"]

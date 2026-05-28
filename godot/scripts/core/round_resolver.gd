@@ -2,14 +2,13 @@ class_name RoundResolver
 extends RefCounted
 ## Phases de fin de manche — séparées pour logs + animations futures.
 
-enum Phase { MOVES, COMBATS, FLAG_CHECK, POWER_HARVEST, ROUND_INCOME }
+enum Phase { MOVES, COMBATS, FLAG_CHECK, POWER_HARVEST }
 
 const PHASE_LABELS: Dictionary = {
-	Phase.MOVES: "Ordres",
-	Phase.COMBATS: "Combats",
-	Phase.FLAG_CHECK: "Drapeaux",
-	Phase.POWER_HARVEST: "Récolte",
-	Phase.ROUND_INCOME: "Revenu",
+	Phase.MOVES: "→",
+	Phase.COMBATS: "⚔",
+	Phase.FLAG_CHECK: "⚑",
+	Phase.POWER_HARVEST: "⚡",
 }
 
 
@@ -67,10 +66,5 @@ static func apply_power_harvest(state: GameState, logs: Array[String]) -> Dictio
 		state.power_tokens[occupier] = state.camp_power(occupier) + islands.size()
 		state.power_changed.emit(occupier, state.camp_power(occupier))
 		for enemy: GameConstants.Camp in islands:
-			logs.append(
-				"  · %s +1 Force — île %s" % [
-					GameConstants.camp_to_string(occupier),
-					GameConstants.camp_to_string(enemy),
-				]
-			)
+			logs.append("  · " + GameOrder.feed_harvest(occupier, enemy))
 	return by_camp

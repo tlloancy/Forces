@@ -46,7 +46,7 @@ func _run_checks() -> PackedStringArray:
 		failures.append("BoardGraph: air_adjacency.json incomplet")
 	GameSession.reset_to_solo_defaults()
 	if GameSession.human_camp != GameConstants.Camp.GREEN:
-		failures.append("GameSession: camp humain attendu Vert")
+		failures.append("GameSession: expected human camp Green")
 	var state := GameState.new()
 	state.human_camp = GameSession.human_camp
 	state.reset_match()

@@ -33,10 +33,7 @@ static func run_all_ai(state: GameState) -> Array[String]:
 		if not GameSession.is_ai(camp):
 			continue
 		var diff: GameSession.Difficulty = GameSession.slot_difficulty(camp)
-		var cc: String = GameOrder._camp_hex(camp)
-		logs.append("[color=%s]◈[/color] IA [color=%s]%s[/color]" % [
-			cc, cc, GameSession.difficulty_label(diff).left(1).to_upper(),
-		])
+		logs.append(GameOrder.feed_ai_header(camp, GameSession.difficulty_label(diff).left(1).to_upper()))
 		logs.append_array(plan_turn(state, camp, diff))
 	return logs
 
@@ -68,7 +65,7 @@ static func plan_turn(state: GameState, camp: GameConstants.Camp, difficulty: Ga
 	_maybe_ai_exchange(state, camp, difficulty, rng, logs)
 	_maybe_ai_hbomb(state, camp, difficulty, rng, logs)
 	if logs.is_empty():
-		logs.append("  · (aucun ordre)")
+		logs.append("  " + GameOrder.feed_no_orders())
 	return logs
 
 
@@ -187,6 +184,10 @@ static func _score_destination(
 			score += 5.0 * aggression
 	else:
 		score += 18.0
+	# Pénalise un assaut clairement perdant (force ennemie >> la nôtre) sauf agressivité extrême.
+	if enemy_force > 0 and my_force + ally_force < enemy_force:
+		var deficit: float = float(enemy_force - (my_force + ally_force))
+		score -= deficit * (4.0 - 3.0 * aggression)
 	var dest_camp: GameConstants.Camp = BoardCatalog.camp_for_sector(dest)
 	if dest_camp != camp and not BoardCatalog.is_neutral(dest):
 		score += 45.0 * aggression

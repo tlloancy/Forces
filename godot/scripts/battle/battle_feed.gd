@@ -1,11 +1,11 @@
 class_name BattleFeed
 extends PanelContainer
-## Terminal Matrix — flux lisible, défilement + frappe caractère par caractère.
+## Terminal Matrix — symboles + couleurs camp, pas de prose.
 
 enum LineKind { SYSTEM, PLAYER, PHASE, COMBAT, HARVEST, ENEMY, ERROR, WIN }
 
 const MAX_LINES: int = 120
-const CHARS_PER_SEC: float = 55.0
+const BASE_CHARS_PER_SEC: float = 60.0
 const CURSOR: String = "▌"
 
 const COLOR: Dictionary = {
@@ -21,74 +21,132 @@ const COLOR: Dictionary = {
 
 @onready var _out: RichTextLabel = %FeedOutput
 @onready var _status: Label = %FeedStatus
+@onready var _orders_out: RichTextLabel = %OrdersOutput
 
 var _lines: Array[String] = []
 var _typing_plain: String = ""
 var _typing_kind: LineKind = LineKind.SYSTEM
 var _typing_char: int = 0
 var _typing_active: bool = false
+var _typing_speed: float = BASE_CHARS_PER_SEC
+var _typing_indent: int = 0
 
 
 func _ready() -> void:
 	_out.bbcode_enabled = true
 	_out.scroll_following = true
+	_out.scroll_active = true
+	_out.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_out.add_theme_constant_override("line_separation", 8)
+	_out.add_theme_font_size_override("normal_font_size", 17)
+	_out.add_theme_font_size_override("bold_font_size", 17)
 	var box := StyleBoxFlat.new()
 	box.bg_color = Color(0.015, 0.05, 0.025, 0.97)
 	box.border_color = Color(0.15, 0.55, 0.28, 0.45)
 	box.set_border_width_all(1)
 	box.set_corner_radius_all(2)
 	add_theme_stylebox_override("panel", box)
+	mouse_filter = Control.MOUSE_FILTER_STOP
 	clear()
 
 
 func _process(delta: float) -> void:
 	if not _typing_active:
 		return
-	var step: int = maxi(1, int(CHARS_PER_SEC * delta))
+	var step: int = maxi(1, int(_typing_speed * delta))
 	_typing_char = mini(_typing_char + step, _typing_plain.length())
 	_render()
 	if _typing_char >= _typing_plain.length():
 		_commit_typing()
 
 
+func _gui_input(event: InputEvent) -> void:
+	if not _typing_active:
+		return
+	if event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
+		_typing_char = _typing_plain.length()
+		_commit_typing()
+		_render()
+	if event is InputEventScreenTouch and (event as InputEventScreenTouch).pressed:
+		_typing_char = _typing_plain.length()
+		_commit_typing()
+		_render()
+
+
 func clear() -> void:
 	_lines.clear()
 	_typing_active = false
 	_typing_plain = ""
+	set_planned_orders([], GameConstants.MAX_ORDERS_PER_ROUND)
 	_render()
-	push_system("FORCES.EXE — liaison tactique ouverte", true)
-	push_system("Le flux ci-dessous décrit chaque action en direct.", true)
+	push_system("▸ ◎", true, 0)
+	push_system(GameOrder.feed_boot_line(), true, 1)
 
 
 func set_hud(timer: String, round_n: int, power: int, orders_used: int, orders_max: int) -> void:
-	_status.text = "%s  MANCHE %d  P%d  [%d/%d]" % [timer, round_n, power, orders_used, orders_max]
+	_status.text = "%s  ◎%d  ⚡%d  %s" % [
+		timer,
+		round_n,
+		power,
+		GameOrder.feed_slot_dots(orders_used, orders_max),
+	]
 
 
-func push_system(text: String, instant: bool = false) -> void:
-	_push(LineKind.SYSTEM, text, instant)
+func set_planned_orders(orders: Array[GameOrder], max_orders: int) -> void:
+	if _orders_out == null:
+		return
+	var parts: PackedStringArray = PackedStringArray()
+	if orders.is_empty():
+		parts.append(
+			"[p][color=#3a6848]├─ [/color][color=#588860]%s[/color][/p]"
+			% GameOrder.feed_slot_dots(0, max_orders)
+		)
+	else:
+		for i: int in orders.size():
+			var order: GameOrder = orders[i]
+			parts.append(
+				"[p][color=#3a6848]├─ [/color]%s[/p]" % order.feed_bbcode(i + 1, max_orders)
+			)
+	_orders_out.text = "".join(parts)
+
+
+func push_system(text: String, instant: bool = false, indent: int = 0) -> void:
+	_push(LineKind.SYSTEM, text, instant, indent)
 
 
 func push_player(text: String, instant: bool = false) -> void:
-	_push(LineKind.PLAYER, text, instant)
+	_push(LineKind.PLAYER, text, instant, 1)
 
 
 func push_error(text: String) -> void:
-	_push(LineKind.ERROR, text, true)
+	_push(LineKind.ERROR, "✕ " + text, true, 1)
 
 
-func push_order_planned(order: GameOrder, human_camp: GameConstants.Camp, slot: int, max_o: int) -> void:
-	push_player(order.feed_line(human_camp, slot, max_o), false)
+func push_order_planned(order: GameOrder, _human_camp: GameConstants.Camp, slot: int, max_o: int) -> void:
+	push_bbcode(LineKind.PLAYER, order.feed_bbcode(slot, max_o), 1)
+
+
+func push_bbcode(kind: LineKind, bbcode: String, indent: int = 0) -> void:
+	if bbcode.is_empty():
+		return
+	if kind == LineKind.PHASE and not _lines.is_empty():
+		_lines.append("")
+	_lines.append(_format_line(kind, bbcode, indent))
+	_trim()
+	_render()
 
 
 func push_engine_line(raw: String, human_camp: GameConstants.Camp) -> void:
-	var parsed: Dictionary = _interpret_engine_line(_strip_bbcode(raw), human_camp)
-	if parsed.is_empty():
+	var s: String = raw.strip_edges()
+	if s.is_empty():
 		return
-	var kind: LineKind = parsed.get("kind", LineKind.SYSTEM) as LineKind
-	var text: String = str(parsed.get("text", ""))
-	if text.is_empty():
-		return
-	_push(kind, text, false)
+	var kind: LineKind = _kind_for_line(s, human_camp)
+	var indent: int = _default_indent(kind)
+	if kind == LineKind.PHASE and not _lines.is_empty():
+		_lines.append("")
+	_lines.append(_format_line(kind, s, indent))
+	_trim()
+	_render()
 
 
 func push_ai_block(lines: Array[String], human_camp: GameConstants.Camp) -> void:
@@ -97,20 +155,26 @@ func push_ai_block(lines: Array[String], human_camp: GameConstants.Camp) -> void
 		if plain.is_empty():
 			continue
 		if plain.begins_with("◈"):
-			_push(LineKind.ENEMY, plain, false)
+			push_bbcode(LineKind.ENEMY, line.strip_edges(), 0)
+		elif plain == "· —" or plain.begins_with("(aucun"):
+			push_bbcode(LineKind.ENEMY, GameOrder.feed_no_orders(), 2)
+		elif line.strip_edges().contains("[color="):
+			push_engine_line(line.strip_edges(), human_camp)
 		else:
-			push_engine_line(plain, human_camp)
+			push_engine_line(line.strip_edges(), human_camp)
 
 
 func is_typing() -> bool:
 	return _typing_active
 
 
-func _push(kind: LineKind, text: String, instant: bool) -> void:
+func _push(kind: LineKind, text: String, instant: bool, indent: int = 0) -> void:
 	if text.is_empty():
 		return
-	if instant:
-		_lines.append(_line_bbcode(kind, text))
+	if kind == LineKind.PHASE and not _lines.is_empty():
+		_lines.append("")
+	if instant or text.contains("[color="):
+		_lines.append(_format_line(kind, text, indent))
 		_trim()
 		_render()
 	else:
@@ -118,6 +182,8 @@ func _push(kind: LineKind, text: String, instant: bool) -> void:
 			_commit_typing()
 		_typing_kind = kind
 		_typing_plain = text
+		_typing_indent = indent
+		_typing_speed = _speed_for(kind, text)
 		_typing_char = 0
 		_typing_active = true
 		_render()
@@ -127,15 +193,44 @@ func _commit_typing() -> void:
 	if _typing_plain.is_empty():
 		_typing_active = false
 		return
-	_lines.append(_line_bbcode(_typing_kind, _typing_plain))
+	_lines.append(_format_line(_typing_kind, _typing_plain, _typing_indent))
 	_typing_plain = ""
 	_typing_active = false
 	_trim()
 
 
-func _line_bbcode(kind: LineKind, text: String) -> String:
+func _format_line(kind: LineKind, text: String, indent: int) -> String:
+	var tree: String = _tree_prefix(indent)
+	if text.contains("[color=") or text.contains("[/color]"):
+		return "%s%s" % [tree, text]
 	var c: String = str(COLOR.get(kind, "#7dffb2"))
-	return "[color=%s]%s[/color] [color=%s]%s[/color]" % [c, _prefix(kind), c, text]
+	return "%s[color=%s]%s%s[/color]" % [tree, c, _prefix(kind), text]
+
+
+func _tree_prefix(indent: int) -> String:
+	match indent:
+		1:
+			return "[color=#3a6848]├─ [/color]"
+		2:
+			return "[color=#3a6848]│ ├─ [/color]"
+		3:
+			return "[color=#3a6848]│ │ ├─ [/color]"
+		_:
+			return ""
+
+
+func _default_indent(kind: LineKind) -> int:
+	match kind:
+		LineKind.PHASE, LineKind.WIN:
+			return 0
+		LineKind.PLAYER:
+			return 1
+		LineKind.ERROR:
+			return 1
+		LineKind.COMBAT, LineKind.HARVEST, LineKind.ENEMY:
+			return 2
+		_:
+			return 1
 
 
 func _prefix(kind: LineKind) -> String:
@@ -145,34 +240,80 @@ func _prefix(kind: LineKind) -> String:
 		LineKind.PLAYER:
 			return "» "
 		LineKind.PHASE:
-			return "══ "
+			return ""
 		LineKind.COMBAT:
-			return "⚔ "
+			return ""
 		LineKind.HARVEST:
-			return "⚡ "
+			return ""
 		LineKind.ENEMY:
-			return "◇ "
+			return ""
 		LineKind.ERROR:
 			return "!! "
 		LineKind.WIN:
-			return "★ "
+			return ""
 		_:
-			return "  "
+			return ""
+
+
+func _kind_for_line(s: String, _human_camp: GameConstants.Camp) -> LineKind:
+	var plain: String = _strip_bbcode(s)
+	if plain.begins_with("★"):
+		return LineKind.WIN
+	if plain.begins_with("⏱") or plain.begins_with("✕"):
+		return LineKind.ERROR
+	if plain.begins_with("▸") or plain.begins_with("◎"):
+		return LineKind.PHASE
+	if plain.begins_with("⚔") or plain.begins_with("H☠") or plain.begins_with("⚑"):
+		return LineKind.COMBAT
+	if plain.begins_with("⚡"):
+		return LineKind.HARVEST
+	if plain.begins_with("◈"):
+		return LineKind.ENEMY
+	if plain.begins_with("·"):
+		return LineKind.ENEMY
+	if "→" in plain or "↓" in plain or plain.begins_with("+"):
+		return LineKind.PLAYER
+	return LineKind.SYSTEM
 
 
 func _render() -> void:
 	var parts: PackedStringArray = PackedStringArray()
 	for bb: String in _lines:
-		parts.append(bb)
+		if bb.is_empty():
+			parts.append("[p] [/p]")
+		else:
+			parts.append("[p]%s[/p]" % bb)
 	if _typing_active:
 		var partial: String = _typing_plain.left(_typing_char)
-		parts.append(_line_bbcode(_typing_kind, partial + CURSOR))
-	_out.text = "\n".join(parts)
+		parts.append("[p]%s[/p]" % _format_line(_typing_kind, partial + CURSOR, _typing_indent))
+	_out.text = "".join(parts)
 
 
 func _trim() -> void:
 	while _lines.size() > MAX_LINES:
 		_lines.pop_front()
+
+
+func _speed_for(kind: LineKind, text: String) -> float:
+	var speed: float = BASE_CHARS_PER_SEC
+	match kind:
+		LineKind.PHASE:
+			speed = 84.0
+		LineKind.COMBAT:
+			speed = 76.0
+		LineKind.HARVEST:
+			speed = 72.0
+		LineKind.ERROR:
+			speed = 100.0
+		LineKind.WIN:
+			speed = 95.0
+		_:
+			speed = BASE_CHARS_PER_SEC
+	if text.length() > 72:
+		speed += 16.0
+	if _lines.size() > 85:
+		speed += 20.0
+	return speed
 
 
 func _strip_bbcode(text: String) -> String:
@@ -181,82 +322,3 @@ func _strip_bbcode(text: String) -> String:
 	re.compile("\\[/?[^\\]]+\\]")
 	out = re.sub(out, "", true)
 	return out
-
-
-func _interpret_engine_line(plain: String, human_camp: GameConstants.Camp) -> Dictionary:
-	var s: String = plain.strip_edges()
-	if s.is_empty():
-		return {}
-	if s.begins_with("▸") or s.to_upper().begins_with("ORDRES") or s.to_upper().begins_with("COMBATS"):
-		var phase: String = s.trim_prefix("▸").strip_edges()
-		return {"kind": LineKind.PHASE, "text": "— %s —" % phase.to_upper()}
-	if s.begins_with("Combat"):
-		return {"kind": LineKind.COMBAT, "text": _humanize_combat(s, human_camp)}
-	if "Force" in s or "île" in s:
-		return {"kind": LineKind.HARVEST, "text": _humanize_harvest(s, human_camp)}
-	if "éliminé" in s or "drapeau" in s.to_lower():
-		return {"kind": LineKind.COMBAT, "text": s}
-	if s.begins_with("Bombe H"):
-		return {"kind": LineKind.COMBAT, "text": s}
-	if s.begins_with("Égalité") or s.contains("galité"):
-		return {"kind": LineKind.COMBAT, "text": s}
-	if s.begins_with("Victoire"):
-		return {"kind": LineKind.WIN, "text": s}
-	if s.begins_with("──") or s.begins_with("——"):
-		return {"kind": LineKind.PHASE, "text": s}
-	if s.begins_with("·") or s.begins_with("  ·"):
-		s = s.trim_prefix("·").strip_edges()
-		return _interpret_move_line(s, human_camp)
-	if s.contains("→"):
-		return _interpret_move_line(s, human_camp)
-	if s.contains("déploie") or s.contains("pose bombe"):
-		return {"kind": LineKind.ENEMY, "text": s}
-	if s.begins_with("Revenu") or "+3" in s:
-		return {"kind": LineKind.HARVEST, "text": "Revenu de manche : +3 Forces pour chaque camp encore en jeu."}
-	return {"kind": LineKind.SYSTEM, "text": s}
-
-
-func _interpret_move_line(s: String, human_camp: GameConstants.Camp) -> Dictionary:
-	var camp_name: String = ""
-	var rest: String = s
-	for c: GameConstants.Camp in [GameConstants.Camp.GREEN, GameConstants.Camp.BLUE, GameConstants.Camp.RED, GameConstants.Camp.YELLOW]:
-		var label: String = GameConstants.camp_to_string(c)
-		if s.begins_with(label):
-			camp_name = label
-			rest = s.trim_prefix(label).strip_edges()
-			break
-	var kind: LineKind = LineKind.ENEMY
-	if camp_name != "" and _camp_from_label(camp_name) == human_camp:
-		kind = LineKind.PLAYER
-	if "→" in rest:
-		var parts: PackedStringArray = rest.split("→", false, 1)
-		if parts.size() >= 2:
-			return {
-				"kind": kind,
-				"text": "%s avance : %s → %s" % [camp_name if camp_name != "" else "Unité", parts[0].strip_edges(), parts[1].strip_edges()],
-			}
-	return {"kind": kind, "text": s}
-
-
-func _humanize_combat(s: String, human_camp: GameConstants.Camp) -> String:
-	if "en réserve" in s:
-		return s.replace("Combat ", "Conflit ").replace(" gagne", " l'emporte").replace("en réserve.", "envoyées en réserve.")
-	if human_camp != GameConstants.Camp.GREEN:
-		pass
-	return s.replace("Combat ", "Bataille : ").replace(" gagne", " remporte la zone")
-
-
-func _humanize_harvest(s: String, human_camp: GameConstants.Camp) -> String:
-	var camp_label: String = GameConstants.camp_to_string(human_camp)
-	if s.begins_with(camp_label) or s.contains(camp_label):
-		return s.replace("+1 Force", "vous gagnez +1 Force").replace("île", "présence sur l'île")
-	return s
-
-
-func _camp_from_label(label: String) -> GameConstants.Camp:
-	match label:
-		"Vert": return GameConstants.Camp.GREEN
-		"Bleu": return GameConstants.Camp.BLUE
-		"Rouge": return GameConstants.Camp.RED
-		"Jaune": return GameConstants.Camp.YELLOW
-		_: return GameConstants.Camp.GREEN

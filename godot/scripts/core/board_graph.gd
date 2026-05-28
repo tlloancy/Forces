@@ -141,7 +141,7 @@ func piece_destinations(piece_type: GameConstants.PieceType, from_sector: String
 func format_destinations(piece_type: GameConstants.PieceType, from_sector: String, max_move: int) -> String:
 	var dests := piece_destinations(piece_type, from_sector, max_move)
 	if dests.is_empty():
-		return "(aucune destination)"
+		return "(no destinations)"
 	return ", ".join(dests)
 
 

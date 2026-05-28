@@ -171,13 +171,14 @@ static func tile_design_size(sector_id: String) -> Vector2:
 
 
 static func _camp_multiply_color(camp: GameConstants.Camp) -> Color:
-	var tints: Dictionary = {
-		GameConstants.Camp.GREEN: Color(1.0, 0.42, 0.38),
-		GameConstants.Camp.BLUE: Color(0.72, 0.52, 0.95),
-		GameConstants.Camp.RED: Color(0.38, 0.88, 0.72),
-		GameConstants.Camp.YELLOW: Color(1.0, 0.82, 0.35),
-	}
-	return tints.get(camp, Color.WHITE)
+	## Teinte île / HQ — alignée sur CAMP_COLORS (plus de swap vert↔rouge).
+	var c: Color = GameConstants.CAMP_COLORS.get(camp, Color.WHITE) as Color
+	return Color(
+		minf(c.r * 1.45, 1.0),
+		minf(c.g * 1.45, 1.0),
+		minf(c.b * 1.45, 1.0),
+		1.0,
+	)
 
 
 static func board_reference_id() -> String:

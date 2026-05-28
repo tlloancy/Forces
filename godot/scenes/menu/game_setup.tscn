@@ -39,12 +39,12 @@ theme_override_constants/separation = 12
 [node name="Title" type="Label" parent="Margin/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Créer une partie"
+text = "Create game"
 
 [node name="Hint" type="Label" parent="Margin/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.65, 0.72, 0.78, 1)
-text = "Vert = vous. Configurez Bleu, Rouge et Jaune (IA ou joueur)."
+text = "Green = you. Set Blue, Red and Yellow (AI or player)."
 
 [node name="Grid" type="GridContainer" parent="Margin/VBox"]
 layout_mode = 2
@@ -62,7 +62,7 @@ text = "Type"
 
 [node name="H2" type="Label" parent="Margin/VBox/Grid"]
 layout_mode = 2
-text = "Difficulté"
+text = "Difficulty"
 
 [node name="H3" type="Label" parent="Margin/VBox/Grid"]
 layout_mode = 2
@@ -71,11 +71,11 @@ text = ""
 [node name="GreenLabel" type="Label" parent="Margin/VBox/Grid"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.24, 0.62, 0.34, 1)
-text = "Vert"
+text = "Green"
 
 [node name="GreenFixed" type="Label" parent="Margin/VBox/Grid"]
 layout_mode = 2
-text = "Joueur (vous)"
+text = "Player (you)"
 
 [node name="GreenDash" type="Label" parent="Margin/VBox/Grid"]
 layout_mode = 2
@@ -87,7 +87,7 @@ layout_mode = 2
 [node name="BlueLabel" type="Label" parent="Margin/VBox/Grid"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.25, 0.45, 0.85, 1)
-text = "Bleu"
+text = "Blue"
 
 [node name="BlueKind" type="OptionButton" parent="Margin/VBox/Grid"]
 unique_name_in_owner = true
@@ -103,7 +103,7 @@ layout_mode = 2
 [node name="RedLabel" type="Label" parent="Margin/VBox/Grid"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.82, 0.22, 0.22, 1)
-text = "Rouge"
+text = "Red"
 
 [node name="RedKind" type="OptionButton" parent="Margin/VBox/Grid"]
 unique_name_in_owner = true
@@ -119,7 +119,7 @@ layout_mode = 2
 [node name="YellowLabel" type="Label" parent="Margin/VBox/Grid"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.92, 0.78, 0.18, 1)
-text = "Jaune"
+text = "Yellow"
 
 [node name="YellowKind" type="OptionButton" parent="Margin/VBox/Grid"]
 unique_name_in_owner = true
@@ -146,11 +146,11 @@ theme_override_constants/separation = 12
 
 [node name="BackButton" type="Button" parent="Margin/VBox/Buttons"]
 layout_mode = 2
-text = "Retour"
+text = "Back"
 
 [node name="StartButton" type="Button" parent="Margin/VBox/Buttons"]
 layout_mode = 2
-text = "Lancer la bataille"
+text = "Start battle"
 
 [connection signal="item_selected" from="Margin/VBox/Grid/BlueKind" to="." method="_on_slot_changed"]
 [connection signal="item_selected" from="Margin/VBox/Grid/BlueDiff" to="." method="_on_slot_changed"]

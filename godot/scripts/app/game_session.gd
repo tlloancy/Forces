@@ -65,18 +65,18 @@ func human_player_count() -> int:
 
 func difficulty_label(d: Difficulty) -> String:
 	match d:
-		Difficulty.EASY: return "Facile"
+		Difficulty.EASY: return "Easy"
 		Difficulty.NORMAL: return "Normal"
-		Difficulty.HARD: return "Difficile"
+		Difficulty.HARD: return "Hard"
 		_: return "?"
 
 
 func slot_summary(camp: GameConstants.Camp) -> String:
 	if camp == human_camp:
-		return "Joueur (vous)"
+		return "Player (you)"
 	if slot_kind(camp) == SlotKind.HUMAN:
-		return "Joueur (réseau — bientôt)"
-	return "IA (%s)" % difficulty_label(slot_difficulty(camp))
+		return "Player (network — soon)"
+	return "AI (%s)" % difficulty_label(slot_difficulty(camp))
 
 
 func setup_summary_lines() -> PackedStringArray:
@@ -85,3 +85,24 @@ func setup_summary_lines() -> PackedStringArray:
 	for camp: GameConstants.Camp in CONFIGURABLE_CAMPS:
 		lines.append("%s : %s" % [GameConstants.camp_to_string(camp), slot_summary(camp)])
 	return lines
+
+
+var _saved_battle: Dictionary = {}
+
+
+func has_saved_battle() -> bool:
+	return not _saved_battle.is_empty()
+
+
+func save_battle(snapshot: Dictionary) -> void:
+	_saved_battle = snapshot.duplicate(true)
+
+
+func take_saved_battle() -> Dictionary:
+	var snap: Dictionary = _saved_battle.duplicate(true)
+	_saved_battle.clear()
+	return snap
+
+
+func clear_saved_battle() -> void:
+	_saved_battle.clear()

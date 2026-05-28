@@ -33,10 +33,10 @@ SEA_OCTAGON = (100, 105, 120, 255)
 MOON_GREY = (120, 126, 142, 255)
 SUN_GREY = (100, 105, 120, 255)
 CAMP_TINT = {
-    "Plains": (139, 48, 64),        # #8b3040 bordeaux Unity exact
-    "Ice":    (74, 53, 120),        # #4a3578 violet Unity exact
-    "Jungle": (42, 110, 106),       # #2a6e6a teal Unity exact
-    "Desert": (138, 106, 48),       # #8a6a30 doré Unity exact
+    "Plains": (61, 158, 87),   # Green camp
+    "Ice":    (64, 115, 217),  # Blue camp
+    "Jungle": (209, 56, 56),   # Red camp
+    "Desert": (235, 199, 46),  # Yellow camp
 }
 
 # Bandes couloir (zones grises sur les bords extérieurs entre HQs).

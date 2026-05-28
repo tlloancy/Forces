@@ -1,6 +1,10 @@
 class_name UiPieceIcons
 extends RefCounted
-## Icônes UI — formes atlas (jamais les portraits unité type « H » bombe).
+## Icônes UI — puces plateau (PieceChip) + atlas.
+
+const PieceChipScript = preload("res://scripts/ui/piece_chip.gd")
+const CHIP_BUY := PieceChipScript.CHIP_MD
+const CHIP_ACTION := PieceChipScript.CHIP_SM
 
 const BASIC_TYPES: Array[GameConstants.PieceType] = [
 	GameConstants.PieceType.SOLDIER,
@@ -14,7 +18,6 @@ static func texture_shape(shape_key: String) -> Texture2D:
 	return BoardAtlas.icon_texture(shape_key)
 
 
-## Portrait de l'unité (illustration réelle dans l'atlas) — utilisé dans les boutons achat/count.
 static func texture_portrait(piece_type: GameConstants.PieceType) -> Texture2D:
 	match piece_type:
 		GameConstants.PieceType.SOLDIER, GameConstants.PieceType.COMMANDO:
@@ -31,42 +34,110 @@ static func texture_portrait(piece_type: GameConstants.PieceType) -> Texture2D:
 			return BoardAtlas.icon_texture("soldier")
 
 
-static func texture_for_piece(piece_type: GameConstants.PieceType, filled: bool = true) -> Texture2D:
-	match piece_type:
-		GameConstants.PieceType.SOLDIER, GameConstants.PieceType.COMMANDO:
-			return texture_shape("circle_filled" if filled else "circle_outline")
-		GameConstants.PieceType.RAIDER, GameConstants.PieceType.BOMBER:
-			return texture_shape("square_filled" if filled else "square_outline")
-		GameConstants.PieceType.HUNTER, GameConstants.PieceType.FIGHTER:
-			return texture_shape("triangle_filled" if filled else "triangle_outline")
-		GameConstants.PieceType.CRUISER, GameConstants.PieceType.DESTROYER:
-			return texture_shape("diamond_filled" if filled else "diamond_outline")
-		GameConstants.PieceType.HBOMB:
-			return texture_shape("hbomb_h")
-		_:
-			return texture_shape("circle_filled")
+static func texture_for_piece(piece_type: GameConstants.PieceType, _filled: bool = true) -> Texture2D:
+	return BoardAtlas.piece_board_texture(piece_type)
 
 
 static func texture_hbomb() -> Texture2D:
 	return texture_shape("hbomb_h")
 
 
-static func setup_hbomb_button(btn: Button) -> void:
+static func _clear_btn(btn: Button, min_size: Vector2) -> void:
 	for child: Node in btn.get_children():
 		child.queue_free()
 	btn.icon = null
 	btn.text = ""
-	btn.custom_minimum_size = Vector2(56, 32)
+	btn.custom_minimum_size = min_size
+	btn.expand_icon = false
+
+
+static func _attach_chip(btn: Button, chip: Control) -> void:
+	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	chip.set_anchors_preset(Control.PRESET_CENTER)
+	btn.add_child(chip)
+
+
+static func setup_hbomb_button(btn: Button) -> void:
+	_clear_btn(btn, Vector2(CHIP_BUY + 12.0, CHIP_BUY + 8.0))
+	var chip: PieceChip = PieceChipScript.new().configure(
+		GameConstants.PieceType.HBOMB,
+		Color(0.95, 0.45, 0.35),
+		1,
+		CHIP_BUY - 4.0,
+		false,
+		-1,
+	)
+	chip.show_badge = false
+	_attach_chip(btn, chip)
+
+
+static func setup_buy_button(btn: Button, piece_type: GameConstants.PieceType, power_cost: int) -> void:
+	_clear_btn(btn, Vector2(CHIP_BUY + 4.0, CHIP_BUY + 18.0))
+	var col := VBoxContainer.new()
+	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	col.add_theme_constant_override("separation", 2)
+	var chip: PieceChip = PieceChipScript.new().configure(
+		piece_type,
+		Color(0.82, 0.86, 0.92),
+		1,
+		CHIP_BUY - 2.0,
+		false,
+		-1,
+	)
+	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_child(chip)
+	var cost_lbl := Label.new()
+	cost_lbl.text = "−%d" % power_cost
+	cost_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	cost_lbl.add_theme_font_size_override("font_size", 12)
+	cost_lbl.add_theme_color_override("font_color", Color(0.98, 0.88, 0.45))
+	cost_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_child(cost_lbl)
+	btn.add_child(col)
+	btn.tooltip_text = "%s → reserve (−%d ⚡)" % [
+		GameConstants.piece_type_label(piece_type),
+		power_cost,
+	]
+
+
+static func setup_deploy_button(btn: Button) -> void:
+	_clear_btn(btn, Vector2(CHIP_BUY, CHIP_BUY))
+	var chip: PieceChip = PieceChipScript.new().configure(
+		GameConstants.PieceType.SOLDIER,
+		Color(0.45, 0.92, 0.55),
+		1,
+		CHIP_BUY - 4.0,
+		false,
+	)
+	chip.show_badge = false
+	_attach_chip(btn, chip)
+
+
+static func setup_exchange_button(
+	btn: Button,
+	from_type: GameConstants.PieceType,
+	to_type: GameConstants.PieceType,
+) -> void:
+	_clear_btn(btn, Vector2(CHIP_BUY + 28.0, CHIP_BUY))
 	var row := HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_constant_override("separation", 0)
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", 3)
-	row.add_child(_make_icon_rect(texture_hbomb(), 16))
-	var cap := Label.new()
-	cap.text = "100"
-	cap.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	cap.add_theme_font_size_override("font_size", 12)
-	row.add_child(cap)
+	var from_chip: PieceChip = PieceChipScript.new().configure(from_type, Color(0.75, 0.78, 0.85), 3, CHIP_ACTION, false)
+	from_chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	from_chip.show_badge = true
+	row.add_child(from_chip)
+	var arrow := Label.new()
+	arrow.text = "›"
+	arrow.add_theme_font_size_override("font_size", 16)
+	arrow.add_theme_color_override("font_color", Color(0.95, 0.82, 0.38))
+	arrow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(arrow)
+	var to_chip: PieceChip = PieceChipScript.new().configure(to_type, Color(0.95, 0.82, 0.45), 1, CHIP_ACTION, false)
+	to_chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	to_chip.show_badge = false
+	row.add_child(to_chip)
 	btn.add_child(row)
 
 
@@ -75,85 +146,15 @@ static func apply_button_icon(btn: Button, _tex: Texture2D, caption: String = ""
 	btn.text = caption
 
 
-## Bouton achat : forme outline + coût "P2" doré.
-static func setup_buy_button(btn: Button, piece_type: GameConstants.PieceType, power_cost: int) -> void:
-	for child: Node in btn.get_children():
-		child.queue_free()
-	btn.text = ""
-	btn.custom_minimum_size = Vector2(44, 36)
-	var col := VBoxContainer.new()
-	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	col.alignment = BoxContainer.ALIGNMENT_CENTER
-	col.add_theme_constant_override("separation", 1)
-	col.add_child(_make_icon_rect(texture_for_piece(piece_type, false), 18))
-	var cost := Label.new()
-	cost.text = "P%d" % power_cost
-	cost.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	cost.add_theme_font_size_override("font_size", 10)
-	cost.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	cost.add_theme_color_override("font_color", Color(0.95, 0.82, 0.38))
-	col.add_child(cost)
-	btn.add_child(col)
-
-
-static func setup_exchange_button(
-	btn: Button,
-	from_type: GameConstants.PieceType,
-	to_type: GameConstants.PieceType,
-) -> void:
-	for child: Node in btn.get_children():
-		child.queue_free()
-	btn.text = ""
-	btn.custom_minimum_size = Vector2(52, 30)
-	var row := HBoxContainer.new()
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation", 2)
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_child(_make_icon_rect(texture_for_piece(from_type, true), 14))
-	var mid := Label.new()
-	mid.text = "×3›"
-	mid.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	mid.add_theme_font_size_override("font_size", 11)
-	row.add_child(mid)
-	row.add_child(_make_icon_rect(texture_for_piece(to_type, true), 14))
-	btn.add_child(row)
-
-
-static func _make_icon_rect(tex: Texture2D, size_px: float) -> TextureRect:
-	var icon_rect := TextureRect.new()
-	icon_rect.custom_minimum_size = Vector2(size_px, size_px)
-	icon_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-	icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	if tex != null:
-		icon_rect.texture = tex
-	return icon_rect
-
-
-## Bouton unité sur la case : outline basique / filled élite, teinté par camp.
 static func make_unit_button(
 	piece_type: GameConstants.PieceType,
 	count: int,
 	camp_color: Color = Color.WHITE,
 ) -> Button:
-	var filled: bool = piece_type not in BASIC_TYPES
 	var btn := Button.new()
 	btn.focus_mode = Control.FOCUS_NONE
-	btn.text = ""
-	btn.custom_minimum_size = Vector2(36, 36)
-	var col := VBoxContainer.new()
-	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	col.alignment = BoxContainer.ALIGNMENT_CENTER
-	col.add_theme_constant_override("separation", 1)
-	var icon_rect := _make_icon_rect(texture_for_piece(piece_type, filled), 18)
-	icon_rect.modulate = camp_color
-	col.add_child(icon_rect)
-	var lbl := Label.new()
-	lbl.text = "×%d" % count
-	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	lbl.add_theme_font_size_override("font_size", 10)
-	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl.add_theme_color_override("font_color", camp_color)
-	col.add_child(lbl)
-	btn.add_child(col)
+	btn.custom_minimum_size = Vector2(CHIP_BUY, CHIP_BUY)
+	var chip: PieceChip = PieceChipScript.new().configure(piece_type, camp_color, count, CHIP_BUY, false)
+	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_attach_chip(btn, chip)
 	return btn

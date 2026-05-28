@@ -24,7 +24,6 @@ enum MovementDomain { LAND, SEA, AIR, NONE }
 const MAX_ORDERS_PER_ROUND: int = 5
 const PLANNING_TIMER_SECONDS: int = 3600
 const STARTING_POWER: int = 0
-const POWER_PER_ROUND: int = 3
 const HBOMB_FUSION_FORCE: int = 100
 
 const PIECE_STATS: Dictionary = {
@@ -46,7 +45,7 @@ const CAMP_COLORS: Dictionary = {
 	Camp.YELLOW: Color(0.92, 0.78, 0.18),
 }
 
-const CAMP_NAMES: PackedStringArray = ["Vert", "Bleu", "Rouge", "Jaune"]
+const CAMP_NAMES: PackedStringArray = ["Green", "Blue", "Red", "Yellow"]
 
 
 func camp_to_string(camp: Camp) -> String:
@@ -55,15 +54,15 @@ func camp_to_string(camp: Camp) -> String:
 
 func piece_type_label(piece: PieceType) -> String:
 	match piece:
-		PieceType.SOLDIER: return "Soldat"
-		PieceType.RAIDER: return "Tank"
-		PieceType.HUNTER: return "Chasseur"
-		PieceType.CRUISER: return "Croiseur"
-		PieceType.COMMANDO: return "Régiment"
-		PieceType.BOMBER: return "Bombardier"
-		PieceType.FIGHTER: return "Chasseur lourd"
+		PieceType.SOLDIER: return "Soldier"
+		PieceType.RAIDER: return "Raider"
+		PieceType.HUNTER: return "Hunter"
+		PieceType.CRUISER: return "Cruiser"
+		PieceType.COMMANDO: return "Commando"
+		PieceType.BOMBER: return "Bomber"
+		PieceType.FIGHTER: return "Fighter"
 		PieceType.DESTROYER: return "Destroyer"
-		PieceType.HBOMB: return "Bombe H"
+		PieceType.HBOMB: return "H-bomb"
 		_: return "?"
 
 
@@ -93,9 +92,9 @@ func piece_movement_domain(piece: PieceType) -> MovementDomain:
 func movement_domain_label(domain: MovementDomain) -> String:
 	match domain:
 		MovementDomain.LAND:
-			return "terre"
+			return "land"
 		MovementDomain.SEA:
-			return "mer"
+			return "sea"
 		MovementDomain.AIR:
 			return "air"
 		_:
