@@ -8,6 +8,24 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ---
 
+## 2026-05-29 — Couche réseau Forces (`ForcesNet`, MVP 2 joueurs)
+
+### Intégration au-dessus de `P2PNet` (pas dans l’addon)
+- **`ForcesNet`** autoload : protocole JSON `start` / `order` / `state` sur `P2PNet`.
+- **`network_lobby`** : Host / Join / code salle / Start match (Green host, Blue guest).
+- Menu **Online (2 players)** → lobby.
+- **`GameSession`** : `SlotKind.NETWORK`, `reset_for_network_host/client()`.
+- **`battle.gd`** : host autoritaire (fin de manche + snapshot) ; client envoie ordres.
+- **`game_state.try_apply_network_order()`** : host valide les ordres distants.
+
+### Prérequis test
+- Signaling : `res://addons/p2p_net/server/signaling_server.tscn`
+- webrtc-native + `godot --import`
+
+**Commit** : _(pending)_
+
+---
+
 ## 2026-05-29 01:45:00 — Addon réseau générique `p2p_net` (V1.0)
 
 ### Addon `addons/p2p_net/` (GDScript, jeu-agnostique)

@@ -86,6 +86,11 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Play"
 
+[node name="OnlineButton" type="Button" parent="Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Online (2 players)"
+
 [node name="ResumeButton" type="Button" parent="Center/Panel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -121,6 +126,7 @@ horizontal_alignment = 1
 [node name="LoadingScreen" parent="." instance=ExtResource("3_loading")]
 
 [connection signal="pressed" from="Center/Panel/VBox/PlayButton" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="Center/Panel/VBox/OnlineButton" to="." method="_on_online_pressed"]
 [connection signal="pressed" from="Center/Panel/VBox/ResumeButton" to="." method="_on_resume_pressed"]
 [connection signal="pressed" from="Center/Panel/VBox/QuickPlayButton" to="." method="_on_quick_play_pressed"]
 [connection signal="pressed" from="Center/Panel/VBox/TutorialButton" to="." method="_on_tutorial_pressed"]

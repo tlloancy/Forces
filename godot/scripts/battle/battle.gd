@@ -71,6 +71,12 @@ func _ready() -> void:
 	_refresh_ui()
 	if _board_map.has_method("set_selected"):
 		_board_map.call("set_selected", _selected_sector)
+	if GameSession.is_network_match():
+		ForcesNet.order_received.connect(_on_net_order)
+		ForcesNet.state_received.connect(_on_net_state)
+		if _end_round_btn and not GameSession.network_is_host:
+			_end_round_btn.disabled = true
+			_end_round_btn.tooltip_text = "Only the host ends the round."
 
 
 func _process(delta: float) -> void:
@@ -267,8 +273,39 @@ func _update_feed_hud() -> void:
 
 
 func _notify_human_order() -> void:
-	# Live queue is rendered by set_planned_orders() via _update_feed_hud().
-	pass
+	_sync_last_human_order_to_network()
+
+
+func _sync_last_human_order_to_network() -> void:
+	if not GameSession.is_network_match() or GameSession.network_is_host:
+		return
+	var camp_orders: Array = _state.orders_for_camp(_state.human_camp)
+	if camp_orders.is_empty():
+		return
+	var last: GameOrder = camp_orders[camp_orders.size() - 1]
+	ForcesNet.send_order(GameState._order_to_dict(last))
+
+
+func _on_net_order(data: Dictionary) -> void:
+	if not GameSession.network_is_host or data.is_empty():
+		return
+	var err: String = _state.try_apply_network_order(data)
+	if not err.is_empty():
+		_show_planning_error("Remote order rejected: %s" % err)
+	else:
+		_refresh_ui()
+
+
+func _on_net_state(wrap: Dictionary) -> void:
+	if GameSession.network_is_host or wrap.is_empty():
+		return
+	_state.restore_from_snapshot(wrap.get("state", {}) as Dictionary)
+	_planning_elapsed = int(wrap.get("planning_elapsed", 1))
+	_selected_sector = str(wrap.get("selected_sector", ""))
+	_selected_piece_id = int(wrap.get("selected_piece_id", -1))
+	_timer_accum = 0.0
+	_check_game_over()
+	_refresh_ui()
 
 
 func _show_planning_error(msg: String) -> void:
@@ -534,6 +571,8 @@ func _on_deploy_pressed() -> void:
 func _on_end_round_pressed() -> void:
 	if _state.phase != GameConstants.GamePhase.PLANNING:
 		return
+	if GameSession.is_network_match() and not GameSession.network_is_host:
+		return
 	_play_round_resolution()
 
 
@@ -591,6 +630,8 @@ func _play_round_resolution() -> void:
 	if _feed and _state.phase == GameConstants.GamePhase.PLANNING:
 		_feed.push_system(GameOrder.feed_planning_hint(GameConstants.MAX_ORDERS_PER_ROUND), false, 1)
 	_refresh_ui()
+	if GameSession.is_network_match() and GameSession.network_is_host:
+		ForcesNet.send_state(_battle_snapshot())
 
 
 func _feed_lines(lines: Array[String]) -> void:

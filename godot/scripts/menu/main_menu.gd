@@ -13,7 +13,7 @@ func _ready() -> void:
 	MenuTheme.style_title(_logo_f, 48)
 	MenuTheme.style_title(_logo_rest, 48)
 	_logo_rest.add_theme_color_override("font_color", Color(0.25, 0.45, 0.85))
-	for btn: Button in [%PlayButton, %QuickPlayButton, %TutorialButton, %OptionsButton, %QuitButton]:
+	for btn: Button in [%PlayButton, %OnlineButton, %QuickPlayButton, %TutorialButton, %OptionsButton, %QuitButton]:
 		MenuTheme.style_primary_button(btn)
 	AudioManager.play_menu_music()
 	_update_resume_button()
@@ -30,6 +30,11 @@ func _update_resume_button() -> void:
 func _on_play_pressed() -> void:
 	GameSession.clear_saved_battle()
 	get_tree().change_scene_to_file("res://scenes/menu/game_setup.tscn")
+
+
+func _on_online_pressed() -> void:
+	GameSession.clear_saved_battle()
+	get_tree().change_scene_to_file("res://scenes/menu/network_lobby.tscn")
 
 
 func _on_resume_pressed() -> void:

@@ -5,6 +5,9 @@ tools/godot.env
 export.cfg
 export_presets.cfg
 
+# Asset Library publish export (duplicate of addons/p2p_net — lives in godot-p2p-net repo)
+assetlib/
+
 # Imported artifacts
 *.import
 

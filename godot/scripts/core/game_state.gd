@@ -584,6 +584,40 @@ func try_cancel_last_human_order() -> String:
 	return try_cancel_last_order(human_camp)
 
 
+## Host applies an order from the remote human player (online MVP).
+func try_apply_network_order(data: Dictionary) -> String:
+	var order: GameOrder = _order_from_dict(data)
+	if order.camp == human_camp:
+		return ""
+	if phase != GameConstants.GamePhase.PLANNING:
+		return "Not in planning phase."
+	if not is_alive(order.camp):
+		return "Camp eliminated."
+	match order.kind:
+		GameOrder.Kind.MOVE:
+			var piece: PieceInstance = find_piece(order.piece_id)
+			if piece == null:
+				return "Unknown piece."
+			if piece.camp != order.camp:
+				return "Camp mismatch."
+			return try_move_piece(piece, order.to_sector)
+		GameOrder.Kind.BUY:
+			return try_buy_to_reserve(order.camp, order.piece_type)
+		GameOrder.Kind.EXCHANGE:
+			return try_exchange_to_reserve(order.camp, order.exchange_result)
+		GameOrder.Kind.DEPLOY_FROM_RESERVE:
+			var deploy_piece: PieceInstance = find_piece(order.piece_id)
+			if deploy_piece == null:
+				return "Unknown piece."
+			return try_deploy_from_reserve(deploy_piece, order.to_sector)
+		GameOrder.Kind.HBOMB_PLACE:
+			return try_place_hbomb(order.camp, order.to_sector)
+		GameOrder.Kind.HBOMB_STRIKE:
+			return try_hbomb_strike(order.camp, order.to_sector)
+		_:
+			return "Unknown order."
+
+
 func _pop_last_order_for_camp(camp: GameConstants.Camp) -> GameOrder:
 	for i in range(pending_orders.size() - 1, -1, -1):
 		var order: GameOrder = pending_orders[i]

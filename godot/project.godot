@@ -29,6 +29,7 @@ GameSession="*res://scripts/app/game_session.gd"
 AudioManager="*res://scripts/app/audio_manager.gd"
 GameSettings="*res://scripts/app/game_settings.gd"
 P2PNet="*res://addons/p2p_net/p2p_net.gd"
+ForcesNet="*res://scripts/net/forces_net_adapter.gd"
 
 [display]
 
