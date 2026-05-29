@@ -22,7 +22,7 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 - Signaling : `res://addons/p2p_net/server/signaling_server.tscn`
 - webrtc-native + `godot --import`
 
-**Commit** : _(pending)_
+**Commit** : `3bda2ce`
 
 ---
 
