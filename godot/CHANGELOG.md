@@ -26,7 +26,7 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 - `tools/run_p2p_all.ps1`
 - `project.godot` — autoload `P2PNet`, plugin activé
 
-**Commit** : _(pending)_
+**Commit** : `4fa2b85` (`godot4-network`)
 
 ---
 
