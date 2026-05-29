@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://p2p_net_signaling_server"]
+
+[ext_resource type="Script" path="res://addons/p2p_net/server/ws_signaling_server.gd" id="1"]
+
+[node name="SignalingServer" type="Node"]
+script = ExtResource("1")

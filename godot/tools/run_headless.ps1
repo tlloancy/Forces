@@ -2,7 +2,7 @@
 # Définir GODOT_BIN si besoin, ex.:
 #   $env:GODOT_BIN = "C:\Users\tom\Downloads\Godot_v4.6.3-stable_win64.exe"
 param(
-    [ValidateSet("smoke", "regression", "compile", "import")]
+    [ValidateSet("smoke", "regression", "compile", "import", "p2p")]
     [string]$Mode = "smoke"
 )
 
@@ -95,6 +95,10 @@ switch ($Mode) {
     }
     "import" {
         $code = Invoke-Godot @("--headless", "--path", $ProjectRoot, "--import", "--quit")
+    }
+    "p2p" {
+        & (Join-Path $PSScriptRoot "run_p2p_all.ps1")
+        $code = $LASTEXITCODE
     }
 }
 if ($code -eq 0) {

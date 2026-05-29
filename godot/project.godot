@@ -28,6 +28,7 @@ BoardGraph="*res://scripts/core/board_graph.gd"
 GameSession="*res://scripts/app/game_session.gd"
 AudioManager="*res://scripts/app/audio_manager.gd"
 GameSettings="*res://scripts/app/game_settings.gd"
+P2PNet="*res://addons/p2p_net/p2p_net.gd"
 
 [display]
 
@@ -38,7 +39,7 @@ window/handheld/orientation=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/copy_all_errors/plugin.cfg")
+enabled=PackedStringArray("res://addons/copy_all_errors/plugin.cfg", "res://addons/p2p_net/plugin.cfg")
 
 [input]
 

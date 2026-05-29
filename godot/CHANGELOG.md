@@ -8,7 +8,27 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ---
 
-## 2026-05-29 01:23:02 — Sidebar jouable, règles Unity Power/combat, deploy lisible
+## 2026-05-29 01:45:00 — Addon réseau générique `p2p_net` (V1.0)
+
+### Addon `addons/p2p_net/` (GDScript, jeu-agnostique)
+- **`P2PNet`** autoload V1 : `host_room()`, `join_room()`, `seal_lobby()`, `leave()`, `send_to()` / `broadcast()` avec retour `Error`, getters `room_code()` / `is_in_room()`.
+- Signaux : `room_ready`, **`room_sealed`**, `peer_joined` (WebRTC prêt), `peer_left`, `message_received`, `connection_failed`.
+- **`max_peers`** enforced côté serveur signaling ; TURN optionnel dans `net_config.gd`.
+- **`leave()`** propre — plus de faux `connection_failed` au shutdown.
+- Tests : `run_p2p_smoke.ps1` (2p), **`run_p2p_all.ps1`** (invalid room, room full, mesh 4p, seal), `run_headless.ps1 -Mode p2p`.
+- Branche : `godot4-network`.
+
+### Prérequis desktop
+- Extension **[webrtc-native](https://github.com/godotengine/webrtc-native)** pour WebRTC hors HTML5 ; `godot --import` une fois.
+
+### Fichiers
+- `addons/p2p_net/` (+ `README.md`, tests `net_mesh_test`, `net_negative_test`)
+- `tools/run_p2p_all.ps1`
+- `project.godot` — autoload `P2PNet`, plugin activé
+
+**Commit** : _(pending)_
+
+---
 
 ### UX sidebar (fin de la galère)
 - **`battle_sidebar.gd`** + **`battle.tscn`** : panneau **RESERVE** épinglé en haut (chips larges, compteur `1× Raider`), **ORDERS** avec lignes BBCode colorées par secteur, **⚡ + chiffre** en HUD (plus d’atlas `power_f` confondu avec F5).

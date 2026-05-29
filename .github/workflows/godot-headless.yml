@@ -26,6 +26,12 @@ jobs:
         working-directory: godot
         run: $GODOT_BIN --headless --path . "res://scenes/headless_test.tscn"
 
+      - name: Compile P2PNet test scenes
+        working-directory: godot
+        run: |
+          $GODOT_BIN --headless --path . "res://addons/p2p_net/test/net_smoke_test.tscn" --quit-after 1
+          $GODOT_BIN --headless --path . "res://addons/p2p_net/test/net_negative_test.tscn" --quit-after 1
+
       - name: Compile main scene
         working-directory: godot
         run: $GODOT_BIN --headless --path . "res://scenes/menu/main_menu.tscn" --quit-after 2

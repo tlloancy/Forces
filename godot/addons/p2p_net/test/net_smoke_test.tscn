@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://p2p_net_test_client"]
+
+[ext_resource type="Script" path="res://addons/p2p_net/test/net_smoke_test.gd" id="1"]
+
+[node name="NetSmokeTest" type="Node"]
+script = ExtResource("1")
