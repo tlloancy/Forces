@@ -1,87 +1,90 @@
-# p2p_net — addon réseau Godot 4
+# p2p_net — P2P networking addon for Godot 4
 
-Couche **transport P2P** jeu-agnostique : signaling WebSocket + WebRTC mesh, API bytes bruts.
+Game-agnostic **transport layer**: WebSocket signaling + WebRTC mesh, raw byte messages.
 
-## Prérequis
+## Requirements
 
-- Godot **4.6+**
-- Desktop : [webrtc-native](https://github.com/godotengine/webrtc-native) dans `res://webrtc/` (GDExtension)
-- HTML5 : WebRTC intégré (pas de GDExtension)
+- Godot **4.3+** (tested on 4.6)
+- **Desktop**: [webrtc-native](https://github.com/godotengine/webrtc-native) GDExtension in `res://webrtc/`
+- **HTML5**: built-in WebRTC (no extension)
 
-Première ouverture ou CI :
+After installing webrtc-native (Windows: `.\tools\setup_webrtc.ps1` in Forces, or extract [godot-extension-webrtc.zip](https://github.com/godotengine/webrtc-native/releases) into project root):
 
-```powershell
+```text
 godot --headless --path . --import --quit
 ```
 
 ## Installation
 
-1. Copier `addons/p2p_net/` dans le projet
-2. Activer le plugin **P2P Net** (Project → Project Settings → Plugins)
-3. L’autoload `P2PNet` est enregistré automatiquement
+1. Copy `addons/p2p_net/` into your project
+2. Enable **Project → Project Settings → Plugins → P2P Net**
+3. Autoload `P2PNet` is registered automatically
 
-## API (`P2PNet`)
-
-| Méthode | Description |
-|---------|-------------|
-| `configure(config)` | `net_config.gd` : URL signaling, STUN/TURN, max peers |
-| `host_room(max_peers)` | Crée une salle (host = peer id `1` en mesh) |
-| `join_room(code)` | Rejoint une salle existante |
-| `seal_lobby()` | Host only — ferme le lobby signaling |
-| `leave()` | Quitte proprement (sans faux `connection_failed`) |
-| `send_to(id, bytes, reliable)` | → `Error` |
-| `broadcast(bytes, reliable)` | → `Error` |
-| `room_code()` / `is_in_room()` / `is_host()` / `my_peer_id()` / `peer_ids()` | État |
-
-### Signaux
-
-`room_ready`, `room_sealed`, `room_left`, `peer_joined`, `peer_left`, `message_received`, `connection_failed`
-
-`peer_joined` = WebRTC data channels prêts (pas seulement signaling).
-
-## Configuration TURN (optionnel)
+## Quick start
 
 ```gdscript
+# Configure (optional)
 var cfg = load("res://addons/p2p_net/net_config.gd").defaults()
-cfg.turn_url = "turn:your.server:3478"
-cfg.turn_username = "user"
-cfg.turn_password = "pass"
+cfg.signaling_url = "ws://127.0.0.1:8080"
 P2PNet.configure(cfg)
+
+# Host — starts local signaling automatically if port 8080 is free
+P2PNet.ensure_local_signaling()
+P2PNet.room_ready.connect(func(code): print("Room: ", code))
+P2PNet.host_room(4)
+
+# Join
+P2PNet.join_room("YOUR_ROOM_CODE")
+
+# When peer_joined fires (WebRTC ready):
+P2PNet.send_to(peer_id, "hello".to_utf8_buffer())
+P2PNet.message_received.connect(func(from_id, data): print(data.get_string_from_utf8()))
 ```
 
-## Serveur signaling local
+## Local signaling server
 
-```powershell
+**Automatic (recommended):** call `P2PNet.ensure_local_signaling()` before `host_room()` — listens on `ws://127.0.0.1:8080` inside the game process. If the port is already in use, an external server is assumed (second game instance, dedicated server, etc.).
+
+**Manual (optional):**
+
+```text
 godot --headless --path . res://addons/p2p_net/server/signaling_server.tscn
 ```
 
-Écoute `ws://127.0.0.1:8080`. Protocole compatible [demo officielle Godot `webrtc_signaling`](https://github.com/godotengine/godot-demo-projects/tree/master/networking/webrtc_signaling).
+## API summary
 
-`max_peers` est transmis à la création de salle et enforced côté serveur.
+| Method | Description |
+|--------|-------------|
+| `ensure_local_signaling()` | Start embedded signaling on `config.signaling_url` port (desktop) |
+| `host_room(max_peers)` | Create a room (auto-starts local signaling) |
+| `join_room(code)` | Join existing room |
+| `seal_lobby()` | Host closes signaling lobby |
+| `leave()` | Clean disconnect |
+| `send_to(id, bytes, reliable)` | Returns `Error` |
+| `broadcast(bytes, reliable)` | Returns `Error` |
+| `room_code()` / `is_in_room()` / `is_host()` | State |
 
-## Tests
+**Signals:** `room_ready`, `room_sealed`, `room_left`, `peer_joined`, `peer_left`, `message_received`, `connection_failed`
+
+`peer_joined` means WebRTC data channels are ready, not just signaling.
+
+## TURN (optional)
+
+```gdscript
+cfg.turn_url = "turn:your.server:3478"
+cfg.turn_username = "user"
+cfg.turn_password = "pass"
+```
+
+## Tests (optional)
 
 ```powershell
-cd godot
-.\tools\run_p2p_smoke.ps1      # 2 joueurs
-.\tools\run_p2p_all.ps1        # suite V1 complète
+.\tools\setup_webrtc.ps1          # Windows — download webrtc-native once
 .\tools\run_headless.ps1 -Mode p2p
 ```
 
-Suite `run_p2p_all` : import GDExtension, salle invalide, smoke 2p, salle pleine, mesh 4p, `seal_lobby`.
+Headless smoke tests live in `addons/p2p_net/test/`. They require webrtc-native on desktop.
 
-## Backends
+## License
 
-| Backend | État |
-|---------|------|
-| `WEBRTC_SIGNALING` | **V1.0** |
-| `JANUS` | stub |
-
-## Hors scope addon
-
-- Règles de jeu Forces (`GameOrder`, sync état) → couche `forces_net_adapter` séparée
-- UI lobby / matchmaking
-
-## Version
-
-`1.0.0` — voir `plugin.cfg`
+MIT — see repository root `LICENSE`.

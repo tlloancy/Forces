@@ -52,7 +52,8 @@ if (-not $godot) { Write-Error "Godot not found. Set GODOT_BIN or tools/godot.en
 
 $dll = Join-Path $ProjectRoot "webrtc\lib\libwebrtc_native.windows.template_debug.x86_64.dll"
 if (-not (Test-Path $dll)) {
-    Write-Error "webrtc-native DLL missing in webrtc/lib/"
+    & (Join-Path $PSScriptRoot "setup_webrtc.ps1")
+    if (-not (Test-Path $dll)) { Write-Error "webrtc-native DLL missing in webrtc/lib/" }
 }
 
 $baseArgs = @("--headless", "--path", $ProjectRoot)

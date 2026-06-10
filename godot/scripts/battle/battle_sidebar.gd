@@ -37,7 +37,6 @@ signal reserve_unit_pressed(piece_type: GameConstants.PieceType)
 
 var _unit_chips: Array[PieceChip] = []
 var _reserve_chips: Array[PieceChip] = []
-var _active_chip: PieceChip
 var _icons_ready: bool = false
 
 

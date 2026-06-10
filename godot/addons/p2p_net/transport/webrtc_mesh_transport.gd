@@ -53,20 +53,34 @@ func host_room(max_peers: int) -> void:
 	_ready_emitted = false
 	_room_code = ""
 	config.max_peers = maxi(2, max_peers)
-	_start_signaling("")
+	_start_signaling("", false)
 
 
-func join_room(room_code: String) -> void:
+func join_room(code: String) -> void:
 	if not _webrtc_available():
 		connection_failed.emit("WebRTC unavailable.")
 		return
-	if room_code.is_empty():
+	if code.is_empty():
 		connection_failed.emit("Room code is empty.")
 		return
 	_sealed = false
 	_ready_emitted = false
-	_room_code = room_code.strip_edges()
-	_start_signaling(_room_code)
+	_room_code = code.strip_edges()
+	_start_signaling(_room_code, false)
+
+
+func rejoin_room(code: String) -> void:
+	if not _webrtc_available():
+		connection_failed.emit("WebRTC unavailable.")
+		return
+	if code.is_empty():
+		connection_failed.emit("Room code is empty.")
+		return
+	_reset_session()
+	_sealed = false
+	_ready_emitted = false
+	_room_code = code.strip_edges()
+	_start_signaling(_room_code, true)
 
 
 func seal_lobby() -> Error:
@@ -91,8 +105,6 @@ func leave() -> void:
 	_sealed = false
 	_ready_emitted = false
 	_peer_join_retries.clear()
-	_intentional_disconnect = false
-	room_left.emit()
 	_intentional_disconnect = false
 	room_left.emit()
 
@@ -155,12 +167,13 @@ func broadcast(data: PackedByteArray, reliable: bool = true) -> Error:
 	return _mp().send_bytes(data, 0, mode)
 
 
-func _start_signaling(lobby: String) -> void:
+func _start_signaling(lobby: String, rejoin: bool) -> void:
 	_reset_session()
 	_rtc_mp = WebRTCMultiplayerPeer.new()
 	_signaling.mesh = config.use_mesh
 	_signaling.max_peers = config.max_peers
 	_signaling.lobby = lobby
+	_signaling.rejoin_mode = rejoin
 	_signaling.connect_to_url(config.signaling_url)
 
 
@@ -228,10 +241,19 @@ func _on_lobby_sealed() -> void:
 	room_sealed.emit()
 
 
-func _on_signaling_disconnected(_code: int, _reason: String) -> void:
+func _on_signaling_disconnected(code: int, reason: String) -> void:
 	if _intentional_disconnect or _sealed:
 		return
-	connection_failed.emit("Signaling disconnected.")
+	var hint: String = config.signaling_url if config else "ws://127.0.0.1:8080"
+	var msg := "Signaling disconnected (%s)." % hint
+	if _room_code.is_empty():
+		msg = (
+			"Cannot reach signaling at %s. "
+			+ "Host must click Host first (starts server automatically), or run signaling_server.tscn."
+		) % hint
+	elif not reason.is_empty():
+		msg = "Signaling disconnected: %s (code %d)." % [reason, code]
+	connection_failed.emit(msg)
 	_reset_session()
 	room_left.emit()
 

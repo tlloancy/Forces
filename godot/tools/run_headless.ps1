@@ -98,7 +98,13 @@ switch ($Mode) {
     }
     "p2p" {
         & (Join-Path $PSScriptRoot "run_p2p_all.ps1")
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        & (Join-Path $PSScriptRoot "run_forces_net_e2e.ps1") -Players 2
         $code = $LASTEXITCODE
+        if ($code -eq 0) {
+            & (Join-Path $PSScriptRoot "run_forces_net_e2e.ps1") -Players 4
+            $code = $LASTEXITCODE
+        }
     }
 }
 if ($code -eq 0) {

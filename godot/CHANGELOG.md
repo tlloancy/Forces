@@ -8,6 +8,78 @@ Format des entrées : `AAAA-MM-JJ HH:MM:SS` (heure locale, fuseau du commit Git 
 
 ---
 
+## 2026-06-09 (sync) — Timer online 60 s + confirmation conjointe
+
+### Planification online
+- **60 s partagés** par manche (`GameSession.NETWORK_PLANNING_SEC`) — compte à rebours visible, pas 60 s « par joueur ».
+- Solo / IA : toujours **3600 s** (pas de limite pratique).
+- Bouton **Confirm orders** pour tous les joueurs online ; la manche ne se résout que quand **tout le monde a confirmé** ou à **0 s**.
+- Fix sync : le client conserve son camp (`human_camp`) après réception de l'état hôte (Bleu n'était plus Bleu).
+
+### Déconnexion
+- Grâce reconnexion **45 s** (était 90 s) — assez pour un crash/WiFi, sans bloquer la partie trop longtemps.
+
+---
+
+### Tests
+- **`full_match_test.gd`** : snapshot de round pris **après** placement des pièces (fix `tie: blue must bounce`).
+- Suite headless : **smoke**, **regression**, **compile**, **p2p**, **ForcesNet E2E 2p/4p** — tout OK.
+
+### Interface online
+- **Lobby réseau** : logo FORCES, slots joueurs par camp (couleur + statut Connected/Waiting/AI), bouton **Copy** du code, boutons Host/Join côte à côte, **Start match** mis en avant.
+- **Bataille** : barre **Online** en haut (camps connectés / away), overlay déconnexion avec titre coloré, barre de progression 90 s, texte type chess.com.
+- Menu principal : **Online multiplayer** (2–4 joueurs).
+
+---
+
+### `p2p_net` v1.0.1 (addon générique — **pas encore publié**)
+- **`ensure_local_signaling()`** — démarre le serveur WS embarqué sur le port 8080 (plus de terminal séparé pour le dev local).
+- Timeout signaling **15 s** (était 1 s — coupait les connexions lentes en éditeur).
+- Messages d’erreur explicites si le signaling est injoignable.
+- **`tools/setup_webrtc.ps1`** — télécharge webrtc-native Windows.
+- **`tools/sync_godot_p2p_net.ps1`** — sync local vers `godot-p2p-net` sans push.
+- **`assetlib/PUBLISH_PENDING.md`** — checklist publication (en attente accord Tom).
+
+### Forces online
+- Lobby : signaling prêt à l’ouverture ; guest voit « Connected to host — waiting for Start… ».
+- **`ForcesNet`** : ignore les messages non-JSON (tests P2P `ping`).
+
+---
+
+## 2026-06-09 (suite) — Online 2–4 joueurs + E2E headless
+
+### Réseau Forces (2 → 4 joueurs)
+- **`GameSession`** : `network_player_count`, `network_peer_camps`, assignation auto Blue/Red/Yellow à la connexion.
+- Lobby : sélecteur **2 / 3 / 4 players** ; Start quand tous les remotes sont connectés (WebRTC prêt).
+- **`ForcesNet.send_match_start()`** : config `peer_camps` + `player_count` ; clients appliquent camp via `apply_network_match_config`.
+- **`try_apply_network_order`** : host accepte ordres de tous les camps `NETWORK` (pas seulement Bleu).
+- Fix **`restore_from_snapshot`** : `pieces_moved_this_round` typé `Array[int]`.
+
+### Tests E2E
+- **`scenes/tests/forces_net_e2e_test.tscn`** : match_start → ordre distant → snapshot manche 2.
+- **`tools/run_forces_net_e2e.ps1 -Players 2|4`** ; inclus dans `run_headless.ps1 -Mode p2p`.
+
+### Publication — **STOP** (inchangé)
+
+---
+
+## 2026-06-09 (reconnect) — Déconnexion / reconnexion style chess.com
+
+### Comportement
+- **90 s** de grâce (`GameSession.DISCONNECT_GRACE_SEC`) avant abandon auto.
+- Timer de planification **gelé** pendant qu’un adversaire est déconnecté.
+- Overlay bataille : compte à rebours + bouton **Rejoin match** si tu es déconnecté.
+- Lobby : bouton **Rejoin previous match** si checkpoint valide.
+- Host envoie **resync** (snapshot complet) au joueur qui revient.
+- Signaling **reste ouvert** après `seal_lobby` pour permettre le re-Join WebRTC.
+
+### Protocole ForcesNet
+- `disconnect`, `reconnect`, `forfeit`, `resync` (JSON sur P2PNet).
+
+### p2p_net
+- `P2PNet.rejoin_room(code)` + `Lobby.rejoin()` côté serveur signaling.
+
+
 ## 2026-05-29 — Couche réseau Forces (`ForcesNet`, MVP 2 joueurs)
 
 ### Intégration au-dessus de `P2PNet` (pas dans l’addon)

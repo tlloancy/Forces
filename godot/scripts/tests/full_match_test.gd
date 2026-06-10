@@ -89,11 +89,11 @@ static func _test_combat_rebound_and_capture() -> PackedStringArray:
 	var state := _fresh_state()
 	var sector: String = "Plains_C"
 	var hq_blue: String = BoardCatalog.hq_for_camp(GameConstants.Camp.BLUE)
-	state.capture_round_board_snapshot()
 	state._add_piece(GameConstants.Camp.GREEN, GameConstants.PieceType.SOLDIER, sector, false)
 	var blue_piece: PieceInstance = state._add_piece(
 		GameConstants.Camp.BLUE, GameConstants.PieceType.SOLDIER, hq_blue, false
 	)
+	state.capture_round_board_snapshot()
 	blue_piece.sector_id = sector
 	var msg_tie: String = BattleResolver.resolve_sector(state, sector)
 	if msg_tie.is_empty() or not msg_tie.contains("═"):

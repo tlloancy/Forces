@@ -14,6 +14,7 @@ signal candidate_received(id: int, mid: String, index: int, sdp: String)
 signal lobby_sealed()
 
 var autojoin: bool = true
+var rejoin_mode: bool = false
 var lobby: String = ""
 var mesh: bool = true
 var max_peers: int = 8

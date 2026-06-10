@@ -16,7 +16,6 @@ const PowerToastScript = preload("res://scripts/battle/power_toast.gd")
 @onready var _buy_raider_btn: Button = %BuyRaiderButton
 @onready var _buy_hunter_btn: Button = %BuyHunterButton
 @onready var _buy_cruiser_btn: Button = %BuyCruiserButton
-@onready var _deploy_btn: Button = %DeployButton
 @onready var _hbomb_fuse_btn: Button = %HbombFuseButton
 @onready var _game_over_layer: CanvasLayer = $GameOverLayer
 @onready var _game_over_label: Label = %GameOverLabel
@@ -29,6 +28,18 @@ var _sector_pick_index: int = 0
 var _planning_elapsed: int = 1
 var _timer_accum: float = 0.0
 var _power_toast: PowerToast
+var _network_timer_frozen: bool = false
+var _disconnect_layer: CanvasLayer
+var _disconnect_title: Label
+var _disconnect_label: Label
+var _disconnect_progress: ProgressBar
+var _disconnect_rejoin_btn: Button
+var _disconnect_countdown_camp: int = -1
+var _network_hud_layer: CanvasLayer
+var _network_hud_dots: Dictionary = {}
+var _planning_ready_camps: Dictionary = {}
+var _local_planning_ready: bool = false
+var _resolution_running: bool = false
 func _ready() -> void:
 	_state = GameState.new()
 	_state.human_camp = GameSession.human_camp
@@ -72,14 +83,30 @@ func _ready() -> void:
 	if _board_map.has_method("set_selected"):
 		_board_map.call("set_selected", _selected_sector)
 	if GameSession.is_network_match():
+		ForcesNet.begin_network_match()
 		ForcesNet.order_received.connect(_on_net_order)
 		ForcesNet.state_received.connect(_on_net_state)
-		if _end_round_btn and not GameSession.network_is_host:
-			_end_round_btn.disabled = true
-			_end_round_btn.tooltip_text = "Only the host ends the round."
+		ForcesNet.opponent_disconnected.connect(_on_opponent_disconnected)
+		ForcesNet.opponent_reconnected.connect(_on_opponent_reconnected)
+		ForcesNet.opponent_forfeited.connect(_on_opponent_forfeited)
+		ForcesNet.local_connection_lost.connect(_on_local_connection_lost)
+		ForcesNet.resync_received.connect(_on_net_resync)
+		ForcesNet.planning_ready_received.connect(_on_net_planning_ready)
+		_setup_network_disconnect_ui()
+		_setup_network_hud()
+		_state.match_timer_seconds = GameSession.NETWORK_PLANNING_SEC
+		_reset_planning_ready()
+		if _end_round_btn:
+			_end_round_btn.tooltip_text = (
+				"Lock in your orders. The round resolves when everyone confirms or the timer hits 0."
+			)
 
 
 func _process(delta: float) -> void:
+	if GameSession.is_network_match() and _disconnect_countdown_camp >= 0:
+		_update_disconnect_countdown()
+	if _network_timer_frozen:
+		return
 	if _state.phase != GameConstants.GamePhase.PLANNING:
 		return
 	_timer_accum += delta
@@ -87,13 +114,17 @@ func _process(delta: float) -> void:
 		_timer_accum -= 1.0
 		_planning_elapsed = mini(_planning_elapsed + 1, _state.planning_time_limit())
 		if _planning_elapsed >= _state.planning_time_limit():
-			var timeout_logs: Array[String] = []
-			_state.apply_planning_timeout(timeout_logs)
-			for line: String in timeout_logs:
-				if _feed:
-					_feed.push_error(line)
-			_check_game_over()
-			_refresh_ui()
+			if GameSession.is_network_match():
+				if GameSession.network_is_host and not _resolution_running:
+					_on_network_planning_timeout()
+			else:
+				var timeout_logs: Array[String] = []
+				_state.apply_planning_timeout(timeout_logs)
+				for line: String in timeout_logs:
+					if _feed:
+						_feed.push_error(line)
+				_check_game_over()
+				_refresh_ui()
 			return
 		_update_feed_hud()
 
@@ -141,6 +172,11 @@ func _style_sidebar() -> void:
 func _begin_match() -> void:
 	GameSession.clear_saved_battle()
 	_state.reset_match()
+	if GameSession.is_network_match():
+		_state.match_timer_seconds = GameSession.NETWORK_PLANNING_SEC
+	else:
+		_state.match_timer_seconds = 0
+	_reset_planning_ready()
 	_selected_sector = ""   # aucun secteur présélectionné au démarrage
 	_selected_piece_id = -1
 	_planning_elapsed = 1
@@ -160,7 +196,12 @@ func _populate_sector_list() -> void:
 func _refresh_ui() -> void:
 	var planning: bool = _state.phase == GameConstants.GamePhase.PLANNING
 	var game_over: bool = _state.phase == GameConstants.GamePhase.GAME_OVER
-	_end_round_btn.disabled = not planning
+	if GameSession.is_network_match():
+		_refresh_network_planning_button(planning)
+	else:
+		_end_round_btn.disabled = not planning
+		if _end_round_btn:
+			_end_round_btn.text = "End round"
 	if _undo_order_btn:
 		_undo_order_btn.disabled = not planning or _state.camp_orders_used(_state.human_camp) <= 0
 	if _game_over_layer:
@@ -196,12 +237,24 @@ func _refresh_ui() -> void:
 	if _status and planning:
 		_status.modulate = Color.WHITE
 	if _status:
-		_status.text = "%s | %s | orders %d/%d" % [
-			GameConstants.camp_to_string(_state.human_camp),
-			_phase_name(_state.phase),
-			_state.camp_orders_used(_state.human_camp),
-			GameConstants.MAX_ORDERS_PER_ROUND,
-		]
+		if GameSession.is_network_match() and planning:
+			var left: int = maxi(0, _state.planning_time_limit() - _planning_elapsed)
+			_status.text = "%s | %ds left | %s | orders %d/%d" % [
+				GameConstants.camp_to_string(_state.human_camp),
+				left,
+				_planning_ready_status_text(),
+				_state.camp_orders_used(_state.human_camp),
+				GameConstants.MAX_ORDERS_PER_ROUND,
+			]
+		else:
+			_status.text = "%s | %s | orders %d/%d" % [
+				GameConstants.camp_to_string(_state.human_camp),
+				_phase_name(_state.phase),
+				_state.camp_orders_used(_state.human_camp),
+				GameConstants.MAX_ORDERS_PER_ROUND,
+			]
+	if GameSession.is_network_match() and GameSession.network_is_host:
+		ForcesNet.set_host_snapshot(_battle_snapshot())
 
 
 func _selected_piece() -> PieceInstance:
@@ -296,16 +349,234 @@ func _on_net_order(data: Dictionary) -> void:
 		_refresh_ui()
 
 
-func _on_net_state(wrap: Dictionary) -> void:
-	if GameSession.network_is_host or wrap.is_empty():
+func _on_net_state(state_wrap: Dictionary) -> void:
+	if GameSession.network_is_host or state_wrap.is_empty():
 		return
-	_state.restore_from_snapshot(wrap.get("state", {}) as Dictionary)
-	_planning_elapsed = int(wrap.get("planning_elapsed", 1))
-	_selected_sector = str(wrap.get("selected_sector", ""))
-	_selected_piece_id = int(wrap.get("selected_piece_id", -1))
+	_apply_network_snapshot(state_wrap)
+
+
+func _on_net_resync(state_wrap: Dictionary) -> void:
+	if state_wrap.is_empty():
+		return
+	_apply_network_snapshot(state_wrap)
+	_hide_disconnect_overlay()
+	GameSession.clear_reconnect_checkpoint()
+
+
+func _apply_network_snapshot(state_wrap: Dictionary) -> void:
+	var my_camp: GameConstants.Camp = GameSession.human_camp
+	_state.restore_from_snapshot(state_wrap.get("state", {}) as Dictionary)
+	_state.human_camp = my_camp
+	_planning_elapsed = int(state_wrap.get("planning_elapsed", 1))
+	_selected_sector = str(state_wrap.get("selected_sector", ""))
+	_selected_piece_id = int(state_wrap.get("selected_piece_id", -1))
 	_timer_accum = 0.0
+	_reset_planning_ready()
+	_resolution_running = false
 	_check_game_over()
 	_refresh_ui()
+
+
+func _setup_network_disconnect_ui() -> void:
+	_disconnect_layer = CanvasLayer.new()
+	_disconnect_layer.name = "DisconnectLayer"
+	_disconnect_layer.visible = false
+	add_child(_disconnect_layer)
+	var dim := ColorRect.new()
+	dim.color = Color(0.02, 0.04, 0.08, 0.78)
+	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_disconnect_layer.add_child(dim)
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_disconnect_layer.add_child(center)
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(400, 0)
+	center.add_child(panel)
+	MenuTheme.style_panel(panel)
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 12)
+	panel.add_child(vbox)
+	_disconnect_title = Label.new()
+	_disconnect_title.text = "Connection interrupted"
+	_disconnect_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_disconnect_title.add_theme_font_size_override("font_size", 20)
+	_disconnect_title.add_theme_color_override("font_color", MenuTheme.ACCENT)
+	vbox.add_child(_disconnect_title)
+	_disconnect_label = Label.new()
+	_disconnect_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_disconnect_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_disconnect_label.custom_minimum_size = Vector2(360, 0)
+	_disconnect_label.add_theme_color_override("font_color", MenuTheme.TEXT)
+	vbox.add_child(_disconnect_label)
+	_disconnect_progress = ProgressBar.new()
+	_disconnect_progress.custom_minimum_size = Vector2(320, 18)
+	_disconnect_progress.max_value = GameSession.DISCONNECT_GRACE_SEC as float
+	_disconnect_progress.show_percentage = false
+	vbox.add_child(_disconnect_progress)
+	_disconnect_rejoin_btn = Button.new()
+	_disconnect_rejoin_btn.text = "↩ Rejoin match"
+	_disconnect_rejoin_btn.visible = false
+	MenuTheme.style_primary_button(_disconnect_rejoin_btn)
+	_disconnect_rejoin_btn.pressed.connect(_on_disconnect_rejoin_pressed)
+	vbox.add_child(_disconnect_rejoin_btn)
+
+
+func _setup_network_hud() -> void:
+	_network_hud_layer = CanvasLayer.new()
+	_network_hud_layer.name = "NetworkHudLayer"
+	_network_hud_layer.layer = 5
+	add_child(_network_hud_layer)
+	var anchor := MarginContainer.new()
+	anchor.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	anchor.add_theme_constant_override("margin_top", 8)
+	anchor.add_theme_constant_override("margin_left", 12)
+	anchor.add_theme_constant_override("margin_right", 12)
+	_network_hud_layer.add_child(anchor)
+	var panel := PanelContainer.new()
+	anchor.add_child(panel)
+	MenuTheme.style_dock_panel(panel)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 14)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	panel.add_child(row)
+	var title := Label.new()
+	title.text = "Online"
+	title.add_theme_font_size_override("font_size", 12)
+	title.add_theme_color_override("font_color", MenuTheme.MUTED)
+	row.add_child(title)
+	for camp: GameConstants.Camp in GameSession.network_online_camps():
+		var chip := HBoxContainer.new()
+		chip.add_theme_constant_override("separation", 5)
+		var dot := ColorRect.new()
+		dot.custom_minimum_size = Vector2(10, 10)
+		dot.color = GameConstants.CAMP_COLORS[camp]
+		chip.add_child(dot)
+		var lbl := Label.new()
+		lbl.text = GameConstants.camp_to_string(camp)
+		lbl.add_theme_font_size_override("font_size", 12)
+		lbl.add_theme_color_override("font_color", GameConstants.CAMP_COLORS[camp])
+		chip.add_child(lbl)
+		row.add_child(chip)
+		_network_hud_dots[camp] = {"dot": dot, "label": lbl}
+	_refresh_network_hud()
+
+
+func _refresh_network_hud() -> void:
+	if _network_hud_dots.is_empty():
+		return
+	for camp: GameConstants.Camp in _network_hud_dots.keys():
+		var entry: Dictionary = _network_hud_dots[camp]
+		var dot: ColorRect = entry["dot"] as ColorRect
+		var lbl: Label = entry["label"] as Label
+		var offline: bool = GameSession.is_camp_disconnected(camp)
+		var is_you: bool = int(camp) == int(GameSession.human_camp)
+		dot.modulate = Color(1, 1, 1, 0.35 if offline else 1.0)
+		var suffix: String = ""
+		if offline:
+			suffix = " · away"
+		elif is_you:
+			suffix = " · you"
+		lbl.text = GameConstants.camp_to_string(camp) + suffix
+		lbl.add_theme_color_override(
+			"font_color",
+			Color(MenuTheme.MUTED, 0.7) if offline else GameConstants.CAMP_COLORS[camp],
+		)
+
+
+func _show_disconnect_overlay(text: String, show_rejoin: bool = false, title: String = "Connection interrupted") -> void:
+	if _disconnect_layer == null:
+		return
+	if _disconnect_title:
+		_disconnect_title.text = title
+	_disconnect_label.text = text
+	_disconnect_rejoin_btn.visible = show_rejoin
+	if _disconnect_progress:
+		_disconnect_progress.visible = _disconnect_countdown_camp >= 0 or show_rejoin
+		if show_rejoin and _disconnect_countdown_camp < 0:
+			_disconnect_progress.value = GameSession.DISCONNECT_GRACE_SEC as float
+	_disconnect_layer.visible = true
+	_network_timer_frozen = true
+
+
+func _hide_disconnect_overlay() -> void:
+	if _disconnect_layer:
+		_disconnect_layer.visible = false
+	_disconnect_countdown_camp = -1
+	_network_timer_frozen = false
+
+
+func _update_disconnect_countdown() -> void:
+	if _disconnect_countdown_camp < 0:
+		return
+	var camp: GameConstants.Camp = _disconnect_countdown_camp as GameConstants.Camp
+	var deadline: int = GameSession.disconnected_camp_deadline(camp)
+	var left: int = maxi(0, deadline - int(Time.get_unix_time_from_system()))
+	var camp_name: String = GameConstants.camp_to_string(camp)
+	var camp_color: Color = GameConstants.CAMP_COLORS[camp]
+	if _disconnect_title:
+		_disconnect_title.text = "%s disconnected" % camp_name
+		_disconnect_title.add_theme_color_override("font_color", camp_color)
+	if left > 0:
+		_disconnect_label.text = (
+			"Planning is paused.\nThey can rejoin within %d s or forfeit the match." % left
+		)
+		if _disconnect_progress:
+			_disconnect_progress.value = left as float
+	else:
+		_disconnect_label.text = "%s forfeits (timeout)…" % camp_name
+	_refresh_network_hud()
+
+
+func _on_opponent_disconnected(camp: int, _seconds_left: int) -> void:
+	if camp == int(GameSession.human_camp):
+		return
+	_disconnect_countdown_camp = camp
+	_show_disconnect_overlay("", false, "%s disconnected" % GameConstants.camp_to_string(camp as GameConstants.Camp))
+	_update_disconnect_countdown()
+	_refresh_network_hud()
+
+
+func _on_opponent_reconnected(camp: int) -> void:
+	if camp == _disconnect_countdown_camp:
+		_hide_disconnect_overlay()
+	_refresh_network_hud()
+	if _feed:
+		_feed.push_system("%s reconnected." % GameConstants.camp_to_string(camp as GameConstants.Camp), true)
+
+
+func _on_opponent_forfeited(camp: int) -> void:
+	_hide_disconnect_overlay()
+	_refresh_network_hud()
+	var forfeited: GameConstants.Camp = camp as GameConstants.Camp
+	if _state.is_alive(forfeited):
+		_state.alive[forfeited] = false
+		if _feed:
+			_feed.push_system(
+				"%s forfeited (disconnect timeout)." % GameConstants.camp_to_string(forfeited),
+				true,
+			)
+	_check_game_over()
+	_refresh_ui()
+
+
+func _on_local_connection_lost() -> void:
+	GameSession.save_reconnect_checkpoint()
+	_disconnect_countdown_camp = -1
+	_show_disconnect_overlay(
+		"You were disconnected.\nRejoin within %d s or the match may be forfeited." % GameSession.DISCONNECT_GRACE_SEC,
+		true,
+		"Connection lost",
+	)
+
+
+func _on_disconnect_rejoin_pressed() -> void:
+	var cp: Dictionary = GameSession.peek_reconnect_checkpoint()
+	if cp.is_empty():
+		return
+	var code: String = str(cp.get("room_code", ""))
+	var camp: GameConstants.Camp = int(cp.get("camp", GameSession.human_camp)) as GameConstants.Camp
+	_hide_disconnect_overlay()
+	ForcesNet.rejoin_match(code, camp)
 
 
 func _show_planning_error(msg: String) -> void:
@@ -571,12 +842,106 @@ func _on_deploy_pressed() -> void:
 func _on_end_round_pressed() -> void:
 	if _state.phase != GameConstants.GamePhase.PLANNING:
 		return
-	if GameSession.is_network_match() and not GameSession.network_is_host:
+	if GameSession.is_network_match():
+		_mark_local_planning_ready()
 		return
 	_play_round_resolution()
 
 
+func _reset_planning_ready() -> void:
+	_planning_ready_camps.clear()
+	_local_planning_ready = false
+
+
+func _online_camps_for_planning() -> Array[GameConstants.Camp]:
+	return GameSession.network_online_camps()
+
+
+func _all_players_planning_ready() -> bool:
+	for camp: GameConstants.Camp in _online_camps_for_planning():
+		if not _state.is_alive(camp):
+			continue
+		if not _planning_ready_camps.has(int(camp)):
+			return false
+	return true
+
+
+func _planning_ready_status_text() -> String:
+	var ready_n: int = 0
+	var alive_n: int = 0
+	for camp: GameConstants.Camp in _online_camps_for_planning():
+		if not _state.is_alive(camp):
+			continue
+		alive_n += 1
+		if _planning_ready_camps.has(int(camp)):
+			ready_n += 1
+	return "%d/%d ready" % [ready_n, alive_n]
+
+
+func _refresh_network_planning_button(planning: bool) -> void:
+	if _end_round_btn == null:
+		return
+	if not planning:
+		_end_round_btn.disabled = true
+		return
+	var left: int = maxi(0, _state.planning_time_limit() - _planning_elapsed)
+	if _local_planning_ready:
+		if _all_players_planning_ready():
+			_end_round_btn.text = "Resolving…"
+		else:
+			_end_round_btn.text = "Waiting for others…"
+		_end_round_btn.disabled = true
+	else:
+		_end_round_btn.text = "Confirm orders (%ds)" % left
+		_end_round_btn.disabled = false
+
+
+func _mark_local_planning_ready() -> void:
+	if _local_planning_ready or _state.phase != GameConstants.GamePhase.PLANNING:
+		return
+	_local_planning_ready = true
+	_planning_ready_camps[int(GameSession.human_camp)] = true
+	ForcesNet.send_planning_ready(GameSession.human_camp)
+	if _feed:
+		_feed.push_system("Orders locked — waiting for other players.", false, 1)
+	_refresh_ui()
+	if GameSession.network_is_host:
+		_try_network_resolution()
+
+
+func _on_net_planning_ready(camp: int) -> void:
+	_planning_ready_camps[camp] = true
+	_refresh_ui()
+	if GameSession.network_is_host:
+		_try_network_resolution()
+
+
+func _try_network_resolution() -> void:
+	if not GameSession.network_is_host or _resolution_running:
+		return
+	if _state.phase != GameConstants.GamePhase.PLANNING:
+		return
+	if not _all_players_planning_ready():
+		return
+	_play_round_resolution()
+
+
+func _on_network_planning_timeout() -> void:
+	if not GameSession.network_is_host or _resolution_running:
+		return
+	for camp: GameConstants.Camp in _online_camps_for_planning():
+		if _state.is_alive(camp):
+			_planning_ready_camps[int(camp)] = true
+	_local_planning_ready = true
+	if _feed:
+		_feed.push_system("[color=#888aa0]Time's up — resolving with current orders.[/color]", true)
+	_try_network_resolution()
+
+
 func _play_round_resolution() -> void:
+	if _resolution_running:
+		return
+	_resolution_running = true
 	if _feed:
 		_feed.push_system(GameOrder.feed_resolution_marker(_state.round_number), true)
 		_feed.push_ai_block(AiPlanner.run_all_ai(_state), _state.human_camp)
@@ -779,6 +1144,8 @@ func _on_round_advanced(round_number: int) -> void:
 		_feed.push_system(GameOrder.feed_round_marker(round_number), true, 0)
 	_planning_elapsed = 1
 	_timer_accum = 0.0
+	_reset_planning_ready()
+	_resolution_running = false
 
 
 func _on_sidebar_unit_pressed(piece_type: GameConstants.PieceType) -> void:

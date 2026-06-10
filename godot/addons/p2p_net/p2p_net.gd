@@ -14,10 +14,12 @@ signal connection_failed(reason: String)
 const NetConfigScript = preload("res://addons/p2p_net/net_config.gd")
 const WebRtcMeshTransportScript = preload("res://addons/p2p_net/transport/webrtc_mesh_transport.gd")
 const JanusTransportScript = preload("res://addons/p2p_net/transport/janus_transport.gd")
+const SignalingServerScript = preload("res://addons/p2p_net/server/ws_signaling_server.gd")
 
 var config  # P2PNetConfig
 var _transport  # P2PTransportBackend
 var _backend_kind: Backend = Backend.WEBRTC_SIGNALING
+var _local_signaling: Node
 
 
 func _ready() -> void:
@@ -62,14 +64,38 @@ func _wire_transport() -> void:
 	_transport.connection_failed.connect(func(reason: String) -> void: connection_failed.emit(reason))
 
 
+func ensure_local_signaling() -> bool:
+	if OS.has_feature("web"):
+		return false
+	if _local_signaling != null and is_instance_valid(_local_signaling):
+		return _local_signaling.is_listening()
+	_local_signaling = SignalingServerScript.new()
+	_local_signaling.name = "LocalSignaling"
+	add_child(_local_signaling)
+	return _local_signaling.is_listening()
+
+
 func host_room(max_peers: int = 4) -> void:
+	if not ensure_local_signaling():
+		connection_failed.emit(
+			"Local signaling server unavailable (port 8080). Close other apps using it."
+		)
+		return
 	if _transport:
 		_transport.host_room(max_peers)
 
 
-func join_room(room_code: String) -> void:
+func join_room(code: String) -> void:
 	if _transport:
-		_transport.join_room(room_code)
+		_transport.join_room(code)
+
+
+func rejoin_room(code: String) -> void:
+	if not ensure_local_signaling():
+		connection_failed.emit("Signaling unavailable for rejoin.")
+		return
+	if _transport:
+		_transport.rejoin_room(code)
 
 
 func seal_lobby() -> Error:

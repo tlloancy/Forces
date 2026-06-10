@@ -1,10 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://forces_main_menu"]
+[gd_scene format=3 uid="uid://babc5plns17s6"]
 
-[ext_resource type="Script" path="res://scripts/menu/main_menu.gd" id="1_menu"]
-[ext_resource type="Script" path="res://scripts/menu/logo_rotating_o.gd" id="2_logo_o"]
-[ext_resource type="PackedScene" uid="uid://forces_loading_screen" path="res://scenes/menu/loading_screen.tscn" id="3_loading"]
+[ext_resource type="Script" uid="uid://d1ahl7fxooppt" path="res://scripts/menu/main_menu.gd" id="1_menu"]
+[ext_resource type="Script" uid="uid://dklf7jsidhjok" path="res://scripts/menu/logo_rotating_o.gd" id="2_logo_o"]
+[ext_resource type="PackedScene" path="res://scenes/menu/loading_screen.tscn" id="3_loading"]
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=895582622]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,7 +13,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_menu")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1264273973]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,7 +22,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.06, 0.09, 0.14, 1)
 
-[node name="SplashTexture" type="TextureRect" parent="."]
+[node name="SplashTexture" type="TextureRect" parent="." unique_id=1216328512]
 unique_name_in_owner = true
 visible = false
 modulate = Color(1, 1, 1, 0.18)
@@ -35,7 +35,7 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 6
 
-[node name="Center" type="CenterContainer" parent="."]
+[node name="Center" type="CenterContainer" parent="." unique_id=1560238780]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -43,87 +43,84 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="PanelContainer" parent="Center"]
+[node name="Panel" type="PanelContainer" parent="Center" unique_id=651004312]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(440, 0)
 layout_mode = 2
 
-[node name="VBox" type="VBoxContainer" parent="Center/Panel"]
+[node name="VBox" type="VBoxContainer" parent="Center/Panel" unique_id=1391363090]
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="LogoRow" type="HBoxContainer" parent="Center/Panel/VBox"]
+[node name="LogoRow" type="HBoxContainer" parent="Center/Panel/VBox" unique_id=1790282584]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
 alignment = 1
 
-[node name="LogoF" type="Label" parent="Center/Panel/VBox/LogoRow"]
+[node name="LogoF" type="Label" parent="Center/Panel/VBox/LogoRow" unique_id=43072258]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.82, 0.68, 0.22, 1)
 theme_override_font_sizes/font_size = 48
 text = "F"
 
-[node name="LogoO" type="Control" parent="Center/Panel/VBox/LogoRow"]
+[node name="LogoO" type="Control" parent="Center/Panel/VBox/LogoRow" unique_id=1297518323]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
 script = ExtResource("2_logo_o")
-icon_size = 44.0
-rotate_speed = 120.0
-snap_interval_sec = 1.0
 
-[node name="LogoRest" type="Label" parent="Center/Panel/VBox/LogoRow"]
+[node name="LogoRest" type="Label" parent="Center/Panel/VBox/LogoRow" unique_id=1229082208]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.72, 0.52, 0.95, 1)
 theme_override_font_sizes/font_size = 48
 text = "RCES"
 
-[node name="PlayButton" type="Button" parent="Center/Panel/VBox"]
+[node name="PlayButton" type="Button" parent="Center/Panel/VBox" unique_id=67204609]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Play"
 
-[node name="OnlineButton" type="Button" parent="Center/Panel/VBox"]
+[node name="OnlineButton" type="Button" parent="Center/Panel/VBox" unique_id=413012764]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Online (2 players)"
+text = "Online multiplayer"
 
-[node name="ResumeButton" type="Button" parent="Center/Panel/VBox"]
+[node name="ResumeButton" type="Button" parent="Center/Panel/VBox" unique_id=645156409]
 unique_name_in_owner = true
 layout_mode = 2
 text = "▶ Continue"
 
-[node name="QuickPlayButton" type="Button" parent="Center/Panel/VBox"]
+[node name="QuickPlayButton" type="Button" parent="Center/Panel/VBox" unique_id=34239275]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Quick match"
 
-[node name="TutorialButton" type="Button" parent="Center/Panel/VBox"]
+[node name="TutorialButton" type="Button" parent="Center/Panel/VBox" unique_id=1728416745]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Tutorial"
 
-[node name="OptionsButton" type="Button" parent="Center/Panel/VBox"]
+[node name="OptionsButton" type="Button" parent="Center/Panel/VBox" unique_id=1454830561]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Options"
 
-[node name="QuitButton" type="Button" parent="Center/Panel/VBox"]
+[node name="QuitButton" type="Button" parent="Center/Panel/VBox" unique_id=573054504]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Quit"
 
-[node name="Version" type="Label" parent="Center/Panel/VBox"]
+[node name="Version" type="Label" parent="Center/Panel/VBox" unique_id=1099027673]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.45, 0.5, 0.55, 1)
 theme_override_font_sizes/font_size = 12
 text = "Godot 4.6"
 horizontal_alignment = 1
 
-[node name="LoadingScreen" parent="." instance=ExtResource("3_loading")]
+[node name="LoadingScreen" parent="." unique_id=1224677720 instance=ExtResource("3_loading")]
 
 [connection signal="pressed" from="Center/Panel/VBox/PlayButton" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="Center/Panel/VBox/OnlineButton" to="." method="_on_online_pressed"]

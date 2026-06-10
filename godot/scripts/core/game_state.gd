@@ -584,11 +584,15 @@ func try_cancel_last_human_order() -> String:
 	return try_cancel_last_order(human_camp)
 
 
-## Host applies an order from the remote human player (online MVP).
+## Host applies an order from a remote human player (online).
 func try_apply_network_order(data: Dictionary) -> String:
 	var order: GameOrder = _order_from_dict(data)
 	if order.camp == human_camp:
 		return ""
+	if not GameSession.network_is_host:
+		return "Host only."
+	if GameSession.slot_kind(order.camp) != GameSession.SlotKind.NETWORK:
+		return "Camp is not an online player."
 	if phase != GameConstants.GamePhase.PLANNING:
 		return "Not in planning phase."
 	if not is_alive(order.camp):
@@ -837,7 +841,10 @@ func restore_from_snapshot(data: Dictionary) -> void:
 			continue
 		pending_orders.append(_order_from_dict(entry as Dictionary))
 	orders_by_camp = (data.get("orders_by_camp", {}) as Dictionary).duplicate()
-	pieces_moved_this_round = (data.get("pieces_moved_this_round", []) as Array).duplicate()
+	var moved_raw: Array = (data.get("pieces_moved_this_round", []) as Array).duplicate()
+	pieces_moved_this_round.clear()
+	for moved_id: Variant in moved_raw:
+		pieces_moved_this_round.append(int(moved_id))
 	phase_changed.emit(phase)
 
 

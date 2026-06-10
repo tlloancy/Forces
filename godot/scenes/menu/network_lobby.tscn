@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://forces_network_lobby"]
+[gd_scene load_steps=3 format=3 uid="uid://forces_network_lobby"]
 
 [ext_resource type="Script" path="res://scripts/menu/network_lobby.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/menu/logo_rotating_o.gd" id="2_logo_o"]
 
 [node name="NetworkLobby" type="Control"]
 layout_mode = 3
@@ -30,51 +31,114 @@ grow_vertical = 2
 
 [node name="Panel" type="PanelContainer" parent="Center"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(480, 0)
+custom_minimum_size = Vector2(520, 0)
 layout_mode = 2
 
 [node name="VBox" type="VBoxContainer" parent="Center/Panel"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 14
 
-[node name="Title" type="Label" parent="Center/Panel/VBox"]
+[node name="LogoRow" type="HBoxContainer" parent="Center/Panel/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "Online (2 players)"
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="LogoF" type="Label" parent="Center/Panel/VBox/LogoRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.68, 0.22, 1)
+theme_override_font_sizes/font_size = 40
+text = "F"
+
+[node name="LogoO" type="Control" parent="Center/Panel/VBox/LogoRow"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+script = ExtResource("2_logo_o")
+
+[node name="LogoRest" type="Label" parent="Center/Panel/VBox/LogoRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.52, 0.95, 1)
+theme_override_font_sizes/font_size = 40
+text = "RCES"
+
+[node name="Subtitle" type="Label" parent="Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.68, 0.74, 1)
+theme_override_font_sizes/font_size = 15
+text = "Online multiplayer · 2–4 players"
 horizontal_alignment = 1
+
+[node name="PlayerSlots" type="VBoxContainer" parent="Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
 
 [node name="StatusLabel" type="Label" parent="Center/Panel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.94, 0.88, 1)
+theme_override_font_sizes/font_size = 14
 autowrap_mode = 3
 text = "Status"
+horizontal_alignment = 1
 
-[node name="RoomCodeEdit" type="LineEdit" parent="Center/Panel/VBox"]
+[node name="PlayerCountOption" type="OptionButton" parent="Center/Panel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-placeholder_text = "Room code (join)"
 
-[node name="HostButton" type="Button" parent="Center/Panel/VBox"]
+[node name="RoomRow" type="HBoxContainer" parent="Center/Panel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RoomCodeEdit" type="LineEdit" parent="Center/Panel/VBox/RoomRow"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Host room"
+size_flags_horizontal = 3
+placeholder_text = "Room code"
+alignment = 1
 
-[node name="JoinButton" type="Button" parent="Center/Panel/VBox"]
+[node name="CopyCodeButton" type="Button" parent="Center/Panel/VBox/RoomRow"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Join room"
+text = "Copy"
+
+[node name="ActionRow" type="HBoxContainer" parent="Center/Panel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="HostButton" type="Button" parent="Center/Panel/VBox/ActionRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Host"
+
+[node name="JoinButton" type="Button" parent="Center/Panel/VBox/ActionRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Join"
+
+[node name="RejoinButton" type="Button" parent="Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "↩ Rejoin previous match"
 
 [node name="StartButton" type="Button" parent="Center/Panel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Start match"
+text = "▶ Start match"
 
 [node name="BackButton" type="Button" parent="Center/Panel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Back"
+text = "Back to menu"
 
-[connection signal="pressed" from="Center/Panel/VBox/HostButton" to="." method="_on_host_pressed"]
-[connection signal="pressed" from="Center/Panel/VBox/JoinButton" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="Center/Panel/VBox/RoomRow/CopyCodeButton" to="." method="_on_copy_code_pressed"]
+[connection signal="pressed" from="Center/Panel/VBox/ActionRow/HostButton" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="Center/Panel/VBox/ActionRow/JoinButton" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="Center/Panel/VBox/RejoinButton" to="." method="_on_rejoin_pressed"]
 [connection signal="pressed" from="Center/Panel/VBox/StartButton" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="Center/Panel/VBox/BackButton" to="." method="_on_back_pressed"]

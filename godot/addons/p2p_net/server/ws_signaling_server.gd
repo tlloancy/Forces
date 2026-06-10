@@ -13,8 +13,8 @@ enum Message {
 	SEAL,
 }
 
-const TIMEOUT_MS := 1000
-const SEAL_TIME_MS := 10000
+const TIMEOUT_MS := 15000
+const SEAL_TIME_MS := 3600000
 const DEFAULT_MAX_PEERS := 8
 const ALFNUM := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
@@ -26,6 +26,7 @@ var _lobbies: Dictionary = {}
 var _tcp_server := TCPServer.new()
 var _peers: Dictionary = {}
 var _alfnum: PackedByteArray = ALFNUM.to_ascii_buffer()
+var _using_external_server: bool = false
 
 
 class Peer extends RefCounted:
@@ -53,6 +54,7 @@ class Lobby extends RefCounted:
 	var seal_time: int = 0
 	var mesh: bool = true
 	var max_peers: int = DEFAULT_MAX_PEERS
+	var lobby_name: String = ""
 
 	func _init(host_id: int, use_mesh: bool, p_max_peers: int) -> void:
 		host = host_id
@@ -99,30 +101,65 @@ class Lobby extends RefCounted:
 			if p.is_open():
 				p.send(Message.SEAL, 0)
 		seal_time = Time.get_ticks_msec()
+		var host_peer: Peer = peers.get(host) as Peer
 		peers.clear()
+		if host_peer != null and host_peer.is_open():
+			peers[host] = host_peer
+		return true
+
+	func rejoin(peer: Peer) -> bool:
+		if not sealed or not peer.is_open():
+			return false
+		if peers.size() >= max_peers:
+			return false
+		peer.send(Message.ID, peer.id, "true" if mesh else "")
+		peers[peer.id] = peer
+		if peers.has(host):
+			var host_peer: Peer = peers[host] as Peer
+			if host_peer.is_open():
+				host_peer.send(Message.PEER_CONNECT, peer.id)
+				peer.send(Message.PEER_CONNECT, host if not mesh else 1)
+		for pid: int in peers.keys():
+			if pid == peer.id or pid == host:
+				continue
+			var other: Peer = peers[pid] as Peer
+			if other.is_open():
+				other.send(Message.PEER_CONNECT, peer.id)
+				peer.send(Message.PEER_CONNECT, pid)
 		return true
 
 
 func _ready() -> void:
-	listen(listen_port)
+	if not listen(listen_port):
+		push_error("P2PNet local signaling could not start on port %d." % listen_port)
 
 
 func _process(_delta: float) -> void:
 	poll()
 
 
-func listen(port: int) -> void:
+func is_listening() -> bool:
+	return _tcp_server.is_listening() or _using_external_server
+
+
+func listen(port: int) -> bool:
 	if OS.has_feature("web"):
 		push_warning("P2PNet signaling server cannot run in HTML5 export.")
-		return
+		return false
 	stop()
+	_using_external_server = false
 	_rand.seed = int(Time.get_unix_time_from_system())
 	listen_port = port
 	var err: Error = _tcp_server.listen(port)
-	if err != OK:
-		push_error("P2PNet signaling listen failed: %s" % error_string(err))
-	else:
+	if err == OK:
 		print("P2PNet signaling listening on ws://127.0.0.1:%d" % port)
+		return true
+	if err == ERR_ALREADY_IN_USE:
+		_using_external_server = true
+		print("P2PNet signaling port %d already in use — using existing server." % port)
+		return true
+	push_error("P2PNet signaling listen failed: %s" % error_string(err))
+	return false
 
 
 func stop() -> void:
@@ -132,7 +169,7 @@ func stop() -> void:
 
 
 func poll() -> void:
-	if not _tcp_server.is_listening():
+	if not is_listening() or _using_external_server:
 		return
 	if _tcp_server.is_connection_available():
 		var id: int = _rand.randi() % (1 << 31)
@@ -174,9 +211,19 @@ func _join_lobby(peer: Peer, lobby_name: String, join_id: int) -> bool:
 	if lobby.is_empty():
 		for _i in 32:
 			lobby += char(_alfnum[_rand.randi_range(0, ALFNUM.length() - 1)])
-		_lobbies[lobby] = Lobby.new(peer.id, mesh, max_for_lobby)
+		var new_lobby := Lobby.new(peer.id, mesh, max_for_lobby)
+		new_lobby.lobby_name = lobby
+		_lobbies[lobby] = new_lobby
 	elif not _lobbies.has(lobby):
 		return false
+	else:
+		var existing: Lobby = _lobbies[lobby] as Lobby
+		if existing.sealed:
+			if not existing.rejoin(peer):
+				return false
+			peer.lobby = lobby
+			peer.send(Message.JOIN, 0, lobby)
+			return true
 	if not _lobbies[lobby].join(peer):
 		return false
 	peer.lobby = lobby

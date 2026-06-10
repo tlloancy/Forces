@@ -35,7 +35,10 @@ if (-not $godot) {
 
 $dll = Join-Path $ProjectRoot "webrtc\lib\libwebrtc_native.windows.template_debug.x86_64.dll"
 if (-not (Test-Path $dll)) {
-    Write-Error "webrtc-native Windows DLL missing in webrtc/lib/ - extract godot-extension-webrtc.zip into project root"
+    & (Join-Path $PSScriptRoot "setup_webrtc.ps1")
+    if (-not (Test-Path $dll)) {
+        Write-Error "webrtc-native Windows DLL missing in webrtc/lib/"
+    }
 }
 
 $roomFile = Join-Path $env:TEMP "forces_p2p_smoke_room.txt"
